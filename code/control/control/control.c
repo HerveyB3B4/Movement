@@ -172,7 +172,7 @@ void control_side_balance(
     struct Control_Turn_Manual_Params* control_turn_params,
     struct Velocity_Motor* vel_motor,
     struct EulerAngle* euler_angle_bias) {
-        if (control_flag->sideVelocity) {
+    if (control_flag->sideVelocity) {
         control_flag->sideVelocity = 0;
         control_side_velocity(vel_motor, control_target, control_turn_params);
     }
@@ -246,9 +246,10 @@ static void control_side_angle_velocity(struct Control_Target* control_target) {
     momentumGyroFilter[1] = momentumGyroFilter[0];
     momentumGyroFilter[0] = currentSideAngleVelocity;
 
-    s_side_balance_duty =
-        (int32)(PID_calc_DELTA(&side_angle_velocity_PID, momentumGyroFilter[0],
-                               control_target->sideAngleVelocity));
+    // 修改为位置式
+    s_side_balance_duty = (int32)(PID_calc_Position(
+        &side_angle_velocity_PID, momentumGyroFilter[0],
+        control_target->sideAngleVelocity));
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sav_flag != 0) {
