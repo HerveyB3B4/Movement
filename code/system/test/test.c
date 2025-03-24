@@ -117,3 +117,91 @@ void test_imu() {
     }
     lcd_clear();
 }
+
+void test_noise() {
+    lcd_clear();
+    float ax[10001], ay[10001], az[10001];
+    float gx[10001], gy[10001], gz[10001];
+
+    while (keymsg.key != KEY_L) {
+        const int N = 10000;
+        uint8 update_flag = 0;
+
+        lcd_show_string(0, 0, "acc_x:");
+        lcd_show_string(0, 1, "acc_y:");
+        lcd_show_string(0, 2, "acc_z:");
+
+        lcd_show_string(0, 3, "gyro_x:");
+        lcd_show_string(0, 4, "gyro_y:");
+        lcd_show_string(0, 5, "gyro_z:");
+
+        float mean_ax = 0, var_ax = 0;
+        float mean_ay = 0, var_ay = 0;
+        float mean_az = 0, var_az = 0;
+
+        float mean_gx = 0, var_gx = 0;
+        float mean_gy = 0, var_gy = 0;
+        float mean_gz = 0, var_gz = 0;
+
+        if (update_flag == 0) {
+            for (int i = 0; i < N; i++) {
+                imu660rb_get_acc();
+                imu660rb_get_gyro();
+
+                ax[i] = imu660rb_acc_transition(imu660rb_acc_x) * GravityAcc;
+                ay[i] = imu660rb_acc_transition(imu660rb_acc_y) * GravityAcc;
+                az[i] = imu660rb_acc_transition(imu660rb_acc_z) * GravityAcc;
+
+                gx[i] = imu660rb_gyro_transition(imu660rb_gyro_x) * DEG2RAD;
+                gy[i] = imu660rb_gyro_transition(imu660rb_gyro_y) * DEG2RAD;
+                gz[i] = imu660rb_gyro_transition(imu660rb_gyro_z) * DEG2RAD;
+
+                mean_ax += ax[i];
+                mean_ay += ay[i];
+                mean_az += az[i];
+
+                mean_gx += gx[i];
+                mean_gy += gy[i];
+                mean_gz += gz[i];
+            }
+
+            mean_ax /= N;
+            mean_ay /= N;
+            mean_az /= N;
+
+            mean_gx /= N;
+            mean_gy /= N;
+            mean_gz /= N;
+
+            for (int i = 0; i < N; i++) {
+                var_ax += (ax[i] - mean_ax) * (ax[i] - mean_ax);
+                var_ay += (ay[i] - mean_ay) * (ay[i] - mean_ay);
+                var_az += (az[i] - mean_az) * (az[i] - mean_az);
+
+                var_gx += (gx[i] - mean_gx) * (gx[i] - mean_gx);
+                var_gy += (gy[i] - mean_gy) * (gy[i] - mean_gy);
+                var_gz += (gz[i] - mean_gz) * (gz[i] - mean_gz);
+            }
+
+            lcd_show_float(8, 0, var_ax, 3, 3);
+            lcd_show_float(8, 1, var_ay, 3, 3);
+            lcd_show_float(8, 2, var_az, 3, 3);
+
+            lcd_show_float(8, 3, var_gx, 3, 3);
+            lcd_show_float(8, 4, var_gy, 3, 3);
+            lcd_show_float(8, 5, var_gz, 3, 3);
+
+            update_flag = 1;
+        } else {
+            lcd_show_float(8, 0, var_ax, 3, 3);
+            lcd_show_float(8, 1, var_ay, 3, 3);
+            lcd_show_float(8, 2, var_az, 3, 3);
+
+            lcd_show_float(8, 3, var_gx, 3, 3);
+            lcd_show_float(8, 4, var_gy, 3, 3);
+            lcd_show_float(8, 5, var_gz, 3, 3);
+        }
+    }
+
+    lcd_clear();
+}
