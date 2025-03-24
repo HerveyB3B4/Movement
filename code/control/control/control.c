@@ -172,18 +172,21 @@ void control_side_balance(
     struct Control_Turn_Manual_Params* control_turn_params,
     struct Velocity_Motor* vel_motor,
     struct EulerAngle* euler_angle_bias) {
-    if (control_flag->sideAngleVelocity) {
-        control_flag->sideAngleVelocity = 0;
-        control_side_angle_velocity(control_target);
+        if (control_flag->sideVelocity) {
+        control_flag->sideVelocity = 0;
+        control_side_velocity(vel_motor, control_target, control_turn_params);
     }
+
     if (control_flag->sideAngle) {
         control_flag->sideAngle = 0;
         control_side_angle(euler_angle_bias, control_target);
     }
-    if (control_flag->sideVelocity) {
-        control_flag->sideVelocity = 0;
-        control_side_velocity(vel_motor, control_target, control_turn_params);
+
+    if (control_flag->sideAngleVelocity) {
+        control_flag->sideAngleVelocity = 0;
+        control_side_angle_velocity(control_target);
     }
+
     // turnControl();
     int32 left_motor_duty, right_motor_duty;
     left_motor_duty = -s_side_balance_duty - s_momentum_diff;
