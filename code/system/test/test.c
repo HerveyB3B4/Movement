@@ -120,8 +120,20 @@ void test_imu() {
 
 void test_noise() {
     lcd_clear();
-    float ax[10001], ay[10001], az[10001];
-    float gx[10001], gy[10001], gz[10001];
+
+    float sum_ax = 0.0f, sum_ax2 = 0.0f;
+    float sum_ay = 0.0f, sum_ay2 = 0.0f;
+    float sum_az = 0.0f, sum_az2 = 0.0f;
+    float sum_gx = 0.0f, sum_gx2 = 0.0f;
+    float sum_gy = 0.0f, sum_gy2 = 0.0f;
+    float sum_gz = 0.0f, sum_gz2 = 0.0f;
+
+    float var_ax = 0.0f;
+    float var_ay = 0.0f;
+    float var_az = 0.0f;
+    float var_gx = 0.0f;
+    float var_gy = 0.0f;
+    float var_gz = 0.0f;
 
     while (keymsg.key != KEY_L) {
         const int N = 10000;
@@ -135,68 +147,64 @@ void test_noise() {
         lcd_show_string(0, 4, "gyro_y:");
         lcd_show_string(0, 5, "gyro_z:");
 
-        float mean_ax = 0, var_ax = 0;
-        float mean_ay = 0, var_ay = 0;
-        float mean_az = 0, var_az = 0;
-
-        float mean_gx = 0, var_gx = 0;
-        float mean_gy = 0, var_gy = 0;
-        float mean_gz = 0, var_gz = 0;
-
         if (update_flag == 0) {
             for (int i = 0; i < N; i++) {
+                // 读取传感器数据
                 imu660rb_get_acc();
                 imu660rb_get_gyro();
 
-                ax[i] = imu660rb_acc_transition(imu660rb_acc_x) * GravityAcc;
-                ay[i] = imu660rb_acc_transition(imu660rb_acc_y) * GravityAcc;
-                az[i] = imu660rb_acc_transition(imu660rb_acc_z) * GravityAcc;
+                // 实时计算并累加
+                float current_ax =
+                    imu660rb_acc_transition(imu660rb_acc_x) * GravityAcc;
+                float current_ay =
+                    imu660rb_acc_transition(imu660rb_acc_y) * GravityAcc;
+                float current_az =
+                    imu660rb_acc_transition(imu660rb_acc_z) * GravityAcc;
 
-                gx[i] = imu660rb_gyro_transition(imu660rb_gyro_x) * DEG2RAD;
-                gy[i] = imu660rb_gyro_transition(imu660rb_gyro_y) * DEG2RAD;
-                gz[i] = imu660rb_gyro_transition(imu660rb_gyro_z) * DEG2RAD;
+                float current_gx =
+                    imu660rb_gyro_transition(imu660rb_gyro_x) * DEG2RAD;
+                float current_gy =
+                    imu660rb_gyro_transition(imu660rb_gyro_y) * DEG2RAD;
+                float current_gz =
+                    imu660rb_gyro_transition(imu660rb_gyro_z) * DEG2RAD;
 
-                mean_ax += ax[i];
-                mean_ay += ay[i];
-                mean_az += az[i];
+                // 累加原始值和平方值
+                sum_ax += current_ax;
+                sum_ax2 += current_ax * current_ax;
+                sum_ay += current_ay;
+                sum_ay2 += current_ay * current_ay;
+                sum_az += current_az;
+                sum_az2 += current_az * current_az;
 
-                mean_gx += gx[i];
-                mean_gy += gy[i];
-                mean_gz += gz[i];
+                sum_gx += current_gx;
+                sum_gx2 += current_gx * current_gx;
+                sum_gy += current_gy;
+                sum_gy2 += current_gy * current_gy;
+                sum_gz += current_gz;
+                sum_gz2 += current_gz * current_gz;
             }
 
-            mean_ax /= N;
-            mean_ay /= N;
-            mean_az /= N;
+            // 计算均值
+            float mean_ax = sum_ax / N;
+            float mean_ay = sum_ay / N;
+            float mean_az = sum_az / N;
+            float mean_gx = sum_gx / N;
+            float mean_gy = sum_gy / N;
+            float mean_gz = sum_gz / N;
 
-            mean_gx /= N;
-            mean_gy /= N;
-            mean_gz /= N;
-
-            for (int i = 0; i < N; i++) {
-                var_ax += (ax[i] - mean_ax) * (ax[i] - mean_ax);
-                var_ay += (ay[i] - mean_ay) * (ay[i] - mean_ay);
-                var_az += (az[i] - mean_az) * (az[i] - mean_az);
-
-                var_gx += (gx[i] - mean_gx) * (gx[i] - mean_gx);
-                var_gy += (gy[i] - mean_gy) * (gy[i] - mean_gy);
-                var_gz += (gz[i] - mean_gz) * (gz[i] - mean_gz);
-            }
-
-            lcd_show_float(8, 0, var_ax, 3, 3);
-            lcd_show_float(8, 1, var_ay, 3, 3);
-            lcd_show_float(8, 2, var_az, 3, 3);
-
-            lcd_show_float(8, 3, var_gx, 3, 3);
-            lcd_show_float(8, 4, var_gy, 3, 3);
-            lcd_show_float(8, 5, var_gz, 3, 3);
+            var_ax = (sum_ax2 / N) - (mean_ax * mean_ax);
+            var_ay = (sum_ay2 / N) - (mean_ay * mean_ay);
+            var_az = (sum_az2 / N) - (mean_az * mean_az);
+            var_gx = (sum_gx2 / N) - (mean_gx * mean_gx);
+            var_gy = (sum_gy2 / N) - (mean_gy * mean_gy);
+            var_gz = (sum_gz2 / N) - (mean_gz * mean_gz);
 
             update_flag = 1;
         } else {
+            // 显示均值和方差
             lcd_show_float(8, 0, var_ax, 3, 3);
             lcd_show_float(8, 1, var_ay, 3, 3);
             lcd_show_float(8, 2, var_az, 3, 3);
-
             lcd_show_float(8, 3, var_gx, 3, 3);
             lcd_show_float(8, 4, var_gy, 3, 3);
             lcd_show_float(8, 5, var_gz, 3, 3);
