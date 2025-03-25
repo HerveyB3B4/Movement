@@ -200,15 +200,14 @@ void test_noise() {
             var_gz = (sum_gz2 / N) - (mean_gz * mean_gz);
 
             update_flag = 1;
-        } else {
-            // 显示均值和方差
-            lcd_show_float(8, 0, var_ax, 3, 3);
-            lcd_show_float(8, 1, var_ay, 3, 3);
-            lcd_show_float(8, 2, var_az, 3, 3);
-            lcd_show_float(8, 3, var_gx, 3, 3);
-            lcd_show_float(8, 4, var_gy, 3, 3);
-            lcd_show_float(8, 5, var_gz, 3, 3);
         }
+
+        lcd_show_float(8, 0, var_ax, 3, 3);
+        lcd_show_float(8, 1, var_ay, 3, 3);
+        lcd_show_float(8, 2, var_az, 3, 3);
+        lcd_show_float(8, 3, var_gx, 3, 3);
+        lcd_show_float(8, 4, var_gy, 3, 3);
+        lcd_show_float(8, 5, var_gz, 3, 3);
     }
 
     lcd_clear();
