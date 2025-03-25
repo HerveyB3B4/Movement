@@ -135,10 +135,10 @@ void test_noise() {
     float var_gy = 0.0f;
     float var_gz = 0.0f;
 
-    while (keymsg.key != KEY_L) {
-        const int N = 10000;
-        uint8 update_flag = 0;
+    const int N = 10000;
+    uint8 update_flag = 0;
 
+    while (keymsg.key != KEY_L) {
         lcd_show_string(0, 0, "acc_x:");
         lcd_show_string(0, 1, "acc_y:");
         lcd_show_string(0, 2, "acc_z:");
