@@ -8,18 +8,20 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
-void test_bottom_motor() {
+void test_bottom_motor()
+{
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: forward");
     lcd_show_string(0, 1, "KEY_D: backward");
     lcd_show_string(0, 4, "Press KEY_L to exit");
-    while (keymsg.key != KEY_L) {
-        if (keymsg.key == KEY_U)  // 向前
+    while (keymsg.key != KEY_L)
+    {
+        if (keymsg.key == KEY_U) // 向前
         {
             gpio_set_level(DIR_BOTTOM, 1);
             pwm_set_duty(MOTOR_BOTTOM, 8000);
         }
-        if (keymsg.key == KEY_D)  // 向后
+        if (keymsg.key == KEY_D) // 向后
         {
             gpio_set_level(DIR_BOTTOM, 0);
             pwm_set_duty(MOTOR_BOTTOM, 8000);
@@ -33,7 +35,8 @@ void test_bottom_motor() {
     lcd_clear();
 }
 
-void test_side_motor() {
+void test_side_motor()
+{
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: left  forward");
     lcd_show_string(0, 1, "KEY_D: left backward");
@@ -41,20 +44,21 @@ void test_side_motor() {
     lcd_show_string(0, 3, "KEY_R:right backward");
     lcd_show_string(0, 4, "Press KEY_L to exit");
     // int count = 0;
-    while (keymsg.key != KEY_L) {
-        if (keymsg.key == KEY_U)  // 向前
+    while (keymsg.key != KEY_L)
+    {
+        if (keymsg.key == KEY_U) // 向前
         {
             small_driver_set_duty(2000, 0);
         }
-        if (keymsg.key == KEY_D)  // 向后
+        if (keymsg.key == KEY_D) // 向后
         {
             small_driver_set_duty(-2000, 0);
         }
-        if (keymsg.key == KEY_B)  // 向前
+        if (keymsg.key == KEY_B) // 向前
         {
             small_driver_set_duty(0, 1000);
         }
-        if (keymsg.key == KEY_R)  // 向后
+        if (keymsg.key == KEY_R) // 向后
         {
             small_driver_set_duty(0, -1000);
         }
@@ -89,9 +93,11 @@ void test_side_motor() {
 //     lcd_clear();
 // }
 
-void test_attitude() {
+void test_attitude()
+{
     lcd_clear();
-    while (keymsg.key != KEY_L) {
+    while (keymsg.key != KEY_L)
+    {
         lcd_show_string(0, 0, "Pitch:");
         lcd_show_float(0, 1, currentFrontAngle, 3, 3);
         lcd_show_string(0, 2, "Row:");
@@ -102,9 +108,11 @@ void test_attitude() {
     lcd_clear();
 }
 
-void test_imu() {
+void test_imu()
+{
     lcd_clear();
-    while (keymsg.key != KEY_L) {
+    while (keymsg.key != KEY_L)
+    {
         lcd_show_string(0, 0, "x:");
         lcd_show_float(0, 1, g_imu_data.gyro.x, 3, 3);
         lcd_show_float(8, 1, g_imu_data.acc.x, 3, 3);
@@ -118,7 +126,8 @@ void test_imu() {
     lcd_clear();
 }
 
-void test_noise() {
+void test_noise()
+{
     lcd_clear();
 
     float sum_ax = 0.0f, sum_ax2 = 0.0f;
@@ -135,80 +144,83 @@ void test_noise() {
     float var_gy = 0.0f;
     float var_gz = 0.0f;
 
-    while (keymsg.key != KEY_L) {
-        const int N = 10000;
-        uint8 update_flag = 0;
+    uint8 T = 10;
+    uint8 cnt = 0;
+    uint32 total = 0;
+    while (keymsg.key != KEY_L)
+    {
+        if (cnt < T)
+        {
+            // 读取传感器数据
+            imu660rb_get_acc();
+            imu660rb_get_gyro();
 
-        lcd_show_string(0, 0, "acc_x:");
-        lcd_show_string(0, 1, "acc_y:");
-        lcd_show_string(0, 2, "acc_z:");
+            // 实时计算并累加
+            float current_ax =
+                imu660rb_acc_transition(imu660rb_acc_x) * GravityAcc;
+            float current_ay =
+                imu660rb_acc_transition(imu660rb_acc_y) * GravityAcc;
+            float current_az =
+                imu660rb_acc_transition(imu660rb_acc_z) * GravityAcc;
 
-        lcd_show_string(0, 3, "gyro_x:");
-        lcd_show_string(0, 4, "gyro_y:");
-        lcd_show_string(0, 5, "gyro_z:");
+            float current_gx =
+                imu660rb_gyro_transition(imu660rb_gyro_x) * DEG2RAD;
+            float current_gy =
+                imu660rb_gyro_transition(imu660rb_gyro_y) * DEG2RAD;
+            float current_gz =
+                imu660rb_gyro_transition(imu660rb_gyro_z) * DEG2RAD;
 
-        if (update_flag == 0) {
-            for (int i = 0; i < N; i++) {
-                // 读取传感器数据
-                imu660rb_get_acc();
-                imu660rb_get_gyro();
+            // 累加原始值和平方值
+            sum_ax += current_ax;
+            sum_ax2 += current_ax * current_ax;
+            sum_ay += current_ay;
+            sum_ay2 += current_ay * current_ay;
+            sum_az += current_az;
+            sum_az2 += current_az * current_az;
 
-                // 实时计算并累加
-                float current_ax =
-                    imu660rb_acc_transition(imu660rb_acc_x) * GravityAcc;
-                float current_ay =
-                    imu660rb_acc_transition(imu660rb_acc_y) * GravityAcc;
-                float current_az =
-                    imu660rb_acc_transition(imu660rb_acc_z) * GravityAcc;
-
-                float current_gx =
-                    imu660rb_gyro_transition(imu660rb_gyro_x) * DEG2RAD;
-                float current_gy =
-                    imu660rb_gyro_transition(imu660rb_gyro_y) * DEG2RAD;
-                float current_gz =
-                    imu660rb_gyro_transition(imu660rb_gyro_z) * DEG2RAD;
-
-                // 累加原始值和平方值
-                sum_ax += current_ax;
-                sum_ax2 += current_ax * current_ax;
-                sum_ay += current_ay;
-                sum_ay2 += current_ay * current_ay;
-                sum_az += current_az;
-                sum_az2 += current_az * current_az;
-
-                sum_gx += current_gx;
-                sum_gx2 += current_gx * current_gx;
-                sum_gy += current_gy;
-                sum_gy2 += current_gy * current_gy;
-                sum_gz += current_gz;
-                sum_gz2 += current_gz * current_gz;
-            }
-
-            // 计算均值
-            float mean_ax = sum_ax / N;
-            float mean_ay = sum_ay / N;
-            float mean_az = sum_az / N;
-            float mean_gx = sum_gx / N;
-            float mean_gy = sum_gy / N;
-            float mean_gz = sum_gz / N;
-
-            var_ax = (sum_ax2 / N) - (mean_ax * mean_ax);
-            var_ay = (sum_ay2 / N) - (mean_ay * mean_ay);
-            var_az = (sum_az2 / N) - (mean_az * mean_az);
-            var_gx = (sum_gx2 / N) - (mean_gx * mean_gx);
-            var_gy = (sum_gy2 / N) - (mean_gy * mean_gy);
-            var_gz = (sum_gz2 / N) - (mean_gz * mean_gz);
-
-            update_flag = 1;
+            sum_gx += current_gx;
+            sum_gx2 += current_gx * current_gx;
+            sum_gy += current_gy;
+            sum_gy2 += current_gy * current_gy;
+            sum_gz += current_gz;
+            sum_gz2 += current_gz * current_gz;
         }
+        else
+        {
+            // 计算均值
+            float mean_ax = sum_ax / total;
+            float mean_ay = sum_ay / total;
+            float mean_az = sum_az / total;
+            float mean_gx = sum_gx / total;
+            float mean_gy = sum_gy / total;
+            float mean_gz = sum_gz / total;
 
-        lcd_show_float(8, 0, var_ax, 3, 3);
-        lcd_show_float(8, 1, var_ay, 3, 3);
-        lcd_show_float(8, 2, var_az, 3, 3);
-        lcd_show_float(8, 3, var_gx, 3, 3);
-        lcd_show_float(8, 4, var_gy, 3, 3);
-        lcd_show_float(8, 5, var_gz, 3, 3);
+            var_ax = (sum_ax2 / total) - (mean_ax * mean_ax);
+            var_ay = (sum_ay2 / total) - (mean_ay * mean_ay);
+            var_az = (sum_az2 / total) - (mean_az * mean_az);
+            var_gx = (sum_gx2 / total) - (mean_gx * mean_gx);
+            var_gy = (sum_gy2 / total) - (mean_gy * mean_gy);
+            var_gz = (sum_gz2 / total) - (mean_gz * mean_gz);
+
+            // lcd_show_string(0, 0, "acc_x:");
+            // lcd_show_float(8, 0, var_ax, 5, 3);
+            // lcd_show_string(0, 1, "acc_y:");
+            // lcd_show_float(8, 1, var_ay, 5, 3);
+            // lcd_show_string(0, 2, "acc_z:");
+            // lcd_show_float(8, 2, var_az, 5, 3);
+            // lcd_show_string(0, 3, "gyro_x:");
+            // lcd_show_float(8, 3, var_gx, 5, 3);
+            // lcd_show_string(0, 4, "gyro_y:");
+            // lcd_show_float(8, 4, var_gy, 5, 3);
+            // lcd_show_string(0, 5, "gyro_z:");
+            // lcd_show_float(8, 5, var_gz, 5, 3);
+            printf("total: %d, acc_x: %f, acc_y: %f, acc_z: %f, gyro_x: %f, gyro_y: %f, gyro_z: %f\n",
+                   total, var_ax, var_ay, var_az, var_gx, var_gy, var_gz);
+            cnt = 0;
+        }
+        cnt++;
+        total++;
+        system_delay_ms(100);
     }
-
     lcd_clear();
 }
