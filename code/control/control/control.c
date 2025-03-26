@@ -229,7 +229,7 @@ static void control_side_angle(struct EulerAngle* euler_angle_bias,
     momentumAngleFilter[0] = currentSideAngle;
     // noiseFilter(momentumAngleFilter[0],0.02f);
     // lowPassFilter(&momentumAngleFilter[0],&momentumAngleFilter[1],0.1f);
-    control_target->sideAngleVelocity = PID_calc_Position(
+    control_target->sideAngleVelocity = -PID_calc_Position(
         &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
         control_target->sideAngle);
 
