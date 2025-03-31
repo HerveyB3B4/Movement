@@ -10,7 +10,9 @@ struct EulerAngle g_euler_angle_bias;
 uint8 g_attitude_cal_flag = 0;
 
 void attitude_init() {
-    IMU_QuaternionEKF_Init(10000, 100000, 10000, 1, 0.001f, 0);  // ekf初始化
+    // 参数顺序依次为 Q1, Q2, R, lambda, dt(这个已经和计时器中断一致)，根据波形图调整
+    // IMU_QuaternionEKF_Init(10000, 100000, 1000000, 0.9996, 0.001f, 0);  // ekf初始化
+    IMU_QuaternionEKF_Init(5, 20,  100, 0.9, 0.001f, 0);  // ekf初始化
     imu_init_offset();                                          // 初始化零飘
 }
 

@@ -262,6 +262,8 @@ void IMU_QuaternionEKF_Update(IMU_DATA* imu_data) {
     }
     QEKF_INS.YawTotalAngle = 360.0f * QEKF_INS.YawRoundCount + QEKF_INS.Yaw;
     QEKF_INS.YawAngleLast = QEKF_INS.Yaw;
+
+    // printf("%f, %f, %f, %f, %f, %f\n", QEKF_INS.Roll, QEKF_INS.Pitch, QEKF_INS.Yaw, QEKF_INS.Gyro[0], QEKF_INS.Gyro[1], QEKF_INS.Gyro[2]);
 }
 
 /**

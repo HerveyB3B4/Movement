@@ -228,7 +228,7 @@ static void control_side_angle(struct EulerAngle* euler_angle_bias,
     momentumAngleFilter[1] = momentumAngleFilter[0];
     momentumAngleFilter[0] = currentSideAngle;
     // noiseFilter(momentumAngleFilter[0],0.02f);
-    // lowPassFilter(&momentumAngleFilter[0],&momentumAngleFilter[1],0.1f);
+    lowPassFilterF(&momentumAngleFilter[0],&momentumAngleFilter[1],0.1f);
     control_target->sideAngleVelocity = -PID_calc_Position(
         &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
         control_target->sideAngle);
@@ -236,7 +236,7 @@ static void control_side_angle(struct EulerAngle* euler_angle_bias,
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0) {
         printf("%f,%f,%f,%f\n", (control_target->sideAngle - currentSideAngle),
-               control_target->sideAngleVelocity, currentSideAngle,
+               -control_target->sideAngleVelocity, currentSideAngle,
                control_target->sideAngle);
     }
 }
@@ -245,7 +245,8 @@ static void control_side_angle_velocity(struct Control_Target* control_target) {
     static float momentumGyroFilter[2] = {0};  // 角度速度滤波
     momentumGyroFilter[1] = momentumGyroFilter[0];
     momentumGyroFilter[0] = currentSideAngleVelocity;
-
+ 
+    lowPassFilterF(&momentumGyroFilter[0],&momentumGyroFilter[1],0.1f);
     // 修改为位置式
     s_side_balance_duty = (int32)(PID_calc_Position(
         &side_angle_velocity_PID, momentumGyroFilter[0],
@@ -255,7 +256,7 @@ static void control_side_angle_velocity(struct Control_Target* control_target) {
     if (g_control_output_sav_flag != 0) {
         printf("%f,%f,%f,%f\n",
                (control_target->sideAngleVelocity - currentSideAngleVelocity),
-               (float)s_side_balance_duty, currentSideAngleVelocity,
+               (float)s_side_balance_duty / 1000.0, currentSideAngleVelocity,
                control_target->sideAngleVelocity);
     }
 }
@@ -303,10 +304,10 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->side_angle_velocity_parameter, 1,
                        MOMENTUM_MOTOR_PWM_MAX, 9999);
     control_param_init(&side_angle_PID,
-                       control_motion_params->side_angle_parameter, 10, 9999,
+                       control_motion_params->side_angle_parameter, 1000, 9999,
                        3.0f);
     control_param_init(&side_velocity_PID,
-                       control_motion_params->side_velocity_parameter, 100,
+                       control_motion_params->side_velocity_parameter, 1000,
                        9999, 1.5f);
     control_param_init(&turn_angle_PID,
                        control_motion_params->turn_angle_parameter, 100, 9999,
