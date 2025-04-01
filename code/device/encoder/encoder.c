@@ -7,8 +7,10 @@ static void pass_momentum_encoder(int32 frontValue,
                                   int32 backValue,
                                   struct Velocity_Motor* vel_motor) {
     // 我们获取到的速度是角速度，需转化为线速度。
-    vel_motor->momentumFront = frontValue * 0.04;
-    vel_motor->momentumBack = backValue * 0.04;
+    // vel_motor->momentumFront = frontValue * 0.04;
+    // vel_motor->momentumBack = backValue * 0.04;
+    vel_motor->momentumFront = frontValue;
+    vel_motor->momentumBack = backValue;
     vel_motor->velocityDiff =
         vel_motor->momentumFront + vel_motor->momentumBack;
 }
