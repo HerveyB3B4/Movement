@@ -3,13 +3,17 @@
 
 #include "zf_common_headfile.h"
 
-#define SMALL_DRIVER_UART (UART_3)
+#define USER_REV (0)
+
+#define SMALL_DRIVER_UART_LEFT (UART_3)
+#define SMALL_DRIVER_UART_RIGHT (UART_6)
 
 #define SMALL_DRIVER_BAUDRATE (115200)
 
-#define SMALL_DRIVER_RX (UART3_TX_P15_6)
-
-#define SMALL_DRIVER_TX (UART3_RX_P15_7)
+#define SMALL_DRIVER_RX_LEFT (UART3_TX_P20_0)
+#define SMALL_DRIVER_RX_RIGHT (UART6_TX_P22_0)
+#define SMALL_DRIVER_TX_LEFT (UART3_RX_P20_3)
+#define SMALL_DRIVER_TX_RIGHT (UART6_RX_P23_1)
 
 typedef struct {
     uint8 send_data_buffer[7];  // 发送缓冲数组
@@ -28,7 +32,7 @@ typedef struct {
 
 extern small_device_value_struct motor_value;
 
-void uart_control_callback(void);  // 无刷驱动 串口接收回调函数
+void uart_control_callback(uint8 uart_index);  // 无刷驱动 串口接收回调函数
 
 void small_driver_set_duty(int16 left_duty,
                            int16 right_duty);  // 无刷驱动 设置电机占空比
