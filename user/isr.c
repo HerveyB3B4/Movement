@@ -85,12 +85,12 @@ IFX_INTERRUPT(cc61_pit_ch0_isr,
             static uint16 count = 0;
             count++;
             g_control_target.frontVelocity = 0;
-            if(g_control_bottom_flag != 0) {
+            if (g_control_bottom_flag != 0) {
                 bottom_control_timer(&g_control_time, &g_control_flag,
-                    &g_control_target, &g_vel_motor,
-                    &g_euler_angle_bias);
+                                     &g_control_target, &g_vel_motor,
+                                     &g_euler_angle_bias);
             }
-            
+
             // turnControlTimer();
             side_control_timer(&g_control_time, &g_control_flag,
                                &g_control_target, &g_control_turn_manual_params,
@@ -246,7 +246,7 @@ IFX_INTERRUPT(uart3_tx_isr, UART3_INT_VECTAB_NUM, UART3_TX_INT_PRIO) {
 IFX_INTERRUPT(uart3_rx_isr, UART3_INT_VECTAB_NUM, UART3_RX_INT_PRIO) {
     interrupt_global_enable(0);  // 开启中断嵌套
     // gnss_uart_callback();        // GNSS串口回调函数
-    uart_control_callback();  // 无刷驱动串口回调函数
+    uart_control_callback(UART_3);  // 无刷驱动串口回调函数
 }
 
 IFX_INTERRUPT(uart4_tx_isr, UART4_INT_VECTAB_NUM, UART4_TX_INT_PRIO) {
