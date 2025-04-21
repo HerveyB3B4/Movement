@@ -271,6 +271,7 @@ IFX_INTERRUPT(uart6_tx_isr, UART6_INT_VECTAB_NUM, UART6_TX_INT_PRIO) {
 
 IFX_INTERRUPT(uart6_rx_isr, UART6_INT_VECTAB_NUM, UART6_RX_INT_PRIO) {
     interrupt_global_enable(0);  // 开启中断嵌套
+    uart_control_callback(UART_6);
 }
 
 IFX_INTERRUPT(uart8_tx_isr, UART8_INT_VECTAB_NUM, UART8_TX_INT_PRIO) {

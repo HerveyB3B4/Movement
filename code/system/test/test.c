@@ -8,20 +8,18 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
-void test_bottom_motor()
-{
+void test_bottom_motor() {
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: forward");
     lcd_show_string(0, 1, "KEY_D: backward");
     lcd_show_string(0, 4, "Press KEY_L to exit");
-    while (keymsg.key != KEY_L)
-    {
-        if (keymsg.key == KEY_U) // 向前
+    while (keymsg.key != KEY_L) {
+        if (keymsg.key == KEY_U)  // 向前
         {
             gpio_set_level(DIR_BOTTOM, 1);
             pwm_set_duty(MOTOR_BOTTOM, 8000);
         }
-        if (keymsg.key == KEY_D) // 向后
+        if (keymsg.key == KEY_D)  // 向后
         {
             gpio_set_level(DIR_BOTTOM, 0);
             pwm_set_duty(MOTOR_BOTTOM, 8000);
@@ -35,8 +33,7 @@ void test_bottom_motor()
     lcd_clear();
 }
 
-void test_side_motor()
-{
+void test_side_motor() {
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: left  forward");
     lcd_show_string(0, 1, "KEY_D: left backward");
@@ -44,23 +41,22 @@ void test_side_motor()
     lcd_show_string(0, 3, "KEY_R:right backward");
     lcd_show_string(0, 4, "Press KEY_L to exit");
     // int count = 0;
-    while (keymsg.key != KEY_L)
-    {
-        if (keymsg.key == KEY_U) // 向前
+    while (keymsg.key != KEY_L) {
+        if (keymsg.key == KEY_U)  // 向前
         {
             small_driver_set_duty(2000, 0);
         }
-        if (keymsg.key == KEY_D) // 向后
+        if (keymsg.key == KEY_D)  // 向后
         {
             small_driver_set_duty(-2000, 0);
         }
-        if (keymsg.key == KEY_B) // 向前
+        if (keymsg.key == KEY_B)  // 向前
         {
-            small_driver_set_duty(0, 1000);
+            small_driver_set_duty(0, 2000);
         }
-        if (keymsg.key == KEY_R) // 向后
+        if (keymsg.key == KEY_R)  // 向后
         {
-            small_driver_set_duty(0, -1000);
+            small_driver_set_duty(0, -2000);
         }
         // count++;
         lcd_show_string(0, 5, "Front:");
@@ -93,11 +89,9 @@ void test_side_motor()
 //     lcd_clear();
 // }
 
-void test_attitude()
-{
+void test_attitude() {
     lcd_clear();
-    while (keymsg.key != KEY_L)
-    {
+    while (keymsg.key != KEY_L) {
         lcd_show_string(0, 0, "Pitch:");
         lcd_show_float(0, 1, currentFrontAngle, 3, 3);
         lcd_show_string(0, 2, "Row:");
@@ -108,11 +102,9 @@ void test_attitude()
     lcd_clear();
 }
 
-void test_imu()
-{
+void test_imu() {
     lcd_clear();
-    while (keymsg.key != KEY_L)
-    {
+    while (keymsg.key != KEY_L) {
         lcd_show_string(0, 0, "x:");
         lcd_show_float(0, 1, g_imu_data.gyro.x, 3, 3);
         lcd_show_float(8, 1, g_imu_data.acc.x, 3, 3);
@@ -126,8 +118,7 @@ void test_imu()
     lcd_clear();
 }
 
-void test_noise()
-{
+void test_noise() {
     lcd_clear();
 
     float sum_ax = 0.0f, sum_ax2 = 0.0f;
@@ -147,10 +138,8 @@ void test_noise()
     uint8 T = 10;
     uint8 cnt = 0;
     uint32 total = 0;
-    while (keymsg.key != KEY_L)
-    {
-        if (cnt < T)
-        {
+    while (keymsg.key != KEY_L) {
+        if (cnt < T) {
             // 读取传感器数据
             imu660rb_get_acc();
             imu660rb_get_gyro();
@@ -184,9 +173,7 @@ void test_noise()
             sum_gy2 += current_gy * current_gy;
             sum_gz += current_gz;
             sum_gz2 += current_gz * current_gz;
-        }
-        else
-        {
+        } else {
             // 计算均值
             float mean_ax = sum_ax / total;
             float mean_ay = sum_ay / total;
@@ -214,8 +201,10 @@ void test_noise()
             // lcd_show_float(8, 4, var_gy, 5, 3);
             // lcd_show_string(0, 5, "gyro_z:");
             // lcd_show_float(8, 5, var_gz, 5, 3);
-            printf("total: %d, acc_x: %f, acc_y: %f, acc_z: %f, gyro_x: %f, gyro_y: %f, gyro_z: %f\n",
-                   total, var_ax, var_ay, var_az, var_gx, var_gy, var_gz);
+            printf(
+                "total: %d, acc_x: %f, acc_y: %f, acc_z: %f, gyro_x: %f, "
+                "gyro_y: %f, gyro_z: %f\n",
+                total, var_ax, var_ay, var_az, var_gx, var_gy, var_gz);
             cnt = 0;
         }
         cnt++;
