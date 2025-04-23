@@ -5,7 +5,7 @@
 
 #define pidCoefficient 100
 #define CONTROL_LAW_CONSTRAINT 0.28f  // simple trace
-#define CONTROL_UPDATE_T 1
+#define CONTROL_UPDATE_T 5
 struct Control_Turn_Manual_Params {
     float buckling_turn_coefficient;  // 屈曲转动系数，这里存放的是已经被除过的
     uint32 buckling_front_coefficientV;  // 前部屈曲系数V
@@ -90,8 +90,8 @@ extern uint8 g_turn_start_flag;
 extern int32 g_control_shutdown_flag;
 extern uint32 g_control_bottom_flag;
 extern uint32 g_control_output_sav_flag;
-extern uint32 g_control_output_sv_flag ;
-extern uint32 g_control_output_sa_flag ;
+extern uint32 g_control_output_sv_flag;
+extern uint32 g_control_output_sa_flag;
 
 extern struct Control_Turn_Manual_Params g_control_turn_manual_params;
 extern struct Control_Target g_control_target;

@@ -188,6 +188,7 @@ void control_side_balance(
     }
 
     // turnControl();
+    // s_side_balance_duty = control_target->sideAngleVelocity * 1000;
     int32 left_motor_duty, right_motor_duty;
     left_motor_duty = -s_side_balance_duty - s_momentum_diff;
     right_motor_duty = s_side_balance_duty - s_momentum_diff;
@@ -210,7 +211,8 @@ static void control_side_velocity(
 
     control_target->sideAngle = (float)PID_calc_Position(
         &side_velocity_PID,
-        (float)(vel_motor->momentumFront - vel_motor->momentumBack), 0.0f);
+        (float)(vel_motor->momentumFront - vel_motor->momentumBack),
+        0.0f);  // 速度是正反馈，因此set和ref要反过来
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sv_flag != 0) {
@@ -226,10 +228,10 @@ static void control_side_angle(struct EulerAngle* euler_angle_bias,
                                struct Control_Target* control_target) {
     static float momentumAngleFilter[2] = {0};  // 角度滤波
     momentumAngleFilter[1] = momentumAngleFilter[0];
-    momentumAngleFilter[0] = currentSideAngle;
+    momentumAngleFilter[0] = -currentSideAngle;
     // noiseFilter(momentumAngleFilter[0],0.02f);
-    lowPassFilterF(&momentumAngleFilter[0],&momentumAngleFilter[1],0.1f);
-    control_target->sideAngleVelocity = -PID_calc_Position(
+    lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
+    control_target->sideAngleVelocity = PID_calc_Position(
         &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
         control_target->sideAngle);
 
@@ -245,8 +247,8 @@ static void control_side_angle_velocity(struct Control_Target* control_target) {
     static float momentumGyroFilter[2] = {0};  // 角度速度滤波
     momentumGyroFilter[1] = momentumGyroFilter[0];
     momentumGyroFilter[0] = currentSideAngleVelocity;
- 
-    lowPassFilterF(&momentumGyroFilter[0],&momentumGyroFilter[1],0.1f);
+
+    lowPassFilterF(&momentumGyroFilter[0], &momentumGyroFilter[1], 0.1f);
     // 修改为位置式
     s_side_balance_duty = (int32)(PID_calc_Position(
         &side_angle_velocity_PID, momentumGyroFilter[0],
@@ -307,8 +309,8 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->side_angle_parameter, 1000, 9999,
                        3.0f);
     control_param_init(&side_velocity_PID,
-                       control_motion_params->side_velocity_parameter, 1000,
-                       9999, 1.5f);
+                       control_motion_params->side_velocity_parameter, 1, 9999,
+                       1.5f);
     control_param_init(&turn_angle_PID,
                        control_motion_params->turn_angle_parameter, 100, 9999,
                        5);

@@ -26,20 +26,24 @@ void uart_control_callback(uint8 uart_index) {
             receive_data;  // 保存串口数据
 
         if (motor_value.receive_data_count >=
-            7)  // 判断是否接收到指定数量的数据
+            5)  // 判断是否接收到指定数量的数据
         {
             if (motor_value.receive_data_buffer[0] == 0xA5)  // 判断帧头是否正确
             {
                 motor_value.sum_check_data = 0;  // 清除校验位数据
 
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < 4; i++) {
                     motor_value.sum_check_data +=
                         motor_value.receive_data_buffer[i];  // 重新计算校验位
                 }
 
                 if (motor_value.sum_check_data ==
-                    motor_value.receive_data_buffer[6])  // 校验数据准确性
+                    motor_value.receive_data_buffer[4])  // 校验数据准确性
                 {
+                    // for (int i = 0; i < 5; i++) {
+                    //     printf("%02X ", motor_value.receive_data_buffer[i]);
+                    // }
+                    // printf("\n");
                     if (motor_value.receive_data_buffer[1] ==
                         0x02)  // 判断是否正确接收到 速度输出 功能字
                     {
@@ -52,10 +56,10 @@ void uart_control_callback(uint8 uart_index) {
                                      [3]);  // 拟合左侧电机转速数据
 #else
                             motor_value.receive_left_speed_data =
-                                (((int)motor_value.receive_data_buffer[4]
+                                (((int)motor_value.receive_data_buffer[2]
                                   << 8) |
                                  (int)motor_value.receive_data_buffer
-                                     [5]);  // 拟合左侧电机转速数据
+                                     [3]);  // 拟合左侧电机转速数据
 #endif
                         } else {
 #if USEREV
@@ -66,10 +70,10 @@ void uart_control_callback(uint8 uart_index) {
                                      [3]);  // 拟合左侧电机转速数据
 #else
                             motor_value.receive_right_speed_data =
-                                (((int)motor_value.receive_data_buffer[4]
+                                (((int)motor_value.receive_data_buffer[2]
                                   << 8) |
                                  (int)motor_value.receive_data_buffer
-                                     [5]);  // 拟合左侧电机转速数据
+                                     [3]);  // 拟合左侧电机转速数据
 #endif
                         }
                     }
@@ -77,18 +81,18 @@ void uart_control_callback(uint8 uart_index) {
                     motor_value.receive_data_count = 0;  // 清除缓冲区计数值
 
                     memset(motor_value.receive_data_buffer, 0,
-                           7);  // 清除缓冲区数据
+                           5);  // 清除缓冲区数据
                 } else {
                     motor_value.receive_data_count = 0;  // 清除缓冲区计数值
 
                     memset(motor_value.receive_data_buffer, 0,
-                           7);  // 清除缓冲区数据
+                           5);  // 清除缓冲区数据
                 }
             } else {
                 motor_value.receive_data_count = 0;  // 清除缓冲区计数值
 
                 memset(motor_value.receive_data_buffer, 0,
-                       7);  // 清除缓冲区数据
+                       5);  // 清除缓冲区数据
             }
         }
     }

@@ -13,6 +13,9 @@ static void pass_momentum_encoder(int32 frontValue,
     vel_motor->momentumBack = backValue;
     vel_motor->velocityDiff =
         vel_motor->momentumFront + vel_motor->momentumBack;
+
+    printf("%d,%d,%d\n", vel_motor->momentumFront, vel_motor->momentumBack,
+           vel_motor->velocityDiff);
 }
 
 static void pass_bottom_encoder(int32 value, struct Velocity_Motor* vel_motor) {
