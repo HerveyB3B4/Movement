@@ -63,7 +63,7 @@ void system_init() {
     control_init(&g_control_motion_params);
     printf("control_init\n");
     // start to balance
-    pit_ms_init(CCU61_CH0, CONTROL_UPDATE_T);
+    // pit_ms_init(CCU61_CH0, CONTROL_UPDATE_T);
 }
 
 void system_attitude_timer(

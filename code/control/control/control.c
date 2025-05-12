@@ -10,6 +10,7 @@
 uint8 g_turn_start_flag = 0;
 int32 g_control_shutdown_flag = 0;
 uint32 g_control_bottom_flag = 0;
+uint32 g_control_side_flag = 0;
 
 uint32 g_control_output_sav_flag = 0;
 uint32 g_control_output_sv_flag = 0;
@@ -113,6 +114,8 @@ void control_bottom_balance(struct Control_Target* control_target,
                 bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
         }
     }
+
+    // s_bottom_balance_duty = control_target->frontAngle;
     set_bottom_motor_pwn(
         (int32)(s_bottom_balance_duty));  // set bottom motor pwm to
                                           // keep front balance
@@ -121,7 +124,7 @@ void control_bottom_balance(struct Control_Target* control_target,
 static void control_bottom_velocity(struct Velocity_Motor* vel_motor,
                                     struct Control_Target* control_target) {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle = PID_calc_Position(
+    control_target->frontAngle = -PID_calc_Position(
         &bottom_velocity_PID, (float)vel_motor->bottomFiltered,
         control_target->frontVelocity);
 #endif
@@ -134,7 +137,7 @@ static void control_bottom_velocity(struct Velocity_Motor* vel_motor,
     // PID_calc_Position_DynamicI(&bottom_velocity_PID,(float)vel_motor->bottom,control_target->frontVelocity,
     // 80, 1.5f);
     // TODO:tune the parameter
-    restrictValueF(&control_target->frontAngle, 15.0f, -15.0f);
+    // restrictValueF(&control_target->frontAngle, 15.0f, -15.0f);
     // {
     //     control_target->frontAngle = g_euler_angle_bias->roll;
     // }
@@ -149,7 +152,7 @@ static void control_bottom_angle(struct EulerAngle* euler_angle_bias,
     // noiseFilter(angleControlFilter[0],0.002f);
 
     // simpleFuzzyProcess(&frontBalanceSimpleFuzzy,angleControlFilter[0],control_target->frontAngle,&bottom_angle_PID);
-    control_target->frontAngleVelocity = (PID_calc_Position(
+    control_target->frontAngleVelocity = -(PID_calc_Position(
         &bottom_angle_PID, (angleControlFilter[0] - euler_angle_bias->pitch),
         control_target->frontAngle));
 }
@@ -161,7 +164,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
     angleVelocityControlFilter[0] = currentFrontAngleVelocity;
 
-    s_bottom_balance_duty = (int32)(PID_calc_DELTA(
+    s_bottom_balance_duty = (int32)(PID_calc_Position(
         &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
         control_target->frontAngleVelocity));
 }
@@ -294,26 +297,25 @@ void control_shutdown(struct Control_Target* control_target,
 void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
     control_param_init(&bottom_angle_velocity_PID,
                        control_motion_params->bottom_angle_velocity_parameter,
-                       10, MOTOR_PWM_MAX, 9999);
+                       1, MOTOR_PWM_MAX, 9999);
     control_param_init(&bottom_angle_PID,
                        control_motion_params->bottom_angle_parameter,
                        pidCoefficient, 9999, 10.0f);
     control_param_init(&bottom_velocity_PID,
-                       control_motion_params->bottom_velocity_parameter,
-                       pidCoefficient, 9999, 2.5f);
+                       control_motion_params->bottom_velocity_parameter, 1,
+                       9999, 2.5f);
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
                        control_motion_params->side_angle_velocity_parameter, 1,
-                       MOMENTUM_MOTOR_PWM_MAX, 9999);
+                       MOMENTUM_MOTOR_PWM_MAX, 8000);
     control_param_init(&side_angle_PID,
-                       control_motion_params->side_angle_parameter, 10, 9999,
-                       3.0f);
+                       control_motion_params->side_angle_parameter, 10, 50, 10);
     control_param_init(&side_velocity_PID,
-                       control_motion_params->side_velocity_parameter, 1, 9999,
-                       1.5f);
+                       control_motion_params->side_velocity_parameter, 100, 10,
+                       10);
     control_param_init(&turn_angle_PID,
                        control_motion_params->turn_angle_parameter, 100, 9999,
-                       5);
+                       500);
     control_param_init(&turn_angle_velocity_PID,
                        control_motion_params->turn_velocity_parameter, 1, 9999,
                        500);

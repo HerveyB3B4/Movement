@@ -40,23 +40,24 @@ void stop_bottom_motor(void) {
 bool restrictChange(int32 value) {
     static int32 lastValue = 0;
     if (abs(lastValue - value) >= 2000) {
-        return false;
-    } else {
         lastValue = value;
-        return true;
+        return false;
     }
+    lastValue = value;
+    return true;
 }
+
 // momentum motor
 void set_momentum_motor_pwm(int32 pwmFront, int32 pwmBack) {
     // WARN: 正负值可能需要调整
     restrictValueI(&pwmFront, MOMENTUM_MOTOR_PWM_MIN, MOMENTUM_MOTOR_PWM_MAX);
     restrictValueI(&pwmBack, MOMENTUM_MOTOR_PWM_MIN, MOMENTUM_MOTOR_PWM_MAX);
 
-    if (restrictChange(pwmFront) || restrictChange(pwmBack)) {
-        return;
-    }
+    // if (restrictChange(pwmFront) || restrictChange(pwmBack)) {
+    //     return;
+    // }
 
-    // printf("%d, %d\n", pwmFront, pwmBack);
+    printf("%d, %d\n", pwmFront, pwmBack);
     small_driver_set_duty(-pwmFront, -pwmBack);
 
     // x轴朝前方，y轴朝右方，z轴朝下方
