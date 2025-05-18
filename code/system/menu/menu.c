@@ -32,7 +32,7 @@ MENU_TABLE Table_Null[] = {
 //======================================================================================================================
 
 uint8 g_exit_menu_flag = 0;
-
+uint8 g_show_run_param_flag = 0;
 uint32* EEPROM_DATA_UINT[] = {
     (uint32*)(&g_menu_manual_param.bottom_angle_parameter[0]),
     (uint32*)(&g_menu_manual_param.bottom_angle_parameter[1]),
@@ -70,6 +70,7 @@ uint32* EEPROM_DATA_UINT[] = {
     (uint32*)(&g_control_output_sav_flag),
     (uint32*)(&g_control_output_sv_flag),
     (uint32*)(&g_control_output_sa_flag),
+    (uint32*)(&g_show_run_param_flag),
 };
 
 int32* EEPROM_DATA_INT[] = {
@@ -284,6 +285,10 @@ MENU_TABLE MainMenu_Table[] = {
     {(uint8*)"side",
      {.INT32 = (int32*)&g_control_side_flag},
      Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8*)"menu",
+     {.INT32 = (int32*)&g_show_run_param_flag},
+     Param_Uint,
      {.ItemFunc = Menu_Null}},
     {(uint8*)"1.PID_Param",
      {.SubMenu = PID_Table},

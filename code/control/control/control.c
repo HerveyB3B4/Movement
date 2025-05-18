@@ -176,7 +176,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
     angleVelocityControlFilter[0] = currentFrontAngleVelocity;
 
-    s_bottom_balance_duty = (int32)(PID_calc_Position(
+    s_bottom_balance_duty = (int32)(PID_calc_DELTA(
         &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
         control_target->frontAngleVelocity));
 }
@@ -313,13 +313,13 @@ void control_shutdown(struct Control_Target* control_target,
 void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
     control_param_init(&bottom_angle_velocity_PID,
                        control_motion_params->bottom_angle_velocity_parameter,
-                       1, MOTOR_PWM_MAX, 9999);
+                       10, MOTOR_PWM_MAX, 9999);
     control_param_init(&bottom_angle_PID,
                        control_motion_params->bottom_angle_parameter, 10, 9999,
                        9999);
     control_param_init(&bottom_velocity_PID,
-                       control_motion_params->bottom_velocity_parameter, 100,
-                       9999, 2.5f);
+                       control_motion_params->bottom_velocity_parameter, 10000,
+                       10, 2.5f);
 
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
