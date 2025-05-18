@@ -5,10 +5,11 @@
 
 #define V_KALMAN_MULTIPLE 5000
 #define VELOCITY_KALMAN_FILTER
-#define VELOCITY_UPDATE_T 10  // 更新周期(ms)
+#define VELOCITY_UPDATE_T 4  // 更新周期(ms)
 
 #define ENCODER_TO_VELOCITY ((0.6f) / (3600.0f) / (VELOCITY_UPDATE_T) * 1000.0f)
 
+extern uint32 vel_time;
 struct Velocity_Motor {
     int32 momentumFront;
     int32 momentumBack;

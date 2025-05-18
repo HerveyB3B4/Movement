@@ -62,8 +62,7 @@
 /*------------------------------Type Definitions------------------------------*/
 /******************************************************************************/
 
-typedef struct
-{
+typedef struct {
     float32 sysFreq; /**< \brief Actual SPB frequency */
     float32 cpuFreq; /**< \brief Actual CPU frequency */
     float32 pllFreq; /**< \brief Actual PLL frequency */
@@ -71,8 +70,7 @@ typedef struct
 } AppInfo;
 
 /** \brief Application information */
-typedef struct
-{
+typedef struct {
     AppInfo info; /**< \brief Info object */
 } App_Cpu0;
 
@@ -81,5 +79,4 @@ typedef struct
 /******************************************************************************/
 
 IFX_EXTERN App_Cpu0 g_AppCpu0;
-
 #endif

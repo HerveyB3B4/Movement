@@ -6,6 +6,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
+uint32 control_time = 0;
 // global
 uint8 g_turn_start_flag = 0;
 int32 g_control_shutdown_flag = 0;
@@ -15,6 +16,9 @@ uint32 g_control_side_flag = 0;
 uint32 g_control_output_sav_flag = 0;
 uint32 g_control_output_sv_flag = 0;
 uint32 g_control_output_sa_flag = 0;
+
+uint32 side_front_deadzone = 172;
+uint32 side_back_deadzone = 169;
 
 struct Control_Turn_Manual_Params g_control_turn_manual_params;
 struct Control_Target g_control_target;
@@ -98,22 +102,30 @@ void control_bottom_balance(struct Control_Target* control_target,
     }
     // restrictValueI(&s_bottom_balance_duty,-3000,3000);
     // fuzzyBottomMotorHertz();
-    if (bottom_motor_deadzone != 0) {  // apply feedforward if enabled
-        int32 vel_motorDeadV = vel_motor->bottom;
-        int8 d = 80;
-        restrictValueI(&vel_motorDeadV, -d, d);
-        vel_motorDeadV = (abs(d - abs(vel_motorDeadV)) /
-                          d);  // normalize to 0~1, 0 is the max deadzone pwm
-        if (s_bottom_balance_duty > 0) {
-            s_bottom_balance_duty +=
-                bottom_motor_deadzone *
-                (vel_motorDeadV +
-                 0.1f);  // 0.1f is the minimum pwm to avoid shaking
-        } else {
-            s_bottom_balance_duty -=
-                bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
-        }
+    // if (bottom_motor_deadzone != 0) {  // apply feedforward if enabled
+    //     int32 vel_motorDeadV = vel_motor->bottom;
+    //     int8 d = 80;
+    //     restrictValueI(&vel_motorDeadV, -d, d);
+    //     vel_motorDeadV = (abs(d - abs(vel_motorDeadV)) /
+    //                       d);  // normalize to 0~1, 0 is the max deadzone pwm
+    //     if (s_bottom_balance_duty > 0) {
+    //         s_bottom_balance_duty +=
+    //             bottom_motor_deadzone *
+    //             (vel_motorDeadV +
+    //              0.1f);  // 0.1f is the minimum pwm to avoid shaking
+    //     } else {
+    //         s_bottom_balance_duty -=
+    //             bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
+    //     }
+    // }
+
+    if (s_bottom_balance_duty > 0) {
+        s_bottom_balance_duty += bottom_motor_deadzone;
+    } else if (s_bottom_balance_duty < 0) {
+        s_bottom_balance_duty -= bottom_motor_deadzone;
     }
+
+    restrictValueI(&s_bottom_balance_duty, -10000, 10000);
 
     // s_bottom_balance_duty = control_target->frontAngle;
     set_bottom_motor_pwn(
@@ -124,7 +136,7 @@ void control_bottom_balance(struct Control_Target* control_target,
 static void control_bottom_velocity(struct Velocity_Motor* vel_motor,
                                     struct Control_Target* control_target) {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle = -PID_calc_Position(
+    control_target->frontAngle = PID_calc_Position(
         &bottom_velocity_PID, (float)vel_motor->bottomFiltered,
         control_target->frontVelocity);
 #endif
@@ -191,12 +203,24 @@ void control_side_balance(
     }
 
     // turnControl();
-    // s_side_balance_duty = control_target->sideAngleVelocity * 1000;
     int32 left_motor_duty, right_motor_duty;
     left_motor_duty = -s_side_balance_duty - s_momentum_diff;
     right_motor_duty = s_side_balance_duty - s_momentum_diff;
 
-    restrictValueI(&s_side_balance_duty, -9999, 9999);
+    restrictValueI(&s_side_balance_duty, -8000, 8000);
+
+    // 添加死区补偿
+    if (left_motor_duty > 0) {
+        left_motor_duty += side_front_deadzone;
+    } else if (left_motor_duty < 0) {
+        left_motor_duty -= side_front_deadzone;
+    }
+
+    if (right_motor_duty > 0) {
+        right_motor_duty += side_back_deadzone;
+    } else if (right_motor_duty < 0) {
+        right_motor_duty -= side_back_deadzone;
+    }
 
     // printf("%d,%d\n", left_motor_duty, right_motor_duty);
 
@@ -214,16 +238,12 @@ static void control_side_velocity(
 
     control_target->sideAngle = (float)PID_calc_Position(
         &side_velocity_PID,
-        (float)(vel_motor->momentumFront - vel_motor->momentumBack),
+        (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
         0.0f);  // 速度是正反馈，因此set和ref要反过来
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sv_flag != 0) {
-        printf("%f,%f,%f,%f\n",
-               -(float)(vel_motor->momentumFront - vel_motor->momentumBack),
-               control_target->sideAngle,
-               (float)(vel_motor->momentumFront - vel_motor->momentumBack),
-               0.0f);
+        printf("%f,%f\n", currentSideAngle, control_target->sideAngle * 100);
     }
 }
 
@@ -233,16 +253,15 @@ static void control_side_angle(struct EulerAngle* euler_angle_bias,
     momentumAngleFilter[1] = momentumAngleFilter[0];
     momentumAngleFilter[0] = -currentSideAngle;
     // noiseFilter(momentumAngleFilter[0],0.02f);
-    lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
+    // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
     control_target->sideAngleVelocity = PID_calc_Position(
         &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
         control_target->sideAngle);
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0) {
-        printf("%f,%f,%f,%f\n", (control_target->sideAngle - currentSideAngle),
-               -control_target->sideAngleVelocity, currentSideAngle,
-               control_target->sideAngle);
+        printf("%f,%f\n", currentSideAngle,
+               control_target->sideAngleVelocity / 100);
     }
 }
 
@@ -251,18 +270,16 @@ static void control_side_angle_velocity(struct Control_Target* control_target) {
     momentumGyroFilter[1] = momentumGyroFilter[0];
     momentumGyroFilter[0] = currentSideAngleVelocity;
 
-    lowPassFilterF(&momentumGyroFilter[0], &momentumGyroFilter[1], 0.1f);
+    // lowPassFilterF(&momentumGyroFilter[0], &momentumGyroFilter[1], 0.1f);
     // 修改为位置式
-    s_side_balance_duty = (int32)(PID_calc_Position(
-        &side_angle_velocity_PID, momentumGyroFilter[0],
-        control_target->sideAngleVelocity));
+    s_side_balance_duty =
+        (int32)(PID_calc_DELTA(&side_angle_velocity_PID, momentumGyroFilter[0],
+                               control_target->sideAngleVelocity));
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sav_flag != 0) {
-        printf("%f,%f,%f,%f\n",
-               (control_target->sideAngleVelocity - currentSideAngleVelocity),
-               (float)s_side_balance_duty / 1000.0, currentSideAngleVelocity,
-               control_target->sideAngleVelocity);
+        printf("%f,%f\n", -currentSideAngleVelocity,
+               s_side_balance_duty / 100.0f);
     }
 }
 
@@ -280,8 +297,7 @@ void control_shutdown(struct Control_Target* control_target,
             zf_log(0, tmp);
             runState = CAR_STOP;
         }
-        if (fabsf(currentFrontAngle - euler_angle_bias->pitch -
-                  control_target->frontAngle) > 60) {
+        if (fabsf(currentFrontAngle) > 35) {
             stop_bottom_motor();
             stop_momentum_motor();
 
@@ -299,20 +315,23 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->bottom_angle_velocity_parameter,
                        1, MOTOR_PWM_MAX, 9999);
     control_param_init(&bottom_angle_PID,
-                       control_motion_params->bottom_angle_parameter,
-                       pidCoefficient, 9999, 10.0f);
+                       control_motion_params->bottom_angle_parameter, 10, 9999,
+                       9999);
     control_param_init(&bottom_velocity_PID,
-                       control_motion_params->bottom_velocity_parameter, 1,
+                       control_motion_params->bottom_velocity_parameter, 100,
                        9999, 2.5f);
+
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
-                       control_motion_params->side_angle_velocity_parameter, 1,
+                       control_motion_params->side_angle_velocity_parameter, 10,
                        MOMENTUM_MOTOR_PWM_MAX, 8000);
     control_param_init(&side_angle_PID,
-                       control_motion_params->side_angle_parameter, 10, 50, 10);
+                       control_motion_params->side_angle_parameter, 10, 9999,
+                       2.5);
     control_param_init(&side_velocity_PID,
-                       control_motion_params->side_velocity_parameter, 100, 10,
-                       10);
+                       control_motion_params->side_velocity_parameter, 10000,
+                       10, 10);
+
     control_param_init(&turn_angle_PID,
                        control_motion_params->turn_angle_parameter, 100, 9999,
                        500);

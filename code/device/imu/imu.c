@@ -2,6 +2,7 @@
 
 IMU_DATA g_imu_data;
 float gyroOffset[3] = {0.0f, 0.0f, 0.0f};
+uint32 imu_time;
 
 void imu_init() {
     bool tmp_init_flag = imu660rb_init();
@@ -35,6 +36,7 @@ void imu_get_data(IMU_DATA* data) {
     data->acc.y = -imu660rb_acc_transition(imu660rb_acc_y) * GravityAcc;
     data->acc.z = imu660rb_acc_transition(imu660rb_acc_z) * GravityAcc;
     // }
+    imu_time = system_getval();
 }
 
 void imu_init_offset() {

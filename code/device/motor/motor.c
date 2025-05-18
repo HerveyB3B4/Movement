@@ -1,7 +1,7 @@
 #include "motor.h"
 #include "small_driver_uart_control.h"
 
-uint32 bottom_motor_deadzone = 0;
+uint32 bottom_motor_deadzone = 2169;
 
 void motor_init() {
     gpio_init(P22_3, GPO, 1, GPO_PUSH_PULL);
@@ -57,7 +57,7 @@ void set_momentum_motor_pwm(int32 pwmFront, int32 pwmBack) {
     //     return;
     // }
 
-    printf("%d, %d\n", pwmFront, pwmBack);
+    // printf("%d, %d\n", pwmFront, pwmBack);
     small_driver_set_duty(-pwmFront, -pwmBack);
 
     // x轴朝前方，y轴朝右方，z轴朝下方

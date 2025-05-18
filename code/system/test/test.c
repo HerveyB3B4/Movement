@@ -17,7 +17,7 @@ void test_bottom_motor() {
         if (keymsg.key == KEY_U)  // 向前
         {
             gpio_set_level(DIR_BOTTOM, 1);
-            pwm_set_duty(MOTOR_BOTTOM, 8000);
+            pwm_set_duty(MOTOR_BOTTOM, 10000);
         }
         if (keymsg.key == KEY_D)  // 向后
         {
@@ -211,5 +211,127 @@ void test_noise() {
         total++;
         system_delay_ms(100);
     }
+    lcd_clear();
+}
+
+void test_side_deadzone() {
+    lcd_clear();
+    lcd_show_string(0, 0, "Auto testing...");
+    lcd_show_string(0, 1, "Front PWM:");
+    lcd_show_string(0, 2, "Front Speed:");
+    lcd_show_string(0, 3, "Back PWM:");
+    lcd_show_string(0, 4, "Back Speed:");
+    lcd_show_string(0, 7, "Press KEY_L to exit");
+
+    uint32 front_deadzone = 0;
+    uint32 back_deadzone = 0;
+    uint32 found_front = 0;
+    uint32 found_back = 0;
+    uint8 front_done = 0;
+    uint8 back_done = 0;
+
+    while (keymsg.key != KEY_L) {
+        // 测试前电机
+        if (!front_done) {
+            front_deadzone += 1;
+            set_momentum_motor_pwm(front_deadzone, back_deadzone);
+            system_delay_ms(50);
+
+            if (abs(g_vel_motor.momentumFront) > 0) {
+                found_front = front_deadzone;
+                front_done = 1;
+            }
+        }
+
+        // 测试后电机
+        if (!back_done) {
+            back_deadzone += 1;
+            set_momentum_motor_pwm(front_deadzone, back_deadzone);
+            system_delay_ms(50);
+
+            if (abs(g_vel_motor.momentumBack) > 0) {
+                found_back = back_deadzone;
+                back_done = 1;
+            }
+        }
+
+        // 显示当前状态
+        lcd_show_int(10, 1, front_deadzone, 5);
+        lcd_show_int(10, 2, g_vel_motor.momentumFront, 5);
+        lcd_show_int(10, 3, back_deadzone, 5);
+        lcd_show_int(10, 4, g_vel_motor.momentumBack, 5);
+
+        // 显示找到的死区值
+        if (front_done) {
+            lcd_show_string(0, 5, "Front min:");
+            lcd_show_int(10, 5, found_front, 5);
+        }
+        if (back_done) {
+            lcd_show_string(0, 6, "Back min:");
+            lcd_show_int(10, 6, found_back, 5);
+        }
+
+        // 安全检查
+        if (front_deadzone >= 10000 || back_deadzone >= 10000) {
+            lcd_show_string(0, 7, "Error: Too high!");
+            break;
+        }
+
+        // 如果两个都找到了就停止增加PWM
+        if (front_done && back_done) {
+            system_delay_ms(100);  // 延时避免刷新太快
+            small_driver_set_duty(0, 0);
+        }
+    }
+
+    small_driver_set_duty(0, 0);  // 停止电机
+    lcd_clear();
+}
+
+void test_bottom_deadzone() {
+    lcd_clear();
+    lcd_show_string(0, 0, "KEY_U: PWM +100");
+    lcd_show_string(0, 1, "KEY_D: PWM -100");
+    lcd_show_string(0, 2, "KEY_R: Change dir");
+    lcd_show_string(0, 3, "KEY_B: Set PWM");
+    lcd_show_string(0, 4, "Press KEY_L to exit");
+
+    int32 current_pwm = 0;
+    int32 output_pwm = 0;
+    uint8 direction = 1;  // 1为正向，0为反向
+
+    while (keymsg.key != KEY_L) {
+        if (keymsg.key == KEY_U) {
+            current_pwm += 10;
+            if (current_pwm > 10000)
+                current_pwm = 10000;  // PWM上限
+        } else if (keymsg.key == KEY_D) {
+            current_pwm -= 10;
+            if (current_pwm < 0)
+                current_pwm = 0;  // PWM下限
+        } else if (keymsg.key == KEY_R) {
+            direction = !direction;
+            system_delay_ms(200);  // 切换方向时增加延时防止抖动
+        } else if (keymsg.key == KEY_B) {
+            output_pwm = current_pwm;  // 确认输出当前PWM值
+            system_delay_ms(200);
+        }
+
+        // 更新电机输出
+        gpio_set_level(DIR_BOTTOM, direction);
+        pwm_set_duty(MOTOR_BOTTOM, output_pwm);  // 使用确认后的PWM值
+
+        // 显示当前状态
+        lcd_show_string(0, 5, "Set PWM:");
+        lcd_show_int(9, 5, current_pwm, 5);
+        lcd_show_string(0, 6, "Out PWM:");
+        lcd_show_int(9, 6, output_pwm, 5);
+        lcd_show_string(0, 7, "Speed:");
+        lcd_show_float(7, 7, g_vel_motor.bottomReal, 3, 2);
+
+        system_delay_ms(50);  // 调整延时控制PWM变化速度
+    }
+
+    pwm_set_duty(MOTOR_BOTTOM, 0);  // 停止电机
     lcd_clear();
 }

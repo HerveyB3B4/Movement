@@ -59,14 +59,13 @@ void core1_main(void) {
 
     // 此处编写用户代码 例如外设初始化代码等
     cpu_wait_event_ready();  // 等待所有核心初始化完毕
+    system_start();
     g_exit_menu_flag = 1;
     runState = CAR_STABLE;
     while (TRUE) {
         // 此处编写需要循环执行的代码
         if (g_exit_menu_flag) {
             if (runState == CAR_STABLE) {
-                static uint16 count = 0;
-                count++;
                 g_control_target.frontVelocity = 0;
                 if (g_control_bottom_flag != 0) {
                     bottom_control_timer(&g_control_time, &g_control_flag,
@@ -87,16 +86,21 @@ void core1_main(void) {
                 //     count = 0;
                 //     runState = CAR_RUNNING;
                 // }
-                lcd_show_float(0, 0, runState, 3, 5);
-                lcd_show_int(0, 1, get_side_duty(), 5);
-                lcd_show_int(0, 2, get_bottom_duty(), 5);
+                // lcd_show_float(0, 0, runState, 3, 5);
+                // lcd_show_int(0, 1, get_side_duty(), 5);
+                // lcd_show_int(0, 2, get_bottom_duty(), 5);
 
-                lcd_show_string(0, 3, "Pitch:");
-                lcd_show_float(8, 3, currentFrontAngle, 3, 3);
-                lcd_show_string(0, 4, "Row:");
-                lcd_show_float(8, 4, currentSideAngle, 3, 3);
-                lcd_show_string(0, 5, "Yaw:");
-                lcd_show_float(8, 5, yawAngle, 3, 3);
+                lcd_show_string(0, 0, "Pitch:");
+                lcd_show_float(8, 0, currentFrontAngle, 3, 3);
+                lcd_show_string(0, 1, "Row:");
+                lcd_show_float(8, 1, currentSideAngle, 3, 3);
+                lcd_show_string(0, 2, "Yaw:");
+                lcd_show_float(8, 2, yawAngle, 3, 3);
+
+                lcd_show_float(0, 4, currentSideAngle - g_euler_angle_bias.roll,
+                               3, 3);
+                lcd_show_int(0, 5, get_side_duty(), 5);
+                lcd_show_int(0, 6, get_bottom_duty(), 5);
             }
         }
 

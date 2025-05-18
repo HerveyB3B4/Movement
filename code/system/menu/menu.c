@@ -247,6 +247,14 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_noise}},
+    {(uint8*)"SideDeadzone",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_side_deadzone}},
+    {(uint8*)"BDeadzone",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_bottom_deadzone}},
 };
 
 MENU_TABLE Setting_MenuTable[] = {

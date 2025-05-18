@@ -6,6 +6,7 @@
 struct Velocity_Motor g_vel_motor;
 static kalman_filter_velocity_t s_kf;
 static uint8 s_vel_update_flag = 0;
+uint32 vel_time = 0;
 
 void velocity_init(struct Velocity_Motor* vel_motor) {
     vel_motor->momentumFront = 0;
@@ -46,6 +47,6 @@ void velocity_update(struct Velocity_Motor* vel_motor) {
 
     // printf("%f, %f\n", vel_motor->bottomReal, vel_motor->bottomFiltered);
 #endif
-
+    vel_time = system_getval();
     // motorVelocity.bottomFiltered = (float)motorVelocity.bottom * 2.077e-3f;
 }

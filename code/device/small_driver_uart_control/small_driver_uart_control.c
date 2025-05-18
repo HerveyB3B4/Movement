@@ -129,8 +129,9 @@ void small_driver_set_duty(int16 left_duty, int16 right_duty) {
 
     uart_write_buffer(SMALL_DRIVER_UART_LEFT, motor_value.send_data_buffer,
                       5);  // 发送设置占空比的 字节包 数据
-    uart_write_buffer(DEBUG_UART_INDEX, motor_value.send_data_buffer,  // TODO
-                      5);  // 发送设置占空比的 字节包 数据
+    // uart_write_buffer(DEBUG_UART_INDEX, motor_value.send_data_buffer,  //
+    // TODO
+    //                   5);  // 发送设置占空比的 字节包 数据
 
     motor_value.send_data_buffer[2] =
         (uint8)((left_duty & 0xFF00) >>
