@@ -127,7 +127,6 @@ void control_bottom_balance(struct Control_Target* control_target,
 
     restrictValueI(&s_bottom_balance_duty, -10000, 10000);
 
-    // s_bottom_balance_duty = control_target->frontAngle;
     set_bottom_motor_pwn(
         (int32)(s_bottom_balance_duty));  // set bottom motor pwm to
                                           // keep front balance
@@ -136,9 +135,9 @@ void control_bottom_balance(struct Control_Target* control_target,
 static void control_bottom_velocity(struct Velocity_Motor* vel_motor,
                                     struct Control_Target* control_target) {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle = PID_calc_Position(
-        &bottom_velocity_PID, (float)vel_motor->bottomFiltered,
-        control_target->frontVelocity);
+    control_target->frontAngle =
+        -PID_calc_DELTA(&bottom_velocity_PID, (float)vel_motor->bottom,
+                        control_target->frontVelocity);
 #endif
 #ifndef VELOCITY_KALMAN_FILTER
     control_target->frontAngle =
@@ -176,7 +175,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
     angleVelocityControlFilter[0] = currentFrontAngleVelocity;
 
-    s_bottom_balance_duty = (int32)(PID_calc_DELTA(
+    s_bottom_balance_duty = (int32)(PID_calc_Position(
         &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
         control_target->frontAngleVelocity));
 }
@@ -315,11 +314,11 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->bottom_angle_velocity_parameter,
                        10, MOTOR_PWM_MAX, 9999);
     control_param_init(&bottom_angle_PID,
-                       control_motion_params->bottom_angle_parameter, 10, 9999,
+                       control_motion_params->bottom_angle_parameter, 10, 25,
                        9999);
     control_param_init(&bottom_velocity_PID,
-                       control_motion_params->bottom_velocity_parameter, 10000,
-                       10, 2.5f);
+                       control_motion_params->bottom_velocity_parameter, 1000,
+                       9999, 2.5f);
 
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
