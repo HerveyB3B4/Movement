@@ -92,16 +92,16 @@ void core1_main(void) {
                 if (g_show_run_param_flag) {
                     lcd_show_string(0, 0, "Pitch:");
                     lcd_show_float(8, 0, currentFrontAngle, 3, 3);
-                    lcd_show_string(0, 1, "Row:");
-                    lcd_show_float(8, 1, currentSideAngle, 3, 3);
-                    lcd_show_string(0, 2, "Yaw:");
-                    lcd_show_float(8, 2, yawAngle, 3, 3);
-                    lcd_show_float(0, 3,
+                    lcd_show_string(0, 1, "CurrP:");
+                    lcd_show_float(8, 1,
                                    currentFrontAngle - g_euler_angle_bias.pitch,
                                    3, 3);
-                    lcd_show_float(
-                        0, 4, currentSideAngle - g_euler_angle_bias.roll, 3, 3);
-                    lcd_show_int(0, 5, get_side_duty(), 5);
+                    lcd_show_float(0, 2, g_vel_motor.bottomFiltered, 3, 3);
+                    lcd_show_string(0, 3, "FV:");
+                    lcd_show_float(8, 3, g_control_target.frontAngle, 3, 3);
+                    lcd_show_string(0, 4, "FA:");
+                    lcd_show_float(8, 4, g_control_target.frontAngleVelocity, 3,
+                                   3);
                     lcd_show_int(0, 6, get_bottom_duty(), 5);
                 }
             }

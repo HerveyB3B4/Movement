@@ -13,8 +13,8 @@
 //===========================================limit==================================================
 #define MOMENTUM_MOTOR_PWM_MAX 9999
 #define MOMENTUM_MOTOR_PWM_MIN -9999
-#define MOTOR_PWM_MAX 8000
-#define MOTOR_PWM_MIN -8000
+#define MOTOR_PWM_MAX 9999
+#define MOTOR_PWM_MIN -9999
 
 extern uint32 bottom_motor_deadzone;
 

@@ -118,7 +118,7 @@ void control_bottom_balance(struct Control_Target* control_target,
     //             bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
     //     }
     // }
-
+    // s_bottom_balance_duty = control_target->frontAngle * 100;
     if (s_bottom_balance_duty > 0) {
         s_bottom_balance_duty += bottom_motor_deadzone;
     } else if (s_bottom_balance_duty < 0) {
@@ -135,9 +135,8 @@ void control_bottom_balance(struct Control_Target* control_target,
 static void control_bottom_velocity(struct Velocity_Motor* vel_motor,
                                     struct Control_Target* control_target) {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle =
-        -PID_calc_DELTA(&bottom_velocity_PID, (float)vel_motor->bottom,
-                        control_target->frontVelocity);
+    control_target->frontAngle = -PID_calc_Position(
+        &bottom_velocity_PID, (float)vel_motor->bottomFiltered, 0.0f);
 #endif
 #ifndef VELOCITY_KALMAN_FILTER
     control_target->frontAngle =
@@ -314,11 +313,11 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->bottom_angle_velocity_parameter,
                        10, MOTOR_PWM_MAX, 9999);
     control_param_init(&bottom_angle_PID,
-                       control_motion_params->bottom_angle_parameter, 10, 25,
-                       9999);
+                       control_motion_params->bottom_angle_parameter, 1, 9999,
+                       10);
     control_param_init(&bottom_velocity_PID,
                        control_motion_params->bottom_velocity_parameter, 1000,
-                       9999, 2.5f);
+                       8000, 2.5f);
 
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
