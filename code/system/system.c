@@ -23,6 +23,10 @@ void system_init() {
     // init lcd
     lcd_init();
 
+    // init camera
+    mt9v03x_init();
+    mt9v03x2_init();
+
     // init key
     key_init_rewrite(KEY_MAX);
     pit_ms_init(CCU60_CH1, KEY_UPDATE_T);

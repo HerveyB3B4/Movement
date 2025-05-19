@@ -9,4 +9,5 @@ void test_imu();
 void test_noise();
 void test_side_deadzone();
 void test_bottom_deadzone();
+void test_camera();
 #endif

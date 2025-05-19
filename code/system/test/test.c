@@ -335,3 +335,29 @@ void test_bottom_deadzone() {
     pwm_set_duty(MOTOR_BOTTOM, 0);  // 停止电机
     lcd_clear();
 }
+
+void test_camera() {
+    lcd_clear();
+    while (keymsg.key != KEY_L) {
+        if (mt9v03x_finish_flag) {
+            mt9v03x_finish_flag = 0;
+            // edge_detect_dynamic(mt9v03x_image, edge_map, &edge_cfg);
+            tft180_show_gray_image(0, 0, mt9v03x_image, MT9V03X_W, MT9V03X_H,
+                                   IMG_SIZE_W, IMG_SIZE_H, 0);
+            tft180_show_gray_image(tft180_width_max - IMG_SIZE_W, 0,
+                                   mt9v03x_image, MT9V03X_W, MT9V03X_H,
+                                   IMG_SIZE_W, IMG_SIZE_H, 0);
+        }
+        if (mt9v03x2_finish_flag) {
+            mt9v03x2_finish_flag = 0;
+            // edge_detect_dynamic(mt9v03x2_image, edge_map2, &edge_cfg);
+            tft180_show_gray_image(0, tft180_height_max - IMG_SIZE_H,
+                                   mt9v03x2_image, MT9V03X_W, MT9V03X_H,
+                                   IMG_SIZE_W, IMG_SIZE_H, 0);
+            tft180_show_gray_image(tft180_width_max - IMG_SIZE_W,
+                                   tft180_height_max - IMG_SIZE_H,
+                                   mt9v03x2_image, MT9V03X2_W, MT9V03X2_H,
+                                   IMG_SIZE_W, IMG_SIZE_H, 0);
+        }
+    }
+}
