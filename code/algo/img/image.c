@@ -187,7 +187,7 @@ void computeCentroid(uint16* labeledImage,
     }
 }
 
-void drawRedPlus(uint16* image,
+void drawRedPlus(uint8* image,
                  uint16 width,
                  uint16 height,
                  uint16 cx,

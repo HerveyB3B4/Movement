@@ -69,6 +69,9 @@
 #define MT9V03X2_COF_IIC_SCL (P00_8)  // 总钻风 IIC-SCL 引脚
 #define MT9V03X2_COF_IIC_SDA (P10_1)  // 总钻风 IIC-SDA 引脚
 
+// #define MT9V03X2_COF_IIC_SCL (P02_11)  // 总钻风 IIC-SCL 引脚
+// #define MT9V03X2_COF_IIC_SDA (P02_10)  // 总钻风 IIC-SDA 引脚
+
 #define MT9V03X2_DMA_CH (IfxDma_ChannelId_6)
 
 #define MT9V03X2_PCLK_PIN \

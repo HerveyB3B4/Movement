@@ -29,6 +29,7 @@ struct Control_Motion_Manual_Parmas {
 
     uint32 turn_angle_parameter[3];
     uint32 turn_velocity_parameter[3];
+    uint32 turn_angle_velocity_parameter[3];
 };
 
 struct Control_Time {
@@ -68,6 +69,8 @@ struct Control_Flag {
 
     uint8_t turn;
     uint8_t turnAngle;
+    uint8_t turnAngleVelocity;
+    uint8_t turnVelocity;
     uint8_t turnAngleDiffVelocity;
 
     uint8 frontAngleCount;

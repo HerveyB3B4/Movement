@@ -57,6 +57,11 @@ static void control_side_angle(struct EulerAngle* euler_angle_bias,
                                struct Control_Target* control_target);
 static void control_side_angle_velocity(struct Control_Target* control_target);
 
+static void control_turn_velocity(struct Control_Target* control_target,
+                                  struct Velocity_Motor* vel_motor);
+static void control_turn_angle_velocity(struct Control_Target* control_target);
+static void control_turn_angle(struct Control_Target* control_target);
+
 // PID
 // bottom wheel
 pid_type_def bottom_angle_velocity_PID;
@@ -71,6 +76,7 @@ pid_type_def side_velocity_PID;
 // turn pid
 pid_type_def turn_angle_PID;
 pid_type_def turn_angle_velocity_PID;
+pid_type_def turn_velocity_PID;
 
 int32 get_bottom_duty() {
     return s_bottom_balance_duty;
@@ -202,8 +208,16 @@ void control_side_balance(
 
     // turnControl();
     int32 left_motor_duty, right_motor_duty;
-    left_motor_duty = -s_side_balance_duty - s_momentum_diff;
-    right_motor_duty = s_side_balance_duty - s_momentum_diff;
+    left_motor_duty =
+        -s_side_balance_duty -
+        (int32_t)(s_momentum_diff *
+                  (float)(3.3f -
+                          logf(0.2f * abs(vel_motor->momentumFront) + 8)));
+    right_motor_duty =
+        s_side_balance_duty -
+        (int32_t)(s_momentum_diff *
+                  (float)(3.3f -
+                          logf(0.2f * abs(vel_motor->momentumBack) + 8)));
 
     restrictValueI(&s_side_balance_duty, -8000, 8000);
 
@@ -308,6 +322,69 @@ void control_shutdown(struct Control_Target* control_target,
     }
 }
 
+void control_turn(struct Control_Target* control_target,
+                  struct Control_Flag* control_flag,
+                  struct Control_Turn_Manual_Params* control_turn_params,
+                  struct EulerAngle* euler_angle_bias,
+                  struct Velocity_Motor* vel_motor) {
+    // if (control_flag->turn) {
+    //     control_flag->turn = 0;
+    //     TurnCurvatureControl();
+    // }
+    if (control_flag->turnVelocity) {
+        control_flag->turnVelocity = 0;
+        control_turn_velocity(control_target, vel_motor);
+    }
+    if (control_flag->turnAngle) {
+        control_flag->turnAngle = 0;
+        control_turn_angle(control_target);
+    }
+    if (control_flag->turnAngleVelocity) {
+        control_flag->turnAngleVelocity = 0;
+        control_turn_angle_velocity(control_target);
+    }
+    // if (control_flag->bucking) {
+    //     control_flag->bucking = 0;
+    //     float v = (float)fabsf(vel_motor->bottomReal);
+    //     if (v < 0) {
+    //         v = 0;
+    //     }
+
+    //     // float x = (float) control_target.turn_angle_velocity * 0.01f *
+    //     // fabsf(motor_velocity.bottom_filtered * 0.01f);
+    //     float x = (float)control_target.turn_angle_velocity * 0.1f *
+    //               logf(v + 2);  // 使用ln函数，降低速度对压弯的影响
+    //     control_target.bucking = bucking_k * x;
+    //     RestrictValueF(&control_target.bucking, 10.5f, -10.5f);
+    // }
+}
+
+static void control_turn_angle_velocity(struct Control_Target* control_target) {
+    static float preTurnAngleVelocity = 0;
+    restrictValueF(&control_target->turnAngleVelocity, 250, -250);
+    preTurnAngleVelocity = control_target->turnAngleVelocity;
+    static int32 preMomentumDiff = 0;
+    s_momentum_diff = (int32)PID_calc_Position_LowPassD(
+        &turn_angle_velocity_PID, yawAngleVelocity,
+        control_target->turnAngleVelocity);
+
+    s_momentum_diff = (int32)(0.8f * s_momentum_diff + 0.2f * preMomentumDiff);
+    restrictValueI(&s_momentum_diff, 9000, -9000);
+    preMomentumDiff = s_momentum_diff;
+}
+
+static void control_turn_angle(struct Control_Target* control_target) {
+    control_target->turnAngleVelocity =
+        PID_calc_Position(&turn_angle_PID, 0, control_target->turnAngle);
+}
+
+static void control_turn_velocity(struct Control_Target* control_target,
+                                  struct Velocity_Motor* vel_motor) {
+    control_target->turnAngle -= (float)PID_calc_Position(
+        &turn_velocity_PID,
+        (vel_motor->momentumFront + vel_motor->momentumBack), 0);
+}
+
 void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
     control_param_init(&bottom_angle_velocity_PID,
                        control_motion_params->bottom_angle_velocity_parameter,
@@ -329,13 +406,16 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
     control_param_init(&side_velocity_PID,
                        control_motion_params->side_velocity_parameter, 10000,
                        10, 10);
-
+    // turn pid
+    control_param_init(&turn_angle_velocity_PID,
+                       control_motion_params->turn_angle_velocity_parameter, 1,
+                       9999, 500);
     control_param_init(&turn_angle_PID,
                        control_motion_params->turn_angle_parameter, 100, 9999,
                        500);
-    control_param_init(&turn_angle_velocity_PID,
-                       control_motion_params->turn_velocity_parameter, 1, 9999,
-                       500);
+    control_param_init(&turn_velocity_PID,
+                       control_motion_params->turn_velocity_parameter, 1000,
+                       9999, 500);
 }
 
 /// @brief init the control parameter in the menu
