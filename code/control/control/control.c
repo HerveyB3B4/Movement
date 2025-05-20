@@ -316,8 +316,8 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->bottom_angle_parameter, 1, 9999,
                        10);
     control_param_init(&bottom_velocity_PID,
-                       control_motion_params->bottom_velocity_parameter, 1000,
-                       8000, 2.5f);
+                       control_motion_params->bottom_velocity_parameter, 10000,
+                       50, 2.5f);
 
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
