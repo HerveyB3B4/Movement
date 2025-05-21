@@ -288,6 +288,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_image}},
+    {(uint8*)"Wireless",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_wireless_uart}},
 };
 
 MENU_TABLE Setting_MenuTable[] = {

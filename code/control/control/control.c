@@ -272,8 +272,7 @@ static void control_side_angle(struct EulerAngle* euler_angle_bias,
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0) {
-        printf("%f,%f\n", currentSideAngle,
-               control_target->sideAngleVelocity / 100);
+        printf("%f\n", currentSideAngle);
     }
 }
 

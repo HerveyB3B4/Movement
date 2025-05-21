@@ -51,12 +51,18 @@
 // 所使用的的串口引脚 #define DEBUG_UART_USE_INTERRUPT    (1)                 //
 // 是否启用 debug uart 接收中断
 
-#define DEBUG_UART_INDEX (UART_0)     // 指定 debug uart 所使用的的串口
+// #define DEBUG_UART_INDEX (UART_0)     // 指定 debug uart 所使用的的串口
+// #define DEBUG_UART_BAUDRATE (115200)  // 指定 debug uart 所使用的的串口波特率
+// #define DEBUG_UART_TX_PIN \
+//     (UART0_TX_P14_0)  // 指定 debug uart 所使用的的串口引脚
+// #define DEBUG_UART_RX_PIN \
+//     (UART0_RX_P14_1)                  // 指定 debug uart 所使用的的串口引脚
+#define DEBUG_UART_INDEX (UART_1)     // 指定 debug uart 所使用的的串口
 #define DEBUG_UART_BAUDRATE (115200)  // 指定 debug uart 所使用的的串口波特率
 #define DEBUG_UART_TX_PIN \
-    (UART0_TX_P14_0)  // 指定 debug uart 所使用的的串口引脚
+    (UART1_TX_P20_10)  // 指定 debug uart 所使用的的串口引脚
 #define DEBUG_UART_RX_PIN \
-    (UART0_RX_P14_1)                  // 指定 debug uart 所使用的的串口引脚
+    (UART1_RX_P20_9)                  // 指定 debug uart 所使用的的串口引脚
 #define DEBUG_UART_USE_INTERRUPT (1)  // 是否启用 debug uart 接收中断
 
 //-------------------------------------------------------------------------------------------------------------------
