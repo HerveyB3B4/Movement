@@ -1,6 +1,7 @@
 #include "test.h"
 #include "attitude.h"
 #include "encoder.h"
+#include "image.h"
 #include "lcd.h"
 #include "menu_input.h"
 #include "motor.h"
@@ -336,7 +337,7 @@ void test_bottom_deadzone() {
     lcd_clear();
 }
 
-void test_camera() {
+void test_double_camera() {
     lcd_clear();
     while (keymsg.key != KEY_L) {
         if (mt9v03x_finish_flag) {
@@ -360,4 +361,38 @@ void test_camera() {
                                    IMG_SIZE_W, IMG_SIZE_H, 0);
         }
     }
+    lcd_clear();
+}
+
+void test_image() {
+    lcd_clear();
+
+    // 计算最佳缩放比例
+    float scale_w = (float)tft180_width_max / MT9V03X_W;
+    float scale_h = (float)tft180_height_max / MT9V03X_H;
+    // 选择较小的缩放比例，保持宽高比
+    float scale = scale_w < scale_h ? scale_w : scale_h;
+
+    // 计算实际显示大小
+    uint16 display_w = (uint16)(MT9V03X_W * scale);
+    uint16 display_h = (uint16)(MT9V03X_H * scale);
+
+    // 计算居中显示的起始坐标
+    uint16 start_x = (tft180_width_max - display_w) / 2;
+    uint16 start_y = (tft180_height_max - display_h) / 2;
+
+    uint16_t edge_map[MT9V03X_W][MT9V03X_H];
+    Point center = {-1, -1};  // 默认返回无效坐标
+    while (keymsg.key != KEY_L) {
+        if (mt9v03x_finish_flag) {
+            mt9v03x_finish_flag = 0;
+
+            binary_otsu(mt9v03x_image, edge_map);
+            center = find_largest_white_region_center(edge_map);
+            draw_cross(edge_map, center, -1, RGB565_YELLOW);
+            tft180_show_gray_image(start_x, start_y, edge_map, MT9V03X_W,
+                                   MT9V03X_H, display_w, display_h, 0);
+        }
+    }
+    lcd_clear();
 }

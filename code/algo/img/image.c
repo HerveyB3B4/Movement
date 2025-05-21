@@ -1,251 +1,352 @@
 #include "image.h"
 
-// Otsu算法
-float otsuThreshold(const uint8* image, uint16 width, uint16 height) {
-    uint16 hist[256] = {0};
-    float sum = width * height;
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            hist[image[i * width + j]]++;
+// Sobel算子（
+static const int8_t GX[9] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
+static const int8_t GY[9] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+
+// 分块统计结构（减少内存占用）
+typedef struct {
+    uint16_t sum_grad;
+    uint16_t max_grad;
+} BlockStat;
+
+void edge_config_init(EdgeConfig* config) {
+    config->sobel_thresh = 30;
+    config->k_global = 0.8f;
+    config->k_local = 0.5f;
+}
+
+// 优化Sobel计算
+static inline int16_t sobel_conv(const uint8_t* img,
+                                 const int8_t* kernel,
+                                 uint16_t stride) {
+    return img[-stride - 1] * kernel[0] + img[-stride] * kernel[1] +
+           img[-stride + 1] * kernel[2] + img[-1] * kernel[3] +
+           img[0] * kernel[4] + img[1] * kernel[5] +
+           img[stride - 1] * kernel[6] + img[stride] * kernel[7] +
+           img[stride + 1] * kernel[8];
+}
+
+// 分块梯度统计
+static void block_grad_stats(uint8_t* input, BlockStat* stats) {
+    for (uint16_t by = 0; by < IMG_HEIGHT / BLOCK_SIZE; by++) {
+        for (uint16_t bx = 0; bx < IMG_WIDTH / BLOCK_SIZE; bx++) {
+            uint16_t max_g = 0, sum_g = 0;
+
+            // 处理每个区块
+            for (uint8_t dy = 0; dy < BLOCK_SIZE; dy++) {
+                for (uint8_t dx = 0; dx < BLOCK_SIZE; dx++) {
+                    uint16_t y = by * BLOCK_SIZE + dy;
+                    uint16_t x = bx * BLOCK_SIZE + dx;
+                    if (y >= 1 && y < IMG_HEIGHT - 1 && x >= 1 &&
+                        x < IMG_WIDTH - 1) {
+                        const uint32_t idx = y * IMG_WIDTH + x;
+                        int16_t gx = sobel_conv(&input[idx], GX, IMG_WIDTH);
+                        int16_t gy = sobel_conv(&input[idx], GY, IMG_WIDTH);
+                        uint16_t grad = (abs(gx) + abs(gy)) >> 1;
+
+                        sum_g += grad;
+                        if (grad > max_g)
+                            max_g = grad;
+                    }
+                }
+            }
+            stats[by * (IMG_WIDTH / BLOCK_SIZE) + bx].sum_grad = sum_g;
+            stats[by * (IMG_WIDTH / BLOCK_SIZE) + bx].max_grad = max_g;
+        }
+    }
+}
+
+// 动态阈值计算（结合全局与局部）
+static uint8_t calc_dynamic_thresh(BlockStat* stats, EdgeConfig* cfg) {
+    uint32_t global_sum = 0, global_max = 0;
+    uint16_t valid_blocks = 0;
+
+    // 第一遍扫描获取全局特征
+    for (uint16_t i = 0;
+         i < (IMG_WIDTH / BLOCK_SIZE) * (IMG_HEIGHT / BLOCK_SIZE); i++) {
+        if (stats[i].max_grad > cfg->sobel_thresh) {
+            global_sum += stats[i].sum_grad;
+            if (stats[i].max_grad > global_max)
+                global_max = stats[i].max_grad;
+            valid_blocks++;
         }
     }
 
-    float sumB = 0;
-    uint16 wB = 0, wF = 0;
+    // 计算动态阈值
+    float global_avg =
+        (valid_blocks > 0)
+            ? (global_sum / (float)(valid_blocks * BLOCK_SIZE * BLOCK_SIZE))
+            : 0;
 
-    float varMax = 0;
-    float threshold = 0;
+    uint8_t thresh =
+        (uint8_t)(global_avg * cfg->k_global + global_max * cfg->k_local);
+    return (thresh < cfg->sobel_thresh) ? cfg->sobel_thresh : thresh;
+}
 
-    for (uint16 t = 0; t < 256; t++) {
-        wB += hist[t];  // Weight Background
-        if (wB == 0)
+void edge_detect_dynamic(uint8_t* input, uint8_t* output, EdgeConfig* config) {
+    static BlockStat
+        stats[(IMG_WIDTH / BLOCK_SIZE) * (IMG_HEIGHT / BLOCK_SIZE)];
+
+    // 阶段1：分块梯度统计
+    block_grad_stats(input, stats);
+
+    // 阶段2：动态阈值计算
+    uint8_t dyn_thresh = calc_dynamic_thresh(stats, config);
+
+    // 阶段3：边缘检测（带边界保护）
+    for (uint16_t y = 1; y < IMG_HEIGHT - 1; y++) {
+        for (uint16_t x = 1; x < IMG_WIDTH - 1; x++) {
+            uint32_t idx = y * IMG_WIDTH + x;
+            int16_t gx = sobel_conv(&input[idx], GX, IMG_WIDTH);
+            int16_t gy = sobel_conv(&input[idx], GY, IMG_WIDTH);
+            uint16_t grad = (abs(gx) + abs(gy)) >> 1;
+            output[idx] = (grad > dyn_thresh) ? 0xFF : 0x00;
+        }
+    }
+}
+
+// 大津法二值化
+void binary_otsu(uint8_t* input, uint8_t* output) {
+    uint32_t histogram[256] = {0};  // 灰度直方图
+    uint32_t total_pixels = IMG_WIDTH * IMG_HEIGHT;
+
+    // 1. 计算直方图
+    for (uint32_t i = 0; i < total_pixels; i++) {
+        histogram[input[i]]++;
+    }
+
+    // 2. 计算最佳阈值
+    uint32_t sum = 0;
+    for (uint16_t i = 0; i < 256; i++) {
+        sum += i * histogram[i];  // 计算灰度总和
+    }
+
+    uint32_t w0 = 0;         // 前景像素数
+    uint32_t sum0 = 0;       // 前景灰度和
+    uint8_t threshold = 0;   // 最佳阈值
+    float max_variance = 0;  // 最大类间方差
+
+    for (uint16_t t = 0; t < 256; t++) {
+        w0 += histogram[t];  // 前景像素累加
+        if (w0 == 0)
             continue;
 
-        wF = sum - wB;  // Weight Foreground
-        if (wF == 0)
+        uint32_t w1 = total_pixels - w0;  // 背景像素数
+        if (w1 == 0)
             break;
 
-        sumB += (float)(t * hist[t]);
+        sum0 += t * histogram[t];
 
-        float mB = sumB / wB;          // Mean Background
-        float mF = (sum - sumB) / wF;  // Mean Foreground
+        // 计算均值
+        float u0 = sum0 / (float)w0;          // 前景均值
+        float u1 = (sum - sum0) / (float)w1;  // 背景均值
 
-        // Calculate Between Class Variance
-        float varBetween = (float)wB * (float)wF * (mB - mF) * (mB - mF);
+        // 计算类间方差
+        float variance = w0 * w1 * (u0 - u1) * (u0 - u1);
 
-        // Check if new maximum found
-        if (varBetween > varMax) {
-            varMax = varBetween;
+        // 更新最大方差
+        if (variance > max_variance) {
+            max_variance = variance;
             threshold = t;
         }
     }
 
-    return threshold;
-}
-
-// 二值化图像
-void binarizeImage(const uint8* image,
-                   uint8* binaryImage,
-                   uint16 width,
-                   uint16 height,
-                   double threshold) {
-    for (uint16 i = 0; i < height; i++) {
-        for (uint16 j = 0; j < width; j++) {
-            if (image[i * width + j] >= threshold) {
-                binaryImage[i * width + j] = 255;  // 白色
-            } else {
-                binaryImage[i * width + j] = 0;  // 黑色
-            }
-        }
+    // 3. 二值化
+    for (uint32_t i = 0; i < total_pixels; i++) {
+        output[i] = (input[i] > threshold) ? RGB565_WHITE : RGB565_BLACK;
     }
 }
 
-// 查找函数（路径压缩）
-uint16 find(uint16* parent, uint16 x) {
-    if (parent[x] != x)
-        parent[x] = find(parent, parent[x]);  // 路径压缩
-    return parent[x];
-}
+Point find_white_block_center(uint8_t* binary) {
+    Point center = {-1, -1};  // 默认返回无效坐标
+    uint16_t min_x = IMG_WIDTH;
+    uint16_t max_x = 0;
+    uint16_t min_y = IMG_HEIGHT;
+    uint16_t max_y = 0;
+    bool found = false;
 
-// 合并函数（按秩合并）
-void unionSets(uint16* parent, uint16* rank, uint16 x, uint16 y) {
-    uint16 rootX = find(parent, x);
-    uint16 rootY = find(parent, y);
-    if (rootX != rootY) {
-        if (rank[rootX] < rank[rootY])
-            parent[rootX] = rootY;
-        else {
-            parent[rootY] = rootX;
-            if (rank[rootX] == rank[rootY])
-                rank[rootX]++;
-        }
-    }
-}
-
-// 两遍扫描连通域标记算法
-void twoPassLabeling(const uint8_t* binaryImage,
-                     uint16 width,
-                     uint16 height,
-                     uint16* labeledImage) {
-    uint16 labelCount = 1;
-    uint16 maxLabels = width * height;
-    uint16 parent[maxLabels];
-    uint16 rank[maxLabels];
-
-    for (uint16 i = 0; i < maxLabels; i++) {
-        parent[i] = i;
-        rank[i] = 0;
-    }
-
-    // 第一遍扫描：分配临时标签和等价关系
-    for (uint16 y = 0; y < height; y++) {
-        for (uint16 x = 0; x < width; x++) {
-            if (binaryImage[y * width + x] == 255) {
-                uint16 left = (x > 0 && labeledImage[y * width + (x - 1)] != 0)
-                                  ? labeledImage[y * width + (x - 1)]
-                                  : 0;
-                uint16 above = (y > 0 && labeledImage[(y - 1) * width + x] != 0)
-                                   ? labeledImage[(y - 1) * width + x]
-                                   : 0;
-
-                if (!left && !above) {
-                    labeledImage[y * width + x] = labelCount++;
-                } else if (left && !above) {
-                    labeledImage[y * width + x] = left;
-                } else if (!left && above) {
-                    labeledImage[y * width + x] = above;
-                } else {
-                    labeledImage[y * width + x] = (left < above) ? left : above;
-                    unionSets(parent, rank, left, above);
-                }
+    // 1. 找到第一个白色区块的边界
+    for (uint16_t y = 0; y < IMG_HEIGHT; y++) {
+        for (uint16_t x = 0; x < IMG_WIDTH; x++) {
+            if (binary[y * IMG_WIDTH + x] == 0xFF) {  // 白色像素
+                found = true;
+                if (x < min_x)
+                    min_x = x;
+                if (x > max_x)
+                    max_x = x;
+                if (y < min_y)
+                    min_y = y;
+                if (y > max_y)
+                    max_y = y;
             }
         }
     }
 
-    // 第二遍扫描：统一等价标签
-    for (uint16 y = 0; y < height; y++) {
-        for (uint16 x = 0; x < width; x++) {
-            if (labeledImage[y * width + x] != 0) {
-                labeledImage[y * width + x] =
-                    find(parent, labeledImage[y * width + x]);
+    // 2. 如果找到白色区块，计算中心点
+    if (found) {
+        center.x = (min_x + max_x) / 2;
+        center.y = (min_y + max_y) / 2;
+    }
+
+    return center;
+}
+
+void draw_cross(uint8_t* img, Point center, uint8_t size, uint8_t color) {
+    // 检查中心点是否有效
+    if (center.x < 0 || center.x >= IMG_WIDTH || center.y < 0 ||
+        center.y >= IMG_HEIGHT) {
+        return;
+    }
+
+    if (size == (uint8_t)-1) {
+        // 当 size 为 -1 时,填充整行和整列
+        // 填充水平线
+        for (int16_t x = 0; x < IMG_WIDTH; x++) {
+            img[center.y * IMG_WIDTH + x] = color;
+        }
+        // 填充垂直线
+        for (int16_t y = 0; y < IMG_HEIGHT; y++) {
+            img[y * IMG_WIDTH + center.x] = color;
+        }
+        return;
+    }
+
+    // 画水平线
+    int16_t start_x = center.x - size;
+    int16_t end_x = center.x + size;
+    if (start_x < 0)
+        start_x = 0;
+    if (end_x >= IMG_WIDTH)
+        end_x = IMG_WIDTH - 1;
+
+    for (int16_t x = start_x; x <= end_x; x++) {
+        img[center.y * IMG_WIDTH + x] = color;
+    }
+
+    // 画垂直线
+    int16_t start_y = center.y - size;
+    int16_t end_y = center.y + size;
+    if (start_y < 0)
+        start_y = 0;
+    if (end_y >= IMG_HEIGHT)
+        end_y = IMG_HEIGHT - 1;
+
+    for (int16_t y = start_y; y <= end_y; y++) {
+        img[y * IMG_WIDTH + center.x] = color;
+    }
+}
+
+// 种子填充法进行连通域标记
+static void flood_fill(uint8_t* binary,
+                       uint16_t x,
+                       uint16_t y,
+                       uint8_t label,
+                       Region* region) {
+    // 使用栈替代递归，防止栈溢出
+    static int16_t stack_x[STACK_SIZE];
+    static int16_t stack_y[STACK_SIZE];
+    int16_t stack_pos = 0;
+
+    // 将初始点压入栈
+    stack_x[stack_pos] = x;
+    stack_y[stack_pos] = y;
+    stack_pos++;
+
+    while (stack_pos > 0) {
+        // 弹出一个点
+        stack_pos--;
+        x = stack_x[stack_pos];
+        y = stack_y[stack_pos];
+
+        // 如果不是白点，跳过
+        if (x < 0 || x >= IMG_WIDTH || y < 0 || y >= IMG_HEIGHT ||
+            binary[y * IMG_WIDTH + x] != 0xFF) {
+            continue;
+        }
+
+        // 标记当前点
+        binary[y * IMG_WIDTH + x] = label;
+
+        // 更新区域信息
+        if (x < region->min_x)
+            region->min_x = x;
+        if (x > region->max_x)
+            region->max_x = x;
+        if (y < region->min_y)
+            region->min_y = y;
+        if (y > region->max_y)
+            region->max_y = y;
+        region->area++;
+
+        // 将四邻域点压入栈
+        if (stack_pos < STACK_SIZE - 4) {
+            stack_x[stack_pos] = x;
+            stack_y[stack_pos] = y - 1;
+            stack_pos++;
+
+            stack_x[stack_pos] = x + 1;
+            stack_y[stack_pos] = y;
+            stack_pos++;
+
+            stack_x[stack_pos] = x;
+            stack_y[stack_pos] = y + 1;
+            stack_pos++;
+
+            stack_x[stack_pos] = x - 1;
+            stack_y[stack_pos] = y;
+            stack_pos++;
+        }
+    }
+}
+
+Point find_largest_white_region_center(uint8_t* binary) {
+    static Region regions[MAX_REGIONS];               // 区域信息数组
+    static uint8_t temp_img[IMG_WIDTH * IMG_HEIGHT];  // 临时图像
+    uint8_t region_count = 0;                         // 区域计数
+    Point center = {-1, -1};                          // 返回结果
+
+    // 复制图像，避免修改原图
+    memcpy(temp_img, binary, IMG_WIDTH * IMG_HEIGHT);
+
+    // 扫描图像，进行连通域标记
+    for (uint16_t y = 0; y < IMG_HEIGHT; y++) {
+        for (uint16_t x = 0; x < IMG_WIDTH; x++) {
+            if (temp_img[y * IMG_WIDTH + x] == 0xFF) {  // 找到白点
+                if (region_count >= MAX_REGIONS)
+                    break;  // 防止数组越界
+
+                // 初始化新区域
+                regions[region_count].min_x = x;
+                regions[region_count].min_y = y;
+                regions[region_count].max_x = x;
+                regions[region_count].max_y = y;
+                regions[region_count].area = 0;
+
+                // 标记当前区域
+                flood_fill(temp_img, x, y, region_count + 1,
+                           &regions[region_count]);
+                region_count++;
             }
         }
     }
-}
 
-uint16 findLargestBlobLabel(uint16* labeledImage,
-                            uint16 width,
-                            uint16 height,
-                            uint16* maxArea) {
-    uint16 labelCount[64] = {0};
-    *maxArea = 0;
-    uint16 maxLabel = 0;
+    // 找出最大区域
+    if (region_count > 0) {
+        uint32_t max_area = 0;
+        uint8_t max_idx = 0;
 
-    for (uint16 y = 0; y < height; y++) {
-        for (uint16 x = 0; x < width; x++) {
-            uint16 label = labeledImage[y * width + x];
-            if (label > 0) {
-                labelCount[label]++;
+        for (uint8_t i = 0; i < region_count; i++) {
+            if (regions[i].area > max_area) {
+                max_area = regions[i].area;
+                max_idx = i;
             }
         }
+
+        // 计算中心点
+        center.x = (regions[max_idx].min_x + regions[max_idx].max_x) / 2;
+        center.y = (regions[max_idx].min_y + regions[max_idx].max_y) / 2;
     }
 
-    for (uint16 i = 1; i < 64; i++) {
-        if (labelCount[i] > *maxArea) {
-            *maxArea = labelCount[i];
-            maxLabel = i;
-        }
-    }
-
-    return maxLabel;
+    return center;
 }
-
-void computeCentroid(uint16* labeledImage,
-                     uint16 width,
-                     uint16 height,
-                     uint16 targetLabel,
-                     uint16* out_x,
-                     uint16* out_y) {
-    long sumX = 0, sumY = 0, count = 0;
-
-    for (uint16 y = 0; y < height; y++) {
-        for (uint16 x = 0; x < width; x++) {
-            if (labeledImage[y * width + x] == targetLabel) {
-                sumX += x;
-                sumY += y;
-                count++;
-            }
-        }
-    }
-
-    if (count > 0) {
-        *out_x = (uint16)(sumX / count);
-        *out_y = (uint16)(sumY / count);
-    } else {
-        *out_x = -1;
-        *out_y = -1;
-    }
-}
-
-void drawRedPlus(uint8* image,
-                 uint16 width,
-                 uint16 height,
-                 uint16 cx,
-                 uint16 cy,
-                 uint16 size) {
-    for (uint16 i = -size; i <= size; i++) {
-        // 横线
-        if (cx + i >= 0 && cx + i < width)
-            image[cy * width + (cx + i)] = 565;
-
-        // 竖线
-        if (cy + i >= 0 && cy + i < height)
-            image[(cy + i) * width + cx] = 565;
-    }
-}
-
-// void test() {
-//     uint8_t binaryImage[HEIGHT][WIDTH];   // 输入的二值图像（0或255）
-//     uint16_t rgb565Image[HEIGHT][WIDTH];  // 原始RGB565彩色图像
-
-//     int labeledImage[HEIGHT][WIDTH];  // 标记后的图像（每个像素为区域标签）
-
-//     // 第一步：执行两遍扫描连通域标记
-//     twoPassLabeling((const uint8_t*)binaryImage, WIDTH, HEIGHT,
-//                     (int*)labeledImage);
-
-//     // 第二步：找出最大区域
-//     int maxArea;
-//     int maxLabel =
-//         findLargestBlobLabel((int*)labeledImage, WIDTH, HEIGHT, &maxArea);
-
-//     if (maxLabel == 0 || maxArea < 10) {
-//         printf("未找到有效区域\n");
-//         return -1;
-//     }
-
-//     printf("最大区域标签：%d，面积：%d\n", maxLabel, maxArea);
-
-//     // 第三步：计算质心
-//     int cx, cy;
-//     computeCentroid((int*)labeledImage, WIDTH, HEIGHT, maxLabel, &cx, &cy);
-
-//     if (cx == -1 || cy == -1) {
-//         printf("无法计算质心\n");
-//         return -1;
-//     }
-
-//     printf("质心坐标：(%d, %d)\n", cx, cy);
-
-//     // 第四步：创建副本并在质心处画红十字
-//     uint16_t markedImage[HEIGHT][WIDTH];
-//     memcpy(markedImage, rgb565Image, sizeof(markedImage));
-
-//     drawRedPlus((uint16_t*)markedImage, WIDTH, HEIGHT, cx, cy,
-//                 5);  // 十字大小5x5
-
-//     // 第五步：调用你的显示函数
-//     tft180_show_rgb565_image(0, 0, (const uint16_t*)markedImage, WIDTH,
-//     HEIGHT,
-//                              WIDTH, HEIGHT, 1);
-// }

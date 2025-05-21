@@ -283,7 +283,11 @@ MENU_TABLE Test_MenuTable[] = {
     {(uint8*)"Camera",
      {.SubMenu = Table_Null},
      Functions,
-     {.ItemFunc = test_camera}},
+     {.ItemFunc = test_double_camera}},
+    {(uint8*)"Image",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_image}},
 };
 
 MENU_TABLE Setting_MenuTable[] = {

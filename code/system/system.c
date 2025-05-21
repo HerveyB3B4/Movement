@@ -23,9 +23,20 @@ void system_init() {
     // init lcd
     lcd_init();
 
+    // uart_init(UART_1, 115200, UART1_RX_P20_9, UART1_TX_P20_10);
+    // uart_write_string(UART_1, "test");
+
     // init camera
     mt9v03x_init();
-    mt9v03x2_init();
+    // mt9v03x2_init();
+
+    // init wireless uart
+    // if (!wireless_uart_init()) {
+    //     printf("wireless_uart_init failed\n");
+    // } else {
+    //     printf("wireless_uart_init success\n");
+    // }
+    // wireless_uart_send_string("test");
 
     // init key
     key_init_rewrite(KEY_MAX);
