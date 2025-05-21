@@ -32,7 +32,11 @@ void edge_detect_dynamic(uint8_t* input, uint8_t* output, EdgeConfig* config);
 
 // 大津法二值化（输入灰度图，输出二值图）
 void binary_otsu(uint8_t* input, uint8_t* output);
-
+void binary_adaptive(uint8_t* input,
+                     uint8_t* output,
+                     uint8_t block_size,
+                     int8_t c);
+void binary_otsu_improved(uint8_t* input, uint8_t* output);
 // 获取第一个白色区块的中心点
 // 参数：二值化图像
 // 返回：中心点坐标，如果未找到则x和y均为-1

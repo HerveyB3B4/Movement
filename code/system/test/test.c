@@ -387,7 +387,7 @@ void test_image() {
         if (mt9v03x_finish_flag) {
             mt9v03x_finish_flag = 0;
 
-            binary_otsu(mt9v03x_image, edge_map);
+            binary_otsu_improved(mt9v03x_image, edge_map);
             center = find_largest_white_region_center(edge_map);
             draw_cross(edge_map, center, -1, RGB565_YELLOW);
             tft180_show_gray_image(start_x, start_y, edge_map, MT9V03X_W,
