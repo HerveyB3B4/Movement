@@ -389,10 +389,10 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->bottom_angle_velocity_parameter,
                        10, MOTOR_PWM_MAX, 9999);
     control_param_init(&bottom_angle_PID,
-                       control_motion_params->bottom_angle_parameter, 1, 9999,
+                       control_motion_params->bottom_angle_parameter, 10, 9999,
                        10);
     control_param_init(&bottom_velocity_PID,
-                       control_motion_params->bottom_velocity_parameter, 10000,
+                       control_motion_params->bottom_velocity_parameter, 100000,
                        50, 2.5f);
 
     // momentum wheel pid
