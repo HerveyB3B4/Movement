@@ -368,7 +368,7 @@ static void control_turn_angle_velocity(struct Control_Target* control_target) {
         control_target->turnAngleVelocity);
 
     s_momentum_diff = (int32)(0.8f * s_momentum_diff + 0.2f * preMomentumDiff);
-    restrictValueI(&s_momentum_diff, 9000, -9000);
+    restrictValueI(&s_momentum_diff, 8000, -8000);
     preMomentumDiff = s_momentum_diff;
 }
 

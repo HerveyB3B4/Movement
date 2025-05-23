@@ -362,3 +362,29 @@ IFX_INTERRUPT(uart11_er_isr, UART11_INT_VECTAB_NUM, UART11_ER_INT_PRIO) {
     IfxAsclin_Asc_isrError(&uart11_handle);
 }
 // **************************** 串口中断函数 ****************************
+// pwm input isr
+int8 new_data_filter = 0;
+IFX_INTERRUPT(gtm_pwm_in, 0, GTM_PWM_IN_PRIORITY) {
+    IfxGtm_Tim_In_update(&driver);
+
+    if (FALSE == driver.newData) {
+        if (gpio_get_level(MOTOR_PWM_IN_PIN)) {
+            if (new_data_filter > 0) {
+                new_data_filter--;
+            } else {
+                driver.periodTick = 20000;
+                driver.pulseLengthTick = driver.periodTick;
+            }
+        } else {
+            new_data_filter = 3;
+            driver.periodTick = 20000;
+            driver.pulseLengthTick = 0;
+        }
+    } else {
+        new_data_filter = 0;
+    }
+
+    pwm_in_duty = (uint16)func_limit_ab(
+        (driver.pulseLengthTick * PWM_PRIOD_LOAD / driver.periodTick), 0,
+        PWM_PRIOD_LOAD);
+}
