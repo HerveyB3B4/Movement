@@ -37,6 +37,8 @@
 #ifndef _zf_driver_pwm_h_
 #define _zf_driver_pwm_h_
 
+#include "IfxGtm_Atom_Pwm.h"
+#include "IfxGtm_Tim_In.h"
 #include "zf_common_typedef.h"
 
 #define PWM_DUTY_MAX 10000  // PWM最大占空比  最大占空比越大占空比的步进值越小

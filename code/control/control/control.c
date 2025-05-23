@@ -397,8 +397,8 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
 
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
-                       control_motion_params->side_angle_velocity_parameter, 10,
-                       MOMENTUM_MOTOR_PWM_MAX, 8000);
+                       control_motion_params->side_angle_velocity_parameter,
+                       100, MOMENTUM_MOTOR_PWM_MAX, 8000);
     control_param_init(&side_angle_PID,
                        control_motion_params->side_angle_parameter, 10, 9999,
                        2.5);

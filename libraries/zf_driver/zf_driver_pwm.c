@@ -35,8 +35,6 @@
  ********************************************************************************************************************/
 
 #include "zf_driver_pwm.h"
-#include "IfxGtm_Atom_Pwm.h"
-#include "ifxGtm_PinMap.h"
 #include "zf_common_debug.h"
 
 #define CMU_CLK_FREQ 20000000.0f  // CMU时钟频率
