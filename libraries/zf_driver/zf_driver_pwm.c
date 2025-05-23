@@ -652,7 +652,7 @@ IfxGtm_Tim_In driver;
 void pwm_input_init(void) {
     IfxGtm_enable(&MODULE_GTM);
     if (!(MODULE_GTM.CMU.CLK_EN.U & 0x2)) {
-        IfxGtm_Cmu_setClkFrequency(&MODULE_GTM, IfxGtm_Cmu_Clk_1, (float)FCY);
+        IfxGtm_Cmu_setClkFrequency(&MODULE_GTM, GTM_CLOCK, (float)FCY);
         IfxGtm_Cmu_enableClocks(&MODULE_GTM, IFXGTM_CMU_CLKEN_CLK0);
     }
 
