@@ -1,8 +1,8 @@
 #ifndef _CONTROL_H_
 #define _CONTROL_H_
 
+#include "pid.h"
 #include "zf_common_headfile.h"
-
 #define pidCoefficient 100
 #define CONTROL_LAW_CONSTRAINT 0.28f  // simple trace
 #define CONTROL_UPDATE_T 5
@@ -104,6 +104,8 @@ extern struct Control_Target g_control_target;
 extern struct Control_Flag g_control_flag;
 extern struct Control_Time g_control_time;
 extern struct Control_Motion_Manual_Parmas g_control_motion_params;
+
+extern pid_type_def bottom_angle_velocity_PID;
 
 extern uint32 control_time;
 

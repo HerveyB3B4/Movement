@@ -65,16 +65,20 @@ int core0_main(void) {
         // 此处编写需要循环执行的代码
         // printf("%.2f, %.2f\n", g_control_target.sideAngleVelocity,
         //        currentSideAngleVelocity);
-        // if (g_exit_menu_flag) {
-        //     lcd_show_int(0, 1, get_side_duty(), 5);
-        //     lcd_show_float(0, 2, (currentSideAngle), 3, 5);
-        //     lcd_show_float(8, 2,
-        //                    currentSideAngle - g_euler_angle_bias.roll -
-        //                        g_control_target.sideAngle,
-        //                    3, 5);
-        //     lcd_show_float(0, 3, g_vel_motor.momentumFront, 3, 5);
-        //     lcd_show_float(8, 3, g_vel_motor.momentumBack, 3, 5);
-        // }
+        if (g_exit_menu_flag && g_show_run_param_flag) {
+            lcd_show_string(0, 0, "Pitch:");
+            lcd_show_float(8, 0, currentFrontAngle, 3, 3);
+            lcd_show_string(0, 1, "CurrP:");
+            lcd_show_float(8, 1, currentFrontAngle - g_euler_angle_bias.pitch,
+                           3, 3);
+            lcd_show_float(0, 2, g_vel_motor.bottomFiltered, 3, 3);
+            lcd_show_string(0, 3, "FV:");
+            lcd_show_float(8, 3, g_control_target.frontAngle, 3, 3);
+            lcd_show_string(0, 4, "FA:");
+            lcd_show_float(8, 4, g_control_target.frontAngleVelocity, 3, 3);
+            lcd_show_int(0, 6, get_bottom_duty(), 5);
+            lcd_show_float(0, 7, bottom_angle_velocity_PID.Ki, 3, 3);
+        }
         // system_delay_ms(50);
         // 此处编写需要循环执行的代码
     }

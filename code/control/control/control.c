@@ -36,6 +36,13 @@ static void control_param_init(pid_type_def* pid,
                                float coefficient,
                                float maxOut,
                                float maxIOut);
+void control_param_split_init(pid_type_def* pid,
+                              const uint32 para[3],
+                              float kp_coefficient,
+                              float ki_coefficient,
+                              float kd_coefficient,
+                              float maxOut,
+                              float maxIOut);
 // static float control_bottom_feedforward();
 // static void control_shutdown(struct Control_Target* control_target,
 //                              struct EulerAngle* euler_angle_bias);
@@ -124,7 +131,7 @@ void control_bottom_balance(struct Control_Target* control_target,
     //             bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
     //     }
     // }
-    // s_bottom_balance_duty = control_target->frontAngle * 100;
+    // s_bottom_balance_duty = control_target->frontAngleVelocity * 100;
     if (s_bottom_balance_duty > 0) {
         s_bottom_balance_duty += bottom_motor_deadzone;
     } else if (s_bottom_balance_duty < 0) {
@@ -141,7 +148,7 @@ void control_bottom_balance(struct Control_Target* control_target,
 static void control_bottom_velocity(struct Velocity_Motor* vel_motor,
                                     struct Control_Target* control_target) {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle = -PID_calc_Position(
+    control_target->frontAngle = PID_calc_Position(
         &bottom_velocity_PID, (float)vel_motor->bottomFiltered, 0.0f);
 #endif
 #ifndef VELOCITY_KALMAN_FILTER
@@ -180,7 +187,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
     angleVelocityControlFilter[0] = currentFrontAngleVelocity;
 
-    s_bottom_balance_duty = (int32)(PID_calc_Position(
+    s_bottom_balance_duty = -(int32)(PID_calc_Position(
         &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
         control_target->frontAngleVelocity));
 }
@@ -272,7 +279,7 @@ static void control_side_angle(struct EulerAngle* euler_angle_bias,
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0) {
-        printf("%f\n", currentSideAngle);
+        printf("%f\n", -currentSideAngle);
     }
 }
 
@@ -389,7 +396,7 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
                        control_motion_params->bottom_angle_velocity_parameter,
                        10, MOTOR_PWM_MAX, 9999);
     control_param_init(&bottom_angle_PID,
-                       control_motion_params->bottom_angle_parameter, 10, 9999,
+                       control_motion_params->bottom_angle_parameter, 10, 100,
                        10);
     control_param_init(&bottom_velocity_PID,
                        control_motion_params->bottom_velocity_parameter, 100000,
@@ -399,9 +406,12 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
     control_param_init(&side_angle_velocity_PID,
                        control_motion_params->side_angle_velocity_parameter,
                        100, MOMENTUM_MOTOR_PWM_MAX, 8000);
-    control_param_init(&side_angle_PID,
-                       control_motion_params->side_angle_parameter, 10, 9999,
-                       2.5);
+    // control_param_init(&side_angle_PID,
+    //                    control_motion_params->side_angle_parameter, 10, 9999,
+    //                    2.5);
+    control_param_split_init(&side_angle_PID,
+                             control_motion_params->side_angle_parameter, 10,
+                             10, 100, 9999, 2.5f);
     control_param_init(&side_velocity_PID,
                        control_motion_params->side_velocity_parameter, 10000,
                        10, 10);
@@ -454,5 +464,19 @@ static void control_param_init(pid_type_def* pid,
     temp_pid[0] = (float)para[0] / coefficient;
     temp_pid[1] = (float)para[1] / coefficient;
     temp_pid[2] = (float)para[2] / coefficient;
+    PID_init_Position(pid, temp_pid, maxOut, maxIOut);
+}
+
+static void control_param_split_init(pid_type_def* pid,
+                                     const uint32 para[3],
+                                     float kp_coefficient,
+                                     float ki_coefficient,
+                                     float kd_coefficient,
+                                     float maxOut,
+                                     float maxIOut) {
+    float temp_pid[3];
+    temp_pid[0] = (float)para[0] / kp_coefficient;
+    temp_pid[1] = (float)para[1] / ki_coefficient;
+    temp_pid[2] = (float)para[2] / kd_coefficient;
     PID_init_Position(pid, temp_pid, maxOut, maxIOut);
 }
