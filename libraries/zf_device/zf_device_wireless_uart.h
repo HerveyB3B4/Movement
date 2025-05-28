@@ -54,13 +54,13 @@
 #include "zf_common_typedef.h"
 //================================================定义 无线串口
 // 基本配置===================================================
-#define WIRELESS_UART_INDEX (UART_1)      // 无线串口对应使用的串口号
-#define WIRELESS_UART_BUAD_RATE (115200)  // 无线串口对应使用的串口波特率
+#define WIRELESS_UART_INDEX (UART_2)      // 无线串口对应使用的串口号
+#define WIRELESS_UART_BUAD_RATE (230400)  // 无线串口对应使用的串口波特率
 #define WIRELESS_UART_TX_PIN \
-    (UART1_RX_P20_9)  // 无线串口对应模块的 TX 要接到单片机的 RX
+    (UART2_RX_P14_3)  // 无线串口对应模块的 TX 要接到单片机的 RX
 #define WIRELESS_UART_RX_PIN \
-    (UART1_TX_P20_10)  // 无线串口对应模块的 RX 要接到单片机的 TX
-#define WIRELESS_UART_RTS_PIN (P20_8)  // 无线串口对应模块的 RTS 引脚
+    (UART2_TX_P14_2)  // 无线串口对应模块的 RX 要接到单片机的 TX
+#define WIRELESS_UART_RTS_PIN (P14_4)  // 无线串口对应模块的 RTS 引脚
 //====================================================自动波特率====================================================
 // 注意事项1：无线转串口模块版本是V2.0以下的是无法开启自动波特率的。
 // 注意事项2：开启自动波特率务必连接RTS引脚 否则会开启失败。

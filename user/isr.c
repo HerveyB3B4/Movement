@@ -230,24 +230,22 @@ IFX_INTERRUPT(uart0_rx_isr, UART0_INT_VECTAB_NUM, UART0_RX_INT_PRIO) {
 // 串口1默认连接到摄像头配置串口
 IFX_INTERRUPT(uart1_tx_isr, UART1_INT_VECTAB_NUM, UART1_TX_INT_PRIO) {
     interrupt_global_enable(0);  // 开启中断嵌套
-    uart_write_string(UART_1, "uart1_rx_isr\n");
 }
 IFX_INTERRUPT(uart1_rx_isr, UART1_INT_VECTAB_NUM, UART1_RX_INT_PRIO) {
     interrupt_global_enable(0);  // 开启中断嵌套
     // camera_uart_handler();       // 摄像头参数配置统一回调函数
     // wireless_module_uart_handler();  // 无线模块统一回调函数
-    wireless_flag += 1;
-    // wireless_uart_send_string("test");
-    printf("uart1_rx_isr\n");
 }
 
 // 串口2默认连接到无线转串口模块
 IFX_INTERRUPT(uart2_tx_isr, UART2_INT_VECTAB_NUM, UART2_TX_INT_PRIO) {
     interrupt_global_enable(0);  // 开启中断嵌套
+    wireless_flag = 1;
 }
 
 IFX_INTERRUPT(uart2_rx_isr, UART2_INT_VECTAB_NUM, UART2_RX_INT_PRIO) {
     interrupt_global_enable(0);  // 开启中断嵌套
+    wireless_uart_callback();
 }
 // 串口3默认连接到GPS定位模块
 IFX_INTERRUPT(uart3_tx_isr, UART3_INT_VECTAB_NUM, UART3_TX_INT_PRIO) {

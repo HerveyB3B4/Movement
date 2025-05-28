@@ -59,7 +59,7 @@ void core1_main(void) {
 
     // 此处编写用户代码 例如外设初始化代码等
     cpu_wait_event_ready();  // 等待所有核心初始化完毕
-    system_start();
+    // system_start();
     g_exit_menu_flag = 1;
     runState = CAR_STABLE;
     while (TRUE) {

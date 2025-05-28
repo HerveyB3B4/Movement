@@ -22,7 +22,6 @@ void system_init() {
 
     // init lcd
     lcd_init();
-
     // uart_init(UART_1, 115200, UART1_RX_P20_9, UART1_TX_P20_10);
     // uart_write_string(UART_1, "test");
 

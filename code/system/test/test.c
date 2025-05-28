@@ -404,8 +404,9 @@ void test_wireless_uart() {
     lcd_clear();
     while (keymsg.key != KEY_L) {
         // 发送消息示例
-        lcd_show_int(0, 0, wireless_flag, 5);
-        // wireless_uart_send_string("test");
+        // lcd_show_uint(0, 0, wireless_uart_read_buffer(buff, 1), 3);
+        // printf("test\n");
+        wireless_uart_send_string("test");
     }
     lcd_clear();
 }

@@ -99,6 +99,8 @@ extern uint32 g_control_output_sav_flag;
 extern uint32 g_control_output_sv_flag;
 extern uint32 g_control_output_sa_flag;
 
+extern uint32 g_control_output_fa_flag;
+
 extern struct Control_Turn_Manual_Params g_control_turn_manual_params;
 extern struct Control_Target g_control_target;
 extern struct Control_Flag g_control_flag;
@@ -128,5 +130,6 @@ void control_shutdown(struct Control_Target* control_target,
 
 int32 get_bottom_duty();
 int32 get_side_duty();
+void control_pid_preset();
 
 #endif

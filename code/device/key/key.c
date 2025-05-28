@@ -2,7 +2,8 @@
 
 KEY_MSG_t keymsg = {KEY_B, KEY_UP};
 // gpio_pin_enum KEY_PTxn[KEY_MAX] = {P23_6, P23_0, P22_5, P23_5, P23_2};
-gpio_pin_enum KEY_PTxn[KEY_MAX] = {P21_6, P20_2, P21_7, P21_4, P21_5};
+// gpio_pin_enum KEY_PTxn[KEY_MAX] = {P21_6, P20_2, P21_7, P21_4, P21_5};
+gpio_pin_enum KEY_PTxn[KEY_MAX] = {P20_2, P21_6, P21_4, P21_7, P21_5};
 
 KEY_MSG_t key_msg[KEY_MSG_FIFO_SIZE];
 volatile uint8 key_msg_front = 0, key_msg_rear = 0;
