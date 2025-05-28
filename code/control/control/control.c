@@ -502,9 +502,9 @@ void control_pid_preset() {
     // float bottom_angle_pid[3] = {4.5, 0.02, 2.0};
     // float bottom_velocity_pid[3] = {0.0030, 0.00, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {0.0, 0.08, 250};
-    float bottom_angle_pid[3] = {7.6, 0.00, 5.0};
-    float bottom_velocity_pid[3] = {0.001, 0.00, 0.00};
+    float bottom_angle_velocity_pid[3] = {0.0, 0.05, 0};
+    float bottom_angle_pid[3] = {7, 0.00, 0};
+    float bottom_velocity_pid[3] = {0.0000, 0.00, 0.00};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
                       9999, 9999);

@@ -79,6 +79,14 @@ int core0_main(void) {
             lcd_show_int(0, 6, get_bottom_duty(), 5);
             lcd_show_float(0, 7, bottom_angle_velocity_PID.Ki, 3, 3);
         }
+        printf(
+            "Pitch: %.2f, Roll: %.2f, acc_x: %.2f, acc_y: %.2f, gyro_x: "
+            "%.2f, gyro_y: %.2f, gyro_z: %.2f, vel_flywheel: %.2f, "
+            "vel_motor: %.2f, bottom_pwm: %d, fly_pwm: %d\n",
+            g_euler_angle.pitch, g_euler_angle.roll, g_imu_data.acc.x,
+            g_imu_data.acc.y, g_imu_data.gyro.x, g_imu_data.gyro.y,
+            g_imu_data.gyro.z, motor_value.receive_left_speed_data,
+            g_vel_motor.bottom, get_bottom_duty(), get_side_duty());
         // system_delay_ms(50);
         // 此处编写需要循环执行的代码
     }
