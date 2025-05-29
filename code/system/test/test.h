@@ -12,5 +12,6 @@ void test_bottom_deadzone();
 void test_double_camera();
 void test_image();
 void test_wireless_uart();
+void test_key();
 extern uint8 wireless_flag;
 #endif

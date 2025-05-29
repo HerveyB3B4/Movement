@@ -9,18 +9,20 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
-void test_bottom_motor() {
+void test_bottom_motor()
+{
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: forward");
     lcd_show_string(0, 1, "KEY_D: backward");
     lcd_show_string(0, 4, "Press KEY_L to exit");
-    while (keymsg.key != KEY_L) {
-        if (keymsg.key == KEY_U)  // 向前
+    while (keymsg.key != KEY_L)
+    {
+        if (keymsg.key == KEY_U) // 向前
         {
             gpio_set_level(DIR_BOTTOM, 1);
             pwm_set_duty(MOTOR_BOTTOM, 10000);
         }
-        if (keymsg.key == KEY_D)  // 向后
+        if (keymsg.key == KEY_D) // 向后
         {
             gpio_set_level(DIR_BOTTOM, 0);
             pwm_set_duty(MOTOR_BOTTOM, 8000);
@@ -34,7 +36,8 @@ void test_bottom_motor() {
     lcd_clear();
 }
 
-void test_side_motor() {
+void test_side_motor()
+{
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: left  forward");
     lcd_show_string(0, 1, "KEY_D: left backward");
@@ -42,20 +45,21 @@ void test_side_motor() {
     lcd_show_string(0, 3, "KEY_R:right backward");
     lcd_show_string(0, 4, "Press KEY_L to exit");
     // int count = 0;
-    while (keymsg.key != KEY_L) {
-        if (keymsg.key == KEY_U)  // 向前
+    while (keymsg.key != KEY_L)
+    {
+        if (keymsg.key == KEY_U) // 向前
         {
             small_driver_set_duty(2000, 0);
         }
-        if (keymsg.key == KEY_D)  // 向后
+        if (keymsg.key == KEY_D) // 向后
         {
             small_driver_set_duty(-2000, 0);
         }
-        if (keymsg.key == KEY_B)  // 向前
+        if (keymsg.key == KEY_B) // 向前
         {
             small_driver_set_duty(0, 2000);
         }
-        if (keymsg.key == KEY_R)  // 向后
+        if (keymsg.key == KEY_R) // 向后
         {
             small_driver_set_duty(0, -2000);
         }
@@ -90,9 +94,11 @@ void test_side_motor() {
 //     lcd_clear();
 // }
 
-void test_attitude() {
+void test_attitude()
+{
     lcd_clear();
-    while (keymsg.key != KEY_L) {
+    while (keymsg.key != KEY_L)
+    {
         lcd_show_string(0, 0, "Pitch:");
         lcd_show_float(0, 1, currentFrontAngle, 3, 3);
         lcd_show_string(0, 2, "Row:");
@@ -103,9 +109,11 @@ void test_attitude() {
     lcd_clear();
 }
 
-void test_imu() {
+void test_imu()
+{
     lcd_clear();
-    while (keymsg.key != KEY_L) {
+    while (keymsg.key != KEY_L)
+    {
         lcd_show_string(0, 0, "x:");
         lcd_show_float(0, 1, g_imu_data.gyro.x, 3, 3);
         lcd_show_float(8, 1, g_imu_data.acc.x, 3, 3);
@@ -119,7 +127,8 @@ void test_imu() {
     lcd_clear();
 }
 
-void test_noise() {
+void test_noise()
+{
     lcd_clear();
 
     float sum_ax = 0.0f, sum_ax2 = 0.0f;
@@ -139,8 +148,10 @@ void test_noise() {
     uint8 T = 10;
     uint8 cnt = 0;
     uint32 total = 0;
-    while (keymsg.key != KEY_L) {
-        if (cnt < T) {
+    while (keymsg.key != KEY_L)
+    {
+        if (cnt < T)
+        {
             // 读取传感器数据
             imu660rb_get_acc();
             imu660rb_get_gyro();
@@ -174,7 +185,9 @@ void test_noise() {
             sum_gy2 += current_gy * current_gy;
             sum_gz += current_gz;
             sum_gz2 += current_gz * current_gz;
-        } else {
+        }
+        else
+        {
             // 计算均值
             float mean_ax = sum_ax / total;
             float mean_ay = sum_ay / total;
@@ -215,7 +228,8 @@ void test_noise() {
     lcd_clear();
 }
 
-void test_side_deadzone() {
+void test_side_deadzone()
+{
     lcd_clear();
     lcd_show_string(0, 0, "Auto testing...");
     lcd_show_string(0, 1, "Front PWM:");
@@ -231,26 +245,31 @@ void test_side_deadzone() {
     uint8 front_done = 0;
     uint8 back_done = 0;
 
-    while (keymsg.key != KEY_L) {
+    while (keymsg.key != KEY_L)
+    {
         // 测试前电机
-        if (!front_done) {
+        if (!front_done)
+        {
             front_deadzone += 1;
             set_momentum_motor_pwm(front_deadzone, back_deadzone);
             system_delay_ms(50);
 
-            if (abs(g_vel_motor.momentumFront) > 0) {
+            if (abs(g_vel_motor.momentumFront) > 0)
+            {
                 found_front = front_deadzone;
                 front_done = 1;
             }
         }
 
         // 测试后电机
-        if (!back_done) {
+        if (!back_done)
+        {
             back_deadzone += 1;
             set_momentum_motor_pwm(front_deadzone, back_deadzone);
             system_delay_ms(50);
 
-            if (abs(g_vel_motor.momentumBack) > 0) {
+            if (abs(g_vel_motor.momentumBack) > 0)
+            {
                 found_back = back_deadzone;
                 back_done = 1;
             }
@@ -263,33 +282,38 @@ void test_side_deadzone() {
         lcd_show_int(10, 4, g_vel_motor.momentumBack, 5);
 
         // 显示找到的死区值
-        if (front_done) {
+        if (front_done)
+        {
             lcd_show_string(0, 5, "Front min:");
             lcd_show_int(10, 5, found_front, 5);
         }
-        if (back_done) {
+        if (back_done)
+        {
             lcd_show_string(0, 6, "Back min:");
             lcd_show_int(10, 6, found_back, 5);
         }
 
         // 安全检查
-        if (front_deadzone >= 10000 || back_deadzone >= 10000) {
+        if (front_deadzone >= 10000 || back_deadzone >= 10000)
+        {
             lcd_show_string(0, 7, "Error: Too high!");
             break;
         }
 
         // 如果两个都找到了就停止增加PWM
-        if (front_done && back_done) {
-            system_delay_ms(100);  // 延时避免刷新太快
+        if (front_done && back_done)
+        {
+            system_delay_ms(100); // 延时避免刷新太快
             small_driver_set_duty(0, 0);
         }
     }
 
-    small_driver_set_duty(0, 0);  // 停止电机
+    small_driver_set_duty(0, 0); // 停止电机
     lcd_clear();
 }
 
-void test_bottom_deadzone() {
+void test_bottom_deadzone()
+{
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: PWM +100");
     lcd_show_string(0, 1, "KEY_D: PWM -100");
@@ -299,28 +323,36 @@ void test_bottom_deadzone() {
 
     int32 current_pwm = 0;
     int32 output_pwm = 0;
-    uint8 direction = 1;  // 1为正向，0为反向
+    uint8 direction = 1; // 1为正向，0为反向
 
-    while (keymsg.key != KEY_L) {
-        if (keymsg.key == KEY_U) {
+    while (keymsg.key != KEY_L)
+    {
+        if (keymsg.key == KEY_U)
+        {
             current_pwm += 10;
             if (current_pwm > 10000)
-                current_pwm = 10000;  // PWM上限
-        } else if (keymsg.key == KEY_D) {
+                current_pwm = 10000; // PWM上限
+        }
+        else if (keymsg.key == KEY_D)
+        {
             current_pwm -= 10;
             if (current_pwm < 0)
-                current_pwm = 0;  // PWM下限
-        } else if (keymsg.key == KEY_R) {
+                current_pwm = 0; // PWM下限
+        }
+        else if (keymsg.key == KEY_R)
+        {
             direction = !direction;
-            system_delay_ms(200);  // 切换方向时增加延时防止抖动
-        } else if (keymsg.key == KEY_B) {
-            output_pwm = current_pwm;  // 确认输出当前PWM值
+            system_delay_ms(200); // 切换方向时增加延时防止抖动
+        }
+        else if (keymsg.key == KEY_B)
+        {
+            output_pwm = current_pwm; // 确认输出当前PWM值
             system_delay_ms(200);
         }
 
         // 更新电机输出
         gpio_set_level(DIR_BOTTOM, direction);
-        pwm_set_duty(MOTOR_BOTTOM, output_pwm);  // 使用确认后的PWM值
+        pwm_set_duty(MOTOR_BOTTOM, output_pwm); // 使用确认后的PWM值
 
         // 显示当前状态
         lcd_show_string(0, 5, "Set PWM:");
@@ -330,17 +362,20 @@ void test_bottom_deadzone() {
         lcd_show_string(0, 7, "Speed:");
         lcd_show_float(7, 7, g_vel_motor.bottomReal, 3, 2);
 
-        system_delay_ms(50);  // 调整延时控制PWM变化速度
+        system_delay_ms(50); // 调整延时控制PWM变化速度
     }
 
-    pwm_set_duty(MOTOR_BOTTOM, 0);  // 停止电机
+    pwm_set_duty(MOTOR_BOTTOM, 0); // 停止电机
     lcd_clear();
 }
 
-void test_double_camera() {
+void test_double_camera()
+{
     lcd_clear();
-    while (keymsg.key != KEY_L) {
-        if (mt9v03x_finish_flag) {
+    while (keymsg.key != KEY_L)
+    {
+        if (mt9v03x_finish_flag)
+        {
             mt9v03x_finish_flag = 0;
             // edge_detect_dynamic(mt9v03x_image, edge_map, &edge_cfg);
             tft180_show_gray_image(0, 0, mt9v03x_image, MT9V03X_W, MT9V03X_H,
@@ -349,7 +384,8 @@ void test_double_camera() {
                                    mt9v03x_image, MT9V03X_W, MT9V03X_H,
                                    IMG_SIZE_W, IMG_SIZE_H, 0);
         }
-        if (mt9v03x2_finish_flag) {
+        if (mt9v03x2_finish_flag)
+        {
             mt9v03x2_finish_flag = 0;
             // edge_detect_dynamic(mt9v03x2_image, edge_map2, &edge_cfg);
             tft180_show_gray_image(0, tft180_height_max - IMG_SIZE_H,
@@ -364,7 +400,8 @@ void test_double_camera() {
     lcd_clear();
 }
 
-void test_image() {
+void test_image()
+{
     lcd_clear();
 
     // 计算最佳缩放比例
@@ -382,9 +419,11 @@ void test_image() {
     uint16 start_y = (tft180_height_max - display_h) / 2;
 
     uint16_t edge_map[MT9V03X_W][MT9V03X_H];
-    Point center = {-1, -1};  // 默认返回无效坐标
-    while (keymsg.key != KEY_L) {
-        if (mt9v03x_finish_flag) {
+    Point center = {-1, -1}; // 默认返回无效坐标
+    while (keymsg.key != KEY_L)
+    {
+        if (mt9v03x_finish_flag)
+        {
             mt9v03x_finish_flag = 0;
 
             binary_otsu_improved(mt9v03x_image, edge_map);
@@ -400,13 +439,31 @@ void test_image() {
 uint8 buff[WIRELESS_UART_BUFFER_SIZE];
 uint8 wireless_flag = 0;
 
-void test_wireless_uart() {
+void test_wireless_uart()
+{
     lcd_clear();
-    while (keymsg.key != KEY_L) {
+    while (keymsg.key != KEY_L)
+    {
         // 发送消息示例
         // lcd_show_uint(0, 0, wireless_uart_read_buffer(buff, 1), 3);
         // printf("test\n");
         wireless_uart_send_string("test");
+    }
+    lcd_clear();
+}
+
+void test_key()
+{
+    lcd_clear();
+
+    while (1)
+    {
+        lcd_show_string(0, 2, "Key pressed:");
+        lcd_show_int(10, 2, keymsg.key, 2);
+        lcd_show_string(0, 3, "Status:");
+        lcd_show_int(10, 3, keymsg.status, 2);
+
+        system_delay_ms(1); // 减少刷新频率
     }
     lcd_clear();
 }

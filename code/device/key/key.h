@@ -7,30 +7,35 @@
 #define KEY_HOLD_TIME 11
 
 #define KEY_MSG_FIFO_SIZE 20
+#define KEY_NUM 5 // 定义按键数量，替代 KEY_MAX
 
-#define KEY_UPDATE_T 5  // 更新频率
+#define KEY_UPDATE_T 5 // 更新频率
 
-typedef enum {
+typedef enum
+{
     KEY_U,
     KEY_D,
     KEY_L,
     KEY_R,
     KEY_B,
-    KEY_MAX,
+    KEY_NONE, // 无按键状态
 } KEY_e;
 
-typedef enum {
+typedef enum
+{
     KEY_DOWN = 0,
     KEY_UP = 1,
     KEY_HOLD,
 } KEY_STATUS_e;
 
-typedef struct {
+typedef struct
+{
     KEY_e key;
     KEY_STATUS_e status;
 } KEY_MSG_t;
 
-typedef enum {
+typedef enum
+{
     KEY_MSG_EMPTY,
     KEY_MSG_NORMAL,
     KEY_MSG_FULL,
@@ -40,8 +45,10 @@ void key_init_rewrite(KEY_e key);
 KEY_STATUS_e key_get_status(KEY_e key);
 KEY_STATUS_e key_check_status(KEY_e key);
 
-uint8 key_get_msg(KEY_MSG_t* keymsg);
+uint8 key_get_msg(KEY_MSG_t *keymsg);
 void key_send_msg(KEY_MSG_t keymsg);
+void key_clear_msg(void); // 新增清除按键消息函数
+KEY_e key_scan(void);     // 新增按键扫描函数
 
 void key_IRQHandler();
 
