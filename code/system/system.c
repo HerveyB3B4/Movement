@@ -12,19 +12,16 @@ RunState_t runState;
 
 void system_init() {
     // uart_init(UART_2, 115200, UART2_TX_P10_5, UART2_RX_P10_6);
-
     // init motor
-    // motor_init();
-    // printf("motor_init\n");
+    motor_init();
+    // 串口初始化放到这里不知道会不会好点
+    small_driver_uart_init();
     // init encoder
     encoder_init();
-    printf("encoder_init\n");
-
     // init lcd
     lcd_init();
     // uart_init(UART_1, 115200, UART1_RX_P20_9, UART1_TX_P20_10);
     // uart_write_string(UART_1, "test");
-
     // init camera
     mt9v03x_init();
     // mt9v03x2_init();
@@ -40,29 +37,23 @@ void system_init() {
     // init key
     key_init_rewrite(KEY_MAX);
     pit_ms_init(CCU60_CH1, KEY_UPDATE_T);
-    printf("key_init\n");
 
     // menu_param
     menu_manual_param_init();
-    printf("menu_manual_param_init\n");
 
     // velocity
     velocity_init(&g_vel_motor);
-    printf("velocity_init\n");
     pit_ms_init(CCU60_CH0, VELOCITY_UPDATE_T);
 
     control_manual_param_init();
-    printf("control_manual_param_init\n");
 
     // read eeprom
     Read_EEPROM();
 
     // init imu
     imu_init();
-    printf("imu_init\n");
     // init attitude
     attitude_init();
-    printf("attitude_init\n");
     pit_ms_init(CCU61_CH1, ATTITUDE_UPDATE_T);
 
     // menu
@@ -71,13 +62,12 @@ void system_init() {
     // menu_params
     menu_get_params(&g_euler_angle_bias, &g_control_time,
                     &g_control_turn_manual_params, &g_control_motion_params);
-    printf("menu_get_params\n");
 
     // control init
     control_init(&g_control_motion_params);
-    printf("control_init\n");
     // start to balance
-    // pit_ms_init(CCU61_CH0, CONTROL_UPDATE_T);
+    pit_ms_init(CCU61_CH0, CONTROL_UPDATE_T);
+    pit_close(CCU60_CH1);  // 后续修改逻辑可以改为pit_disable
 }
 
 void system_attitude_timer(

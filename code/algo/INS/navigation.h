@@ -2,9 +2,8 @@
 #define _NAVIGATION_H_
 
 #include "Attitude.h"
-#include "trace.h"
+#include "method.h"
 #include "zf_common_headfile.h"
-
 // 轨迹记录相关定义
 #define MAX_TRAJECTORY_POINTS 1000      // 最大轨迹点数量
 #define TRAJECTORY_RECORD_INTERVAL 100  // 记录间隔(毫秒)

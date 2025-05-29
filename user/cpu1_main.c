@@ -54,44 +54,25 @@ void core1_main(void) {
     interrupt_global_enable(0);  // 打开全局中断
     // 此处编写用户代码 例如外设初始化代码等
 
-    system_init();
-    runState = CAR_READY;
-
     // 此处编写用户代码 例如外设初始化代码等
     cpu_wait_event_ready();  // 等待所有核心初始化完毕
-    // system_start();
-    g_exit_menu_flag = 1;
-    runState = CAR_STABLE;
+
     while (TRUE) {
         // 此处编写需要循环执行的代码
-        if (g_exit_menu_flag) {
-            if (runState == CAR_STABLE) {
-                g_control_target.frontVelocity = 0;
-                if (g_control_bottom_flag != 0) {
-                    bottom_control_timer(&g_control_time, &g_control_flag,
-                                         &g_control_target, &g_vel_motor,
-                                         &g_euler_angle_bias);
-                }
-
-                // turnControlTimer();
-                if (g_control_side_flag != 0) {
-                    side_control_timer(&g_control_time, &g_control_flag,
-                                       &g_control_target,
-                                       &g_control_turn_manual_params,
-                                       &g_vel_motor, &g_euler_angle_bias);
-                }
-                control_shutdown(&g_control_target, &g_euler_angle_bias);
-
-                // if (count >= 1500) {
-                //     count = 0;
-                //     runState = CAR_RUNNING;
-                // }
-                // lcd_show_float(0, 0, runState, 3, 5);
-                // lcd_show_int(0, 1, get_side_duty(), 5);
-                // lcd_show_int(0, 2, get_bottom_duty(), 5);
-            }
+        if (g_exit_menu_flag && g_show_run_param_flag) {
+            lcd_show_string(0, 0, "Pitch:");
+            lcd_show_float(8, 0, currentFrontAngle, 3, 3);
+            lcd_show_string(0, 1, "CurrP:");
+            lcd_show_float(8, 1, currentFrontAngle - g_euler_angle_bias.pitch,
+                           3, 3);
+            lcd_show_float(0, 2, g_vel_motor.bottomFiltered, 3, 3);
+            lcd_show_string(0, 3, "FV:");
+            lcd_show_float(8, 3, g_control_target.frontAngle, 3, 3);
+            lcd_show_string(0, 4, "FA:");
+            lcd_show_float(8, 4, g_control_target.frontAngleVelocity, 3, 3);
+            lcd_show_int(0, 6, get_bottom_duty(), 5);
+            lcd_show_float(0, 7, bottom_angle_velocity_PID.Ki, 3, 3);
         }
-
         // 此处编写需要循环执行的代码
     }
 }

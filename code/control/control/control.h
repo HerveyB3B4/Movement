@@ -5,7 +5,7 @@
 #include "zf_common_headfile.h"
 #define pidCoefficient 100
 #define CONTROL_LAW_CONSTRAINT 0.28f  // simple trace
-#define CONTROL_UPDATE_T 5
+#define CONTROL_UPDATE_T 4
 
 struct Control_Turn_Manual_Params {
     float buckling_turn_coefficient;  // 屈曲转动系数，这里存放的是已经被除过的
