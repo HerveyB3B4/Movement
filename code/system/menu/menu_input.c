@@ -4,22 +4,25 @@
 
 struct Menu_Manual_Param g_menu_manual_param;
 
-void menu_manual_param_init() {
+void menu_manual_param_init()
+{
     memset(&g_menu_manual_param, 0, sizeof(struct Menu_Manual_Param));
 }
 
 void menu_get_params(
-    struct EulerAngle* euler_angle_bias,
-    struct Control_Time* control_time,
-    struct Control_Turn_Manual_Params* control_turn_params,
-    struct Control_Motion_Manual_Parmas* control_motion_params) {
+    struct EulerAngle *euler_angle_bias,
+    struct Control_Time *control_time,
+    struct Control_Turn_Manual_Params *control_turn_params,
+    struct Control_Motion_Manual_Parmas *control_motion_params)
+{
     // euler angle
     euler_angle_bias->roll = g_menu_manual_param.mechanicalRollAngle * 0.1f;
     euler_angle_bias->pitch = g_menu_manual_param.mechanicalPitchAngle * 0.1f;
     euler_angle_bias->yaw = g_menu_manual_param.mechanicalYawAngle * 0.1f;
 
     // pid
-    for (uint8 i = 0; i < 3; i++) {
+    for (uint8 i = 0; i < 3; i++)
+    {
         control_motion_params->bottom_velocity_parameter[i] =
             g_menu_manual_param.bottom_velocity_parameter[i];
         control_motion_params->bottom_angle_velocity_parameter[i] =
@@ -39,6 +42,24 @@ void menu_get_params(
         control_motion_params->turn_velocity_parameter[i] =
             g_menu_manual_param.turn_velocity_parameter[i];
     }
+
+    // 传递PID极性参数
+    control_motion_params->bottom_velocity_polarity =
+        g_menu_manual_param.bottom_velocity_polarity;
+    control_motion_params->bottom_angle_velocity_polarity =
+        g_menu_manual_param.bottom_angle_velocity_polarity;
+    control_motion_params->bottom_angle_polarity =
+        g_menu_manual_param.bottom_angle_polarity;
+    control_motion_params->side_angle_velocity_polarity =
+        g_menu_manual_param.side_angle_velocity_polarity;
+    control_motion_params->side_angle_polarity =
+        g_menu_manual_param.side_angle_polarity;
+    control_motion_params->side_velocity_polarity =
+        g_menu_manual_param.side_velocity_polarity;
+    control_motion_params->turn_angle_polarity =
+        g_menu_manual_param.turn_angle_polarity;
+    control_motion_params->turn_velocity_polarity =
+        g_menu_manual_param.turn_velocity_polarity;
 
     // turn
     control_turn_params->buckling_turn_coefficient =

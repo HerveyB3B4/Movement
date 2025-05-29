@@ -4,18 +4,20 @@
 #include "pid.h"
 #include "zf_common_headfile.h"
 #define pidCoefficient 100
-#define CONTROL_LAW_CONSTRAINT 0.28f  // simple trace
+#define CONTROL_LAW_CONSTRAINT 0.28f // simple trace
 #define CONTROL_UPDATE_T 4
 
-struct Control_Turn_Manual_Params {
-    float buckling_turn_coefficient;  // 屈曲转动系数，这里存放的是已经被除过的
-    uint32 buckling_front_coefficientV;  // 前部屈曲系数V
-    uint32 buckling_front_coefficientT;  // 前部屈曲系数T
-    uint32 turn_gain_coefficient;        // 转弯增益系数
-    int32 turnCurvature;                 // 转弯曲率
+struct Control_Turn_Manual_Params
+{
+    float buckling_turn_coefficient;    // 屈曲转动系数，这里存放的是已经被除过的
+    uint32 buckling_front_coefficientV; // 前部屈曲系数V
+    uint32 buckling_front_coefficientT; // 前部屈曲系数T
+    uint32 turn_gain_coefficient;       // 转弯增益系数
+    int32 turnCurvature;                // 转弯曲率
 };
 
-struct Control_Motion_Manual_Parmas {
+struct Control_Motion_Manual_Parmas
+{
     // 这是底轮速度
     int32 bottom_velocity;
     // PID
@@ -29,17 +31,28 @@ struct Control_Motion_Manual_Parmas {
 
     uint32 turn_angle_parameter[3];
     uint32 turn_velocity_parameter[3];
-    uint32 turn_angle_velocity_parameter[3];
+
+    // PID极性参数
+    uint32 bottom_velocity_polarity;
+    uint32 bottom_angle_velocity_polarity;
+    uint32 bottom_angle_polarity;
+    uint32 side_angle_velocity_polarity;
+    uint32 side_angle_polarity;
+    uint32 side_velocity_polarity;
+    uint32 turn_angle_polarity;
+    uint32 turn_velocity_polarity;
 };
 
-struct Control_Time {
+struct Control_Time
+{
     // 串级pid各个环的时间，时间由长到短，由外到内
     uint32 turn[2];
     uint32 bottom[3];
     uint32 side[3];
 };
 
-struct Control_Target {
+struct Control_Target
+{
     // 控制目标状态
 
     // front side
@@ -51,13 +64,14 @@ struct Control_Target {
     float sideAngle;
     float sideAngleVelocity;
     // turn
-    float bucking;   // balance bucking
-    float Fbucking;  // front balance bucking
+    float bucking;  // balance bucking
+    float Fbucking; // front balance bucking
     float turnAngle;
     float turnAngleVelocity;
 };
 
-struct Control_Flag {
+struct Control_Flag
+{
     // 控制更新标志
     uint8_t frontAngle;
     uint8_t frontAngleVelocity;
@@ -111,22 +125,22 @@ extern pid_type_def bottom_angle_velocity_PID;
 
 extern uint32 control_time;
 
-void control_init(struct Control_Motion_Manual_Parmas* control_motion_params);
+void control_init(struct Control_Motion_Manual_Parmas *control_motion_params);
 void control_manual_param_init();
-void control_bottom_balance(struct Control_Target* control_target,
-                            struct Control_Flag* control_flag,
-                            struct Velocity_Motor* vel_motor,
-                            struct EulerAngle* euler_angle_bias);
+void control_bottom_balance(struct Control_Target *control_target,
+                            struct Control_Flag *control_flag,
+                            struct Velocity_Motor *vel_motor,
+                            struct EulerAngle *euler_angle_bias);
 void control_side_balance(
-    struct Control_Target* control_target,
-    struct Control_Flag* control_flag,
-    struct Control_Turn_Manual_Params* control_turn_params,
-    struct Velocity_Motor* vel_motor,
-    struct EulerAngle* euler_angle_bias);
+    struct Control_Target *control_target,
+    struct Control_Flag *control_flag,
+    struct Control_Turn_Manual_Params *control_turn_params,
+    struct Velocity_Motor *vel_motor,
+    struct EulerAngle *euler_angle_bias);
 
 void control_turn_balance();
-void control_shutdown(struct Control_Target* control_target,
-                      struct EulerAngle* euler_angle_bias);
+void control_shutdown(struct Control_Target *control_target,
+                      struct EulerAngle *euler_angle_bias);
 
 int32 get_bottom_duty();
 int32 get_side_duty();
