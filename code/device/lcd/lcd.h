@@ -10,10 +10,10 @@
 
 void lcd_init(void);
 void lcd_clear(void);
-void lcd_show_string(uint16 x, uint16 y, const char* dat);
+void lcd_show_string(uint16 x, uint16 y, const char *dat);
 void lcd_show_string_color(uint16 x,
                            uint16 y,
-                           const char* dat,
+                           const char *dat,
                            uint16 pen_color,
                            uint16 background_color);
 void lcd_show_uint(uint16 x, uint16 y, uint32 dat, uint8 num);
@@ -42,5 +42,11 @@ void lcd_show_float_color(uint16 x,
                           uint8 pointnum,
                           uint16 pen_color,
                           uint16 background_color);
+void lcd_show_char(uint16 x, uint16 y, char dat);
 
+void lcd_show_char_color(uint16 x,
+                         uint16 y,
+                         char dat,
+                         uint16 pen_color,
+                         uint16 background_color);
 #endif /* _LCD_H_ */
