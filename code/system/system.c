@@ -39,13 +39,14 @@ void system_init()
     // init key
     key_init_rewrite(KEY_NUM);
     pit_ms_init(CCU60_CH1, KEY_UPDATE_T);
-
+    pit_enable(CCU60_CH1); // 使能按键中断
     // menu_param
     menu_manual_param_init();
 
     // velocity
     velocity_init(&g_vel_motor);
     pit_ms_init(CCU60_CH0, VELOCITY_UPDATE_T);
+    pit_enable(CCU60_CH0); // 使能速度中断
 
     control_manual_param_init();
 
@@ -57,6 +58,7 @@ void system_init()
     // init attitude
     attitude_init();
     pit_ms_init(CCU61_CH1, ATTITUDE_UPDATE_T);
+    pit_enable(CCU61_CH1); // 使能姿态中断
 
     // menu
     MainMenu_Set();
@@ -69,7 +71,6 @@ void system_init()
     control_init(&g_control_motion_params);
     // start to balance
     pit_ms_init(CCU61_CH0, CONTROL_UPDATE_T);
-    pit_close(CCU60_CH1); // 后续修改逻辑可以改为pit_disable
 }
 
 void system_attitude_timer(
@@ -222,4 +223,30 @@ void turn_control_timer(struct Control_Time *control_time,
         control_flag->turnAngleDiffVelocity = 0;
     }
     // control_turn_balance();
+}
+
+void system_set_runstate(RunState_t state)
+{
+    // 根据不同的车辆状态执行不同的控制操作
+    switch (state)
+    {
+    case CAR_STOP:
+        runState = CAR_STOP;
+
+        pit_disable(CCU61_CH0); // 失能控制中断
+        pit_enable(CCU60_CH1);  // 使能按键中断
+
+        stop_bottom_motor();
+        stop_momentum_motor();
+        break;
+    case CAR_RUNNING:
+        runState = CAR_RUNNING;
+
+        // 在切换到运行状态时重置控制目标和标志
+        control_reset(&g_control_target);
+
+        pit_enable(CCU61_CH0);  // 使能控制中断
+        pit_disable(CCU60_CH1); // 失能按键中断
+        break;
+    }
 }

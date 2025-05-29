@@ -53,8 +53,9 @@
 // **************************** PIT中断函数 ****************************
 IFX_INTERRUPT(cc60_pit_ch0_isr,
               CCU6_0_CH0_INT_VECTAB_NUM,
-              CCU6_0_CH0_ISR_PRIORITY) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+              CCU6_0_CH0_ISR_PRIORITY)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU60_CH0);
 
     velocity_update(&g_vel_motor);
@@ -62,8 +63,9 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,
 
 IFX_INTERRUPT(cc60_pit_ch1_isr,
               CCU6_0_CH1_INT_VECTAB_NUM,
-              CCU6_0_CH1_ISR_PRIORITY) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+              CCU6_0_CH1_ISR_PRIORITY)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU60_CH1);
     // key
     key_IRQHandler();
@@ -75,44 +77,45 @@ IFX_INTERRUPT(cc60_pit_ch1_isr,
 
 IFX_INTERRUPT(cc61_pit_ch0_isr,
               CCU6_1_CH0_INT_VECTAB_NUM,
-              CCU6_1_CH0_ISR_PRIORITY) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+              CCU6_1_CH0_ISR_PRIORITY)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU61_CH0);
 
     // printf("exit_menu_flag: %d\n", g_exit_menu_flag);
-    if (g_exit_menu_flag) {
-        if (runState == CAR_STABLE) {
-            g_control_target.frontVelocity = 0;
-            if (g_control_bottom_flag != 0) {
-                bottom_control_timer(&g_control_time, &g_control_flag,
-                                     &g_control_target, &g_vel_motor,
-                                     &g_euler_angle_bias);
-            }
 
-            // turnControlTimer();
-            if (g_control_side_flag != 0) {
-                side_control_timer(&g_control_time, &g_control_flag,
-                                   &g_control_target,
-                                   &g_control_turn_manual_params, &g_vel_motor,
-                                   &g_euler_angle_bias);
-            }
-            control_shutdown(&g_control_target, &g_euler_angle_bias);
-
-            // if (count >= 1500) {
-            //     count = 0;
-            //     runState = CAR_RUNNING;
-            // }
-            // lcd_show_float(0, 0, runState, 3, 5);
-            // lcd_show_int(0, 1, get_side_duty(), 5);
-            // lcd_show_int(0, 2, get_bottom_duty(), 5);
-        }
+    g_control_target.frontVelocity = 0;
+    if (g_control_bottom_flag != 0)
+    {
+        bottom_control_timer(&g_control_time, &g_control_flag,
+                             &g_control_target, &g_vel_motor,
+                             &g_euler_angle_bias);
     }
+
+    // turnControlTimer();
+    if (g_control_side_flag != 0)
+    {
+        side_control_timer(&g_control_time, &g_control_flag,
+                           &g_control_target,
+                           &g_control_turn_manual_params, &g_vel_motor,
+                           &g_euler_angle_bias);
+    }
+    control_shutdown(&g_control_target, &g_euler_angle_bias);
+
+    // if (count >= 1500) {
+    //     count = 0;
+    //     runState = CAR_RUNNING;
+    // }
+    // lcd_show_float(0, 0, runState, 3, 5);
+    // lcd_show_int(0, 1, get_side_duty(), 5);
+    // lcd_show_int(0, 2, get_bottom_duty(), 5);
 }
 
 IFX_INTERRUPT(cc61_pit_ch1_isr,
               CCU6_1_CH1_INT_VECTAB_NUM,
-              CCU6_1_CH1_ISR_PRIORITY) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+              CCU6_1_CH1_ISR_PRIORITY)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU61_CH1);
 
     system_attitude_timer(&g_control_turn_manual_params, &g_control_target,
@@ -138,34 +141,36 @@ IFX_INTERRUPT(cc61_pit_ch1_isr,
 
 IFX_INTERRUPT(exti_ch1_ch5_isr,
               EXTI_CH1_CH5_INT_VECTAB_NUM,
-              EXTI_CH1_CH5_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+              EXTI_CH1_CH5_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 
-    if (exti_flag_get(ERU_CH1_REQ10_P14_3))  // 通道1中断
+    if (exti_flag_get(ERU_CH1_REQ10_P14_3)) // 通道1中断
     {
         exti_flag_clear(ERU_CH1_REQ10_P14_3);
 
-        tof_module_exti_handler();  // ToF 模块 INT 更新中断
+        tof_module_exti_handler(); // ToF 模块 INT 更新中断
     }
 
-    if (exti_flag_get(ERU_CH5_REQ1_P15_8))  // 通道5中断
+    if (exti_flag_get(ERU_CH5_REQ1_P15_8)) // 通道5中断
     {
         exti_flag_clear(ERU_CH5_REQ1_P15_8);
-        camera_vsync_handler();  // 摄像头触发采集统一回调函数
+        camera_vsync_handler(); // 摄像头触发采集统一回调函数
     }
 }
 
 // 由于摄像头pclk引脚默认占用了 2通道，用于触发DMA，因此这里不再定义中断函数
 IFX_INTERRUPT(exti_ch2_ch6_isr,
               EXTI_CH2_CH6_INT_VECTAB_NUM,
-              EXTI_CH2_CH6_INT_PRIO) {
-    interrupt_global_enable(0);             // 开启中断嵌套
-    if (exti_flag_get(ERU_CH2_REQ2_P10_2))  // 通道2中断
+              EXTI_CH2_CH6_INT_PRIO)
+{
+    interrupt_global_enable(0);            // 开启中断嵌套
+    if (exti_flag_get(ERU_CH2_REQ2_P10_2)) // 通道2中断
     {
         exti_flag_clear(ERU_CH2_REQ2_P10_2);
-        camera_vsync_handler_2();  // 摄像头触发采集统一回调函数
+        camera_vsync_handler_2(); // 摄像头触发采集统一回调函数
     }
-    if (exti_flag_get(ERU_CH6_REQ9_P20_0))  // 通道6中断
+    if (exti_flag_get(ERU_CH6_REQ9_P20_0)) // 通道6中断
     {
         exti_flag_clear(ERU_CH6_REQ9_P20_0);
     }
@@ -188,182 +193,227 @@ IFX_INTERRUPT(exti_ch2_ch6_isr,
 // **************************** 外部中断函数 ****************************
 
 // **************************** DMA中断函数 ****************************
-IFX_INTERRUPT(dma_ch5_isr, DMA_INT_VECTAB_NUM, DMA_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
-    camera_dma_handler();        // 摄像头采集完成统一回调函数
+IFX_INTERRUPT(dma_ch5_isr, DMA_INT_VECTAB_NUM, DMA_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
+    camera_dma_handler();       // 摄像头采集完成统一回调函数
 }
-IFX_INTERRUPT(dma_ch6_isr, 0, DMA_INT_PRIO_2) {
-    interrupt_global_enable(0);  // 开启中断嵌套
-    camera_dma_handler_2();      // 摄像头采集完成统一回调函数
+IFX_INTERRUPT(dma_ch6_isr, 0, DMA_INT_PRIO_2)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
+    camera_dma_handler_2();     // 摄像头采集完成统一回调函数
 }
 // **************************** DMA中断函数 ****************************
 
 // **************************** 串口中断函数 ****************************
 // 串口0默认作为调试串口
-IFX_INTERRUPT(uart0_tx_isr, UART0_INT_VECTAB_NUM, UART0_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart0_tx_isr, UART0_INT_VECTAB_NUM, UART0_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
-IFX_INTERRUPT(uart0_rx_isr, UART0_INT_VECTAB_NUM, UART0_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart0_rx_isr, UART0_INT_VECTAB_NUM, UART0_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 
-#if DEBUG_UART_USE_INTERRUPT    // 如果开启 debug 串口中断
-    debug_interrupr_handler();  // 调用 debug 串口接收处理函数 数据会被 debug
-                                // 环形缓冲区读取
-#endif  // 如果修改了 DEBUG_UART_INDEX 那这段代码需要放到对应的串口中断去
+#if DEBUG_UART_USE_INTERRUPT   // 如果开启 debug 串口中断
+    debug_interrupr_handler(); // 调用 debug 串口接收处理函数 数据会被 debug
+                               // 环形缓冲区读取
+#endif                         // 如果修改了 DEBUG_UART_INDEX 那这段代码需要放到对应的串口中断去
 }
 
 // 串口1默认连接到摄像头配置串口
-IFX_INTERRUPT(uart1_tx_isr, UART1_INT_VECTAB_NUM, UART1_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart1_tx_isr, UART1_INT_VECTAB_NUM, UART1_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
-IFX_INTERRUPT(uart1_rx_isr, UART1_INT_VECTAB_NUM, UART1_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart1_rx_isr, UART1_INT_VECTAB_NUM, UART1_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     // camera_uart_handler();       // 摄像头参数配置统一回调函数
     // wireless_module_uart_handler();  // 无线模块统一回调函数
 }
 
 // 串口2默认连接到无线转串口模块
-IFX_INTERRUPT(uart2_tx_isr, UART2_INT_VECTAB_NUM, UART2_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart2_tx_isr, UART2_INT_VECTAB_NUM, UART2_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     wireless_flag = 1;
 }
 
-IFX_INTERRUPT(uart2_rx_isr, UART2_INT_VECTAB_NUM, UART2_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart2_rx_isr, UART2_INT_VECTAB_NUM, UART2_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     wireless_uart_callback();
 }
 // 串口3默认连接到GPS定位模块
-IFX_INTERRUPT(uart3_tx_isr, UART3_INT_VECTAB_NUM, UART3_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart3_tx_isr, UART3_INT_VECTAB_NUM, UART3_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart3_rx_isr, UART3_INT_VECTAB_NUM, UART3_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart3_rx_isr, UART3_INT_VECTAB_NUM, UART3_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     // gnss_uart_callback();        // GNSS串口回调函数
-    uart_control_callback(UART_3);  // 无刷驱动串口回调函数
+    uart_control_callback(UART_3); // 无刷驱动串口回调函数
 }
 
-IFX_INTERRUPT(uart4_tx_isr, UART4_INT_VECTAB_NUM, UART4_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart4_tx_isr, UART4_INT_VECTAB_NUM, UART4_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart4_rx_isr, UART4_INT_VECTAB_NUM, UART4_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart4_rx_isr, UART4_INT_VECTAB_NUM, UART4_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart5_tx_isr, UART5_INT_VECTAB_NUM, UART5_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart5_tx_isr, UART5_INT_VECTAB_NUM, UART5_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart5_rx_isr, UART5_INT_VECTAB_NUM, UART5_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart5_rx_isr, UART5_INT_VECTAB_NUM, UART5_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart6_tx_isr, UART6_INT_VECTAB_NUM, UART6_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart6_tx_isr, UART6_INT_VECTAB_NUM, UART6_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart6_rx_isr, UART6_INT_VECTAB_NUM, UART6_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart6_rx_isr, UART6_INT_VECTAB_NUM, UART6_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     uart_control_callback(UART_6);
 }
 
-IFX_INTERRUPT(uart8_tx_isr, UART8_INT_VECTAB_NUM, UART8_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart8_tx_isr, UART8_INT_VECTAB_NUM, UART8_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart8_rx_isr, UART8_INT_VECTAB_NUM, UART8_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart8_rx_isr, UART8_INT_VECTAB_NUM, UART8_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart9_tx_isr, UART9_INT_VECTAB_NUM, UART9_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart9_tx_isr, UART9_INT_VECTAB_NUM, UART9_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart9_rx_isr, UART9_INT_VECTAB_NUM, UART9_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart9_rx_isr, UART9_INT_VECTAB_NUM, UART9_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart10_tx_isr, UART10_INT_VECTAB_NUM, UART10_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart10_tx_isr, UART10_INT_VECTAB_NUM, UART10_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart10_rx_isr, UART10_INT_VECTAB_NUM, UART10_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart10_rx_isr, UART10_INT_VECTAB_NUM, UART10_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart11_tx_isr, UART11_INT_VECTAB_NUM, UART11_TX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart11_tx_isr, UART11_INT_VECTAB_NUM, UART11_TX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 
-IFX_INTERRUPT(uart11_rx_isr, UART11_INT_VECTAB_NUM, UART11_RX_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart11_rx_isr, UART11_INT_VECTAB_NUM, UART11_RX_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
 }
 // 串口通讯错误中断
-IFX_INTERRUPT(uart0_er_isr, UART0_INT_VECTAB_NUM, UART0_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart0_er_isr, UART0_INT_VECTAB_NUM, UART0_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart0_handle);
 }
-IFX_INTERRUPT(uart1_er_isr, UART1_INT_VECTAB_NUM, UART1_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart1_er_isr, UART1_INT_VECTAB_NUM, UART1_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart1_handle);
 }
-IFX_INTERRUPT(uart2_er_isr, UART2_INT_VECTAB_NUM, UART2_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart2_er_isr, UART2_INT_VECTAB_NUM, UART2_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart2_handle);
 }
-IFX_INTERRUPT(uart3_er_isr, UART3_INT_VECTAB_NUM, UART3_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart3_er_isr, UART3_INT_VECTAB_NUM, UART3_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart3_handle);
 }
-IFX_INTERRUPT(uart4_er_isr, UART4_INT_VECTAB_NUM, UART4_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart4_er_isr, UART4_INT_VECTAB_NUM, UART4_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart4_handle);
 }
-IFX_INTERRUPT(uart5_er_isr, UART5_INT_VECTAB_NUM, UART5_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart5_er_isr, UART5_INT_VECTAB_NUM, UART5_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart5_handle);
 }
-IFX_INTERRUPT(uart6_er_isr, UART6_INT_VECTAB_NUM, UART6_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart6_er_isr, UART6_INT_VECTAB_NUM, UART6_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart6_handle);
 }
-IFX_INTERRUPT(uart8_er_isr, UART8_INT_VECTAB_NUM, UART8_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart8_er_isr, UART8_INT_VECTAB_NUM, UART8_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart8_handle);
 }
-IFX_INTERRUPT(uart9_er_isr, UART9_INT_VECTAB_NUM, UART9_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart9_er_isr, UART9_INT_VECTAB_NUM, UART9_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart9_handle);
 }
-IFX_INTERRUPT(uart10_er_isr, UART10_INT_VECTAB_NUM, UART10_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart10_er_isr, UART10_INT_VECTAB_NUM, UART10_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart10_handle);
 }
-IFX_INTERRUPT(uart11_er_isr, UART11_INT_VECTAB_NUM, UART11_ER_INT_PRIO) {
-    interrupt_global_enable(0);  // 开启中断嵌套
+IFX_INTERRUPT(uart11_er_isr, UART11_INT_VECTAB_NUM, UART11_ER_INT_PRIO)
+{
+    interrupt_global_enable(0); // 开启中断嵌套
     IfxAsclin_Asc_isrError(&uart11_handle);
 }
 // **************************** 串口中断函数 ****************************
 // pwm input isr
 int8 new_data_filter = 0;
-IFX_INTERRUPT(gtm_pwm_in, 0, GTM_PWM_IN_PRIORITY) {
+IFX_INTERRUPT(gtm_pwm_in, 0, GTM_PWM_IN_PRIORITY)
+{
     IfxGtm_Tim_In_update(&driver);
 
-    if (FALSE == driver.newData) {
-        if (gpio_get_level(MOTOR_PWM_IN_PIN)) {
-            if (new_data_filter > 0) {
+    if (FALSE == driver.newData)
+    {
+        if (gpio_get_level(MOTOR_PWM_IN_PIN))
+        {
+            if (new_data_filter > 0)
+            {
                 new_data_filter--;
-            } else {
+            }
+            else
+            {
                 driver.periodTick = 20000;
                 driver.pulseLengthTick = driver.periodTick;
             }
-        } else {
+        }
+        else
+        {
             new_data_filter = 3;
             driver.periodTick = 20000;
             driver.pulseLengthTick = 0;
         }
-    } else {
+    }
+    else
+    {
         new_data_filter = 0;
     }
 

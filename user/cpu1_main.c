@@ -49,29 +49,46 @@
 // 本例程是开源库空工程 可用作移植或者测试各类内外设
 
 // **************************** 代码区域 ****************************
-void core1_main(void) {
-    disable_Watchdog();          // 关闭看门狗
-    interrupt_global_enable(0);  // 打开全局中断
+void core1_main(void)
+{
+    disable_Watchdog();         // 关闭看门狗
+    interrupt_global_enable(0); // 打开全局中断
     // 此处编写用户代码 例如外设初始化代码等
 
     // 此处编写用户代码 例如外设初始化代码等
-    cpu_wait_event_ready();  // 等待所有核心初始化完毕
+    cpu_wait_event_ready(); // 等待所有核心初始化完毕
 
-    while (TRUE) {
+    while (TRUE)
+    {
         // 此处编写需要循环执行的代码
-        if (g_exit_menu_flag && g_show_run_param_flag) {
-            lcd_show_string(0, 0, "Pitch:");
-            lcd_show_float(8, 0, currentFrontAngle, 3, 3);
-            lcd_show_string(0, 1, "CurrP:");
-            lcd_show_float(8, 1, currentFrontAngle - g_euler_angle_bias.pitch,
-                           3, 3);
-            lcd_show_float(0, 2, g_vel_motor.bottomFiltered, 3, 3);
-            lcd_show_string(0, 3, "FV:");
-            lcd_show_float(8, 3, g_control_target.frontAngle, 3, 3);
-            lcd_show_string(0, 4, "FA:");
-            lcd_show_float(8, 4, g_control_target.frontAngleVelocity, 3, 3);
-            lcd_show_int(0, 6, get_bottom_duty(), 5);
-            lcd_show_float(0, 7, bottom_angle_velocity_PID.Ki, 3, 3);
+        if (g_exit_menu_flag && g_show_run_param_flag)
+        {
+            // lcd_show_string(0, 0, "Pitch:");
+            // lcd_show_float(8, 0, currentFrontAngle, 3, 3);
+            // lcd_show_string(0, 1, "CurrP:");
+            // lcd_show_float(8, 1, currentFrontAngle - g_euler_angle_bias.pitch,
+            //                3, 3);
+            // lcd_show_float(0, 2, g_vel_motor.bottomFiltered, 3, 3);
+            // lcd_show_string(0, 3, "FV:");
+            // lcd_show_float(8, 3, g_control_target.frontAngle, 3, 3);
+            // lcd_show_string(0, 4, "FA:");
+            // lcd_show_float(8, 4, g_control_target.frontAngleVelocity, 3, 3);
+            // lcd_show_int(0, 6, get_bottom_duty(), 5);
+            // lcd_show_float(0, 7, bottom_angle_velocity_PID.Ki, 3, 3);
+            if (runState == CAR_RUNNING)
+            {
+                lcd_show_string(0, 0, "RUNNING");
+            }
+            else if (runState == CAR_STOP)
+            {
+                lcd_show_string(0, 0, "STOP");
+            }
+            else
+            {
+                lcd_show_string(0, 0, "UNKNOWN");
+            }
+            system_delay_ms(50);
+            lcd_clear(); // 清屏
         }
         // 此处编写需要循环执行的代码
     }

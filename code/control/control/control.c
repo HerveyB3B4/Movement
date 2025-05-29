@@ -33,12 +33,12 @@ static int32 s_bottom_balance_duty = 0;
 static int32 s_side_balance_duty = 0;
 static int32 s_momentum_diff = 0;
 
-static void control_param_init(pid_type_def* pid,
+static void control_param_init(pid_type_def *pid,
                                const uint32 para[3],
                                float coefficient,
                                float maxOut,
                                float maxIOut);
-void control_param_split_init(pid_type_def* pid,
+void control_param_split_init(pid_type_def *pid,
                               const uint32 para[3],
                               float kp_coefficient,
                               float ki_coefficient,
@@ -49,27 +49,30 @@ void control_param_split_init(pid_type_def* pid,
 // static void control_shutdown(struct Control_Target* control_target,
 //                              struct EulerAngle* euler_angle_bias);
 
+// 添加函数原型声明
+void control_reset(struct Control_Target *control_target);
+
 // bottom
-static void control_bottom_velocity(struct Velocity_Motor* vel_motor,
-                                    struct Control_Target* control_target);
-static void control_bottom_angle(struct EulerAngle* euler_angle_bias,
-                                 struct Control_Target* control_target);
+static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
+                                    struct Control_Target *control_target);
+static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
+                                 struct Control_Target *control_target);
 static void control_bottom_angle_velocity(
-    struct Control_Target* control_target);
+    struct Control_Target *control_target);
 
 // side
 static void control_side_velocity(
-    struct Velocity_Motor* vel_motor,
-    struct Control_Target* control_target,
-    struct Control_Turn_Manual_Params* control_turn_params);
-static void control_side_angle(struct EulerAngle* euler_angle_bias,
-                               struct Control_Target* control_target);
-static void control_side_angle_velocity(struct Control_Target* control_target);
+    struct Velocity_Motor *vel_motor,
+    struct Control_Target *control_target,
+    struct Control_Turn_Manual_Params *control_turn_params);
+static void control_side_angle(struct EulerAngle *euler_angle_bias,
+                               struct Control_Target *control_target);
+static void control_side_angle_velocity(struct Control_Target *control_target);
 
-static void control_turn_velocity(struct Control_Target* control_target,
-                                  struct Velocity_Motor* vel_motor);
-static void control_turn_angle_velocity(struct Control_Target* control_target);
-static void control_turn_angle(struct Control_Target* control_target);
+static void control_turn_velocity(struct Control_Target *control_target,
+                                  struct Velocity_Motor *vel_motor);
+static void control_turn_angle_velocity(struct Control_Target *control_target);
+static void control_turn_angle(struct Control_Target *control_target);
 
 // PID
 // bottom wheel
@@ -87,31 +90,38 @@ pid_type_def turn_angle_PID;
 pid_type_def turn_angle_velocity_PID;
 pid_type_def turn_velocity_PID;
 
-int32 get_bottom_duty() {
+int32 get_bottom_duty()
+{
     return s_bottom_balance_duty;
 }
 
-int32 get_side_duty() {
+int32 get_side_duty()
+{
     return s_side_balance_duty;
 }
 
-int get_momentum_diff() {
+int get_momentum_diff()
+{
     return s_momentum_diff;
 }
 
-void control_bottom_balance(struct Control_Target* control_target,
-                            struct Control_Flag* control_flag,
-                            struct Velocity_Motor* vel_motor,
-                            struct EulerAngle* euler_angle_bias) {
-    if (control_flag->frontVelocity) {
+void control_bottom_balance(struct Control_Target *control_target,
+                            struct Control_Flag *control_flag,
+                            struct Velocity_Motor *vel_motor,
+                            struct EulerAngle *euler_angle_bias)
+{
+    if (control_flag->frontVelocity)
+    {
         control_flag->frontVelocity = 0;
         control_bottom_velocity(vel_motor, control_target);
     }
-    if (control_flag->frontAngle) {
+    if (control_flag->frontAngle)
+    {
         control_flag->frontAngle = 0;
         control_bottom_angle(euler_angle_bias, control_target);
     }
-    if (control_flag->frontAngleVelocity) {
+    if (control_flag->frontAngleVelocity)
+    {
         control_flag->frontAngleVelocity = 0;
         control_bottom_angle_velocity(control_target);
     }
@@ -134,21 +144,25 @@ void control_bottom_balance(struct Control_Target* control_target,
     //     }
     // }
 
-    if (s_bottom_balance_duty > 0) {
+    if (s_bottom_balance_duty > 0)
+    {
         s_bottom_balance_duty += bottom_motor_deadzone;
-    } else if (s_bottom_balance_duty < 0) {
+    }
+    else if (s_bottom_balance_duty < 0)
+    {
         s_bottom_balance_duty -= bottom_motor_deadzone;
     }
 
     restrictValueI(&s_bottom_balance_duty, -10000, 10000);
 
     set_bottom_motor_pwn(
-        (int32)(s_bottom_balance_duty));  // set bottom motor pwm to
-                                          // keep front balance
+        (int32)(s_bottom_balance_duty)); // set bottom motor pwm to
+                                         // keep front balance
 }
 
-static void control_bottom_velocity(struct Velocity_Motor* vel_motor,
-                                    struct Control_Target* control_target) {
+static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
+                                    struct Control_Target *control_target)
+{
 #ifdef VELOCITY_KALMAN_FILTER
     control_target->frontAngle = -PID_calc_Position(
         &bottom_velocity_PID, (float)vel_motor->bottomFiltered, 0.0f);
@@ -168,8 +182,9 @@ static void control_bottom_velocity(struct Velocity_Motor* vel_motor,
     // }
 }
 
-static void control_bottom_angle(struct EulerAngle* euler_angle_bias,
-                                 struct Control_Target* control_target) {
+static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
+                                 struct Control_Target *control_target)
+{
     static float angleControlFilter[2] = {0};
     angleControlFilter[1] = angleControlFilter[0];
     angleControlFilter[0] = currentFrontAngle;
@@ -181,13 +196,15 @@ static void control_bottom_angle(struct EulerAngle* euler_angle_bias,
         &bottom_angle_PID, (angleControlFilter[0] - euler_angle_bias->pitch),
         control_target->frontAngle));
 
-    if (g_control_output_fa_flag != 0) {
+    if (g_control_output_fa_flag != 0)
+    {
         printf("%f\n", currentFrontAngle);
     }
 }
 
 static void control_bottom_angle_velocity(
-    struct Control_Target* control_target) {
+    struct Control_Target *control_target)
+{
     // imu963raPushingSensorData();
     static float angleVelocityControlFilter[2] = {0};
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
@@ -199,22 +216,26 @@ static void control_bottom_angle_velocity(
 }
 
 void control_side_balance(
-    struct Control_Target* control_target,
-    struct Control_Flag* control_flag,
-    struct Control_Turn_Manual_Params* control_turn_params,
-    struct Velocity_Motor* vel_motor,
-    struct EulerAngle* euler_angle_bias) {
-    if (control_flag->sideVelocity) {
+    struct Control_Target *control_target,
+    struct Control_Flag *control_flag,
+    struct Control_Turn_Manual_Params *control_turn_params,
+    struct Velocity_Motor *vel_motor,
+    struct EulerAngle *euler_angle_bias)
+{
+    if (control_flag->sideVelocity)
+    {
         control_flag->sideVelocity = 0;
         control_side_velocity(vel_motor, control_target, control_turn_params);
     }
 
-    if (control_flag->sideAngle) {
+    if (control_flag->sideAngle)
+    {
         control_flag->sideAngle = 0;
         control_side_angle(euler_angle_bias, control_target);
     }
 
-    if (control_flag->sideAngleVelocity) {
+    if (control_flag->sideAngleVelocity)
+    {
         control_flag->sideAngleVelocity = 0;
         control_side_angle_velocity(control_target);
     }
@@ -235,15 +256,21 @@ void control_side_balance(
     restrictValueI(&s_side_balance_duty, -8000, 8000);
 
     // 添加死区补偿
-    if (left_motor_duty > 0) {
+    if (left_motor_duty > 0)
+    {
         left_motor_duty += side_front_deadzone;
-    } else if (left_motor_duty < 0) {
+    }
+    else if (left_motor_duty < 0)
+    {
         left_motor_duty -= side_front_deadzone;
     }
 
-    if (right_motor_duty > 0) {
+    if (right_motor_duty > 0)
+    {
         right_motor_duty += side_back_deadzone;
-    } else if (right_motor_duty < 0) {
+    }
+    else if (right_motor_duty < 0)
+    {
         right_motor_duty -= side_back_deadzone;
     }
 
@@ -254,9 +281,10 @@ void control_side_balance(
 }
 
 static void control_side_velocity(
-    struct Velocity_Motor* vel_motor,
-    struct Control_Target* control_target,
-    struct Control_Turn_Manual_Params* control_turn_params) {
+    struct Velocity_Motor *vel_motor,
+    struct Control_Target *control_target,
+    struct Control_Turn_Manual_Params *control_turn_params)
+{
     // static float momentumVelocityFilter = 0;
     // momentumVelocityFilter =
     //     (float)(vel_motor->momentumFront - vel_motor->momentumBack);
@@ -264,17 +292,19 @@ static void control_side_velocity(
     control_target->sideAngle = (float)PID_calc_Position(
         &side_velocity_PID,
         (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
-        0.0f);  // 速度是正反馈，因此set和ref要反过来
+        0.0f); // 速度是正反馈，因此set和ref要反过来
 
     // 输出pid信息：error，输出，实际值，目标值
-    if (g_control_output_sv_flag != 0) {
+    if (g_control_output_sv_flag != 0)
+    {
         printf("%f,%f\n", currentSideAngle, control_target->sideAngle * 100);
     }
 }
 
-static void control_side_angle(struct EulerAngle* euler_angle_bias,
-                               struct Control_Target* control_target) {
-    static float momentumAngleFilter[2] = {0};  // 角度滤波
+static void control_side_angle(struct EulerAngle *euler_angle_bias,
+                               struct Control_Target *control_target)
+{
+    static float momentumAngleFilter[2] = {0}; // 角度滤波
     momentumAngleFilter[1] = momentumAngleFilter[0];
     momentumAngleFilter[0] = -currentSideAngle;
     // noiseFilter(momentumAngleFilter[0],0.02f);
@@ -284,13 +314,15 @@ static void control_side_angle(struct EulerAngle* euler_angle_bias,
         control_target->sideAngle);
 
     // 输出pid信息：error，输出，实际值，目标值
-    if (g_control_output_sa_flag != 0) {
+    if (g_control_output_sa_flag != 0)
+    {
         printf("%f\n", -currentSideAngle);
     }
 }
 
-static void control_side_angle_velocity(struct Control_Target* control_target) {
-    static float momentumGyroFilter[2] = {0};  // 角度速度滤波
+static void control_side_angle_velocity(struct Control_Target *control_target)
+{
+    static float momentumGyroFilter[2] = {0}; // 角度速度滤波
     momentumGyroFilter[1] = momentumGyroFilter[0];
     momentumGyroFilter[0] = currentSideAngleVelocity;
 
@@ -301,57 +333,53 @@ static void control_side_angle_velocity(struct Control_Target* control_target) {
                                control_target->sideAngleVelocity));
 
     // 输出pid信息：error，输出，实际值，目标值
-    if (g_control_output_sav_flag != 0) {
+    if (g_control_output_sav_flag != 0)
+    {
         printf("%f,%f\n", -currentSideAngleVelocity,
                s_side_balance_duty / 100.0f);
     }
 }
 
-void control_shutdown(struct Control_Target* control_target,
-                      struct EulerAngle* euler_angle_bias) {
-    if (g_control_shutdown_flag != 0) {
+void control_shutdown(struct Control_Target *control_target,
+                      struct EulerAngle *euler_angle_bias)
+{
+    if (g_control_shutdown_flag != 0)
+    {
         if (fabsf(currentSideAngle - euler_angle_bias->roll -
-                  control_target->sideAngle) > 28) {
-            stop_bottom_motor();
-            stop_momentum_motor();
-
-            printf("control_shutdown 1\n");
-            char tmp[10];
-            snprintf(tmp, 10, "%.3f", euler_angle_bias->roll);
-            zf_log(0, tmp);
-            runState = CAR_STOP;
+                  control_target->sideAngle) > 28)
+        {
+            system_set_runstate(CAR_STOP);
         }
-        if (fabsf(currentFrontAngle) > 35) {
-            stop_bottom_motor();
-            stop_momentum_motor();
-
-            printf("control_shutdown 2\n");
-            char tmp[10];
-            snprintf(tmp, 10, "%.3f", euler_angle_bias->pitch);
-            zf_log(0, tmp);
-            runState = CAR_STOP;
+        if (fabsf(currentFrontAngle - euler_angle_bias->pitch -
+                  control_target->frontAngle) > 35)
+        {
+            system_set_runstate(CAR_STOP);
         }
     }
 }
 
-void control_turn(struct Control_Target* control_target,
-                  struct Control_Flag* control_flag,
-                  struct Control_Turn_Manual_Params* control_turn_params,
-                  struct EulerAngle* euler_angle_bias,
-                  struct Velocity_Motor* vel_motor) {
+void control_turn(struct Control_Target *control_target,
+                  struct Control_Flag *control_flag,
+                  struct Control_Turn_Manual_Params *control_turn_params,
+                  struct EulerAngle *euler_angle_bias,
+                  struct Velocity_Motor *vel_motor)
+{
     // if (control_flag->turn) {
     //     control_flag->turn = 0;
     //     TurnCurvatureControl();
     // }
-    if (control_flag->turnVelocity) {
+    if (control_flag->turnVelocity)
+    {
         control_flag->turnVelocity = 0;
         control_turn_velocity(control_target, vel_motor);
     }
-    if (control_flag->turnAngle) {
+    if (control_flag->turnAngle)
+    {
         control_flag->turnAngle = 0;
         control_turn_angle(control_target);
     }
-    if (control_flag->turnAngleVelocity) {
+    if (control_flag->turnAngleVelocity)
+    {
         control_flag->turnAngleVelocity = 0;
         control_turn_angle_velocity(control_target);
     }
@@ -371,7 +399,8 @@ void control_turn(struct Control_Target* control_target,
     // }
 }
 
-static void control_turn_angle_velocity(struct Control_Target* control_target) {
+static void control_turn_angle_velocity(struct Control_Target *control_target)
+{
     static float preTurnAngleVelocity = 0;
     restrictValueF(&control_target->turnAngleVelocity, 250, -250);
     preTurnAngleVelocity = control_target->turnAngleVelocity;
@@ -385,19 +414,22 @@ static void control_turn_angle_velocity(struct Control_Target* control_target) {
     preMomentumDiff = s_momentum_diff;
 }
 
-static void control_turn_angle(struct Control_Target* control_target) {
+static void control_turn_angle(struct Control_Target *control_target)
+{
     control_target->turnAngleVelocity =
         PID_calc_Position(&turn_angle_PID, 0, control_target->turnAngle);
 }
 
-static void control_turn_velocity(struct Control_Target* control_target,
-                                  struct Velocity_Motor* vel_motor) {
+static void control_turn_velocity(struct Control_Target *control_target,
+                                  struct Velocity_Motor *vel_motor)
+{
     control_target->turnAngle -= (float)PID_calc_Position(
         &turn_velocity_PID,
         (vel_motor->momentumFront + vel_motor->momentumBack), 0);
 }
 
-void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
+void control_init(struct Control_Motion_Manual_Parmas *control_motion_params)
+{
     // control_param_init(&bottom_angle_velocity_PID,
     //                    control_motion_params->bottom_angle_velocity_parameter,
     //                    100, MOTOR_PWM_MAX, 9999);
@@ -439,7 +471,8 @@ void control_init(struct Control_Motion_Manual_Parmas* control_motion_params) {
 }
 
 /// @brief init the control parameter in the menu
-void control_manual_param_init() {
+void control_manual_param_init()
+{
     bottom_angle_velocity_PID.Kp = 0;
     bottom_angle_velocity_PID.Ki = 0;
     bottom_angle_velocity_PID.Kd = 0;
@@ -466,11 +499,12 @@ void control_manual_param_init() {
     turn_angle_velocity_PID.Kd = 0;
 }
 
-static void control_param_init(pid_type_def* pid,
+static void control_param_init(pid_type_def *pid,
                                const uint32 para[3],
                                float coefficient,
                                float maxOut,
-                               float maxIOut) {
+                               float maxIOut)
+{
     float temp_pid[3];
     temp_pid[0] = (float)para[0] / coefficient;
     temp_pid[1] = (float)para[1] / coefficient;
@@ -478,13 +512,14 @@ static void control_param_init(pid_type_def* pid,
     PID_init_Position(pid, temp_pid, maxOut, maxIOut);
 }
 
-static void control_param_split_init(pid_type_def* pid,
+static void control_param_split_init(pid_type_def *pid,
                                      const uint32 para[3],
                                      float kp_coefficient,
                                      float ki_coefficient,
                                      float kd_coefficient,
                                      float maxOut,
-                                     float maxIOut) {
+                                     float maxIOut)
+{
     float temp_pid[3];
     temp_pid[0] = (float)para[0] / kp_coefficient;
     temp_pid[1] = (float)para[1] / ki_coefficient;
@@ -492,7 +527,8 @@ static void control_param_split_init(pid_type_def* pid,
     PID_init_Position(pid, temp_pid, maxOut, maxIOut);
 }
 
-void control_pid_preset() {
+void control_pid_preset()
+{
     // bottom wheel
     // float bottom_angle_velocity_pid[3] = {0.6, 0.1, 1.2};
     // float bottom_angle_pid[3] = {5, 0.01, 3};
@@ -517,4 +553,26 @@ void control_pid_preset() {
            bottom_angle_PID.Ki, bottom_angle_PID.Kd);
     printf("fv: kp: %f, ki: %f, kd: %f\n", bottom_velocity_PID.Kp,
            bottom_velocity_PID.Ki, bottom_velocity_PID.Kd);
+}
+
+void control_reset(struct Control_Target *control_target)
+{
+    // 重置控制目标值
+    control_target->frontAngle = 0;
+    control_target->frontVelocity = 0;
+    control_target->sideAngle = 0;
+    control_target->turnAngle = 0;
+    control_target->turnAngleVelocity = 0;
+    control_target->bucking = 0;
+
+    // 重置控制标志
+    g_control_flag.frontAngle = 0;
+    g_control_flag.frontVelocity = 0;
+    g_control_flag.sideAngle = 0;
+    g_control_flag.sideVelocity = 0;
+    g_control_flag.turnAngle = 0;
+    g_control_flag.turnVelocity = 0;
+    // g_control_flag.bucking = 0;
+
+    control_init(&g_control_motion_params);
 }
