@@ -139,5 +139,7 @@
 #include "small_driver_uart_control.h"
 #include "system.h"
 #include "test.h"
+
+#include "pin.h"
 //=====================================================用户层=======================================================
 #endif

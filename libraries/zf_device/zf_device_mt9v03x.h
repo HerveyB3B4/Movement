@@ -57,121 +57,121 @@
 
 //================================================定义 MT9V03X
 // 基本配置================================================
-#define MT9V03X_COF_UART (UART_1)  // 配置摄像头所使用到的串口
-#define MT9V03X_COF_BAUR (9600)    // 总钻风配置串口波特率
+#define MT9V03X_COF_UART (UART_1) // 配置摄像头所使用到的串口
+#define MT9V03X_COF_BAUR (9600)   // 总钻风配置串口波特率
 #define MT9V03X_COF_UART_TX \
-    (UART1_RX_P20_9)  // 总钻风 UART-TX 引脚 要接在单片机 RX 上
+    (UART1_RX_P20_9) // 总钻风 UART-TX 引脚 要接在单片机 RX 上
 #define MT9V03X_COF_UART_RX \
-    (UART1_TX_P33_13)  // 总钻风 UART-RX 引脚 要接在单片机 TX 上
+    (UART1_TX_P33_13) // 总钻风 UART-RX 引脚 要接在单片机 TX 上
 
-#define MT9V03X_COF_IIC_DELAY (800)  // 总钻风 IIC 延时
+#define MT9V03X_COF_IIC_DELAY (800) // 总钻风 IIC 延时
 
-#define MT9V03X_COF_IIC_SCL (P10_5)  // 总钻风 IIC-SCL 引脚
-#define MT9V03X_COF_IIC_SDA (P10_6)  // 总钻风 IIC-SDA 引脚
+#define MT9V03X_COF_IIC_SCL CAMERA1_COF_IIC_SCL // 总钻风 IIC-SCL 引脚
+#define MT9V03X_COF_IIC_SDA CAMERA1_COF_IIC_SDA // 总钻风 IIC-SDA 引脚
 
 // #define MT9V03X_COF_IIC_SCL (P10_8)  // 总钻风 IIC-SCL 引脚
 // #define MT9V03X_COF_IIC_SDA (P10_7)  // 总钻风 IIC-SDA 引脚
 
-#define MT9V03X_DMA_CH (IfxDma_ChannelId_7)
+#define MT9V03X_DMA_CH CAMERA1_DMA_CH
 
-#define MT9V03X_PCLK_PIN \
-    (ERU_CH0_REQ0_P15_4)  // PCLK 触发信号 TIM_ETR 引脚禁止随意修改
+#define MT9V03X_PCLK_PIN CAMERA1_PCLK_PIN // PCLK 触发信号 TIM_ETR 引脚禁止随意修改
 
-#define MT9V03X_VSYNC_PIN (ERU_CH5_REQ1_P15_8)  // 场中断引脚
+#define MT9V03X_VSYNC_PIN CAMERA1_VSYNC_PIN // 场中断引脚
 
-#define MT9V03X_DATA_PIN \
-    (P02_0)  // 数据引脚 这里是 只能是 GPIOx0 或者 GPIOx8 开始 连续八个引脚例如
-             // P00_0-P00_7
+#define MT9V03X_DATA_PIN CAMERA1_DATA_PIN // 数据引脚 这里是 只能是 GPIOx0 或者 GPIOx8 开始 连续八个引脚例如
+                                          // P00_0-P00_7
 #define MT9V03X_DATA_ADD (get_port_in_addr(MT9V03X_DATA_PIN))
 
-#define MT9V03X_INIT_TIMEOUT (0x0080)  // 默认的摄像头初始化超时时间 毫秒为单位
+#define MT9V03X_INIT_TIMEOUT (0x0080) // 默认的摄像头初始化超时时间 毫秒为单位
 //================================================定义 MT9V03X
 // 基本配置================================================
 
 //================================================定义 MT9V03X
 // 参数配置================================================
-#define MT9V03X_W (188)  // 图像宽度     范围 [1-752]
-#define MT9V03X_H (120)  // 图像高度     范围 [1-480]
+#define MT9V03X_W (188) // 图像宽度     范围 [1-752]
+#define MT9V03X_H (120) // 图像高度     范围 [1-480]
 
 #define MT9V03X_IMAGE_SIZE \
-    (MT9V03X_W * MT9V03X_H)  // 整体图像大小不能超过 65535
+    (MT9V03X_W * MT9V03X_H) // 整体图像大小不能超过 65535
 
 #define MT9V03X_AUTO_EXP_DEF \
-    (0)  // 自动曝光设置     默认不开启自动曝光设置  范围 [0-63] 0为关闭
-         //                  如果自动曝光开启 EXP_TIME命令设置自动曝光时间的上限
-         //                  一般情况是不需要开启自动曝光设置
-         //                  如果遇到光线非常不均匀的情况可以尝试设置自动曝光，增加图像稳定性
+    (0) // 自动曝光设置     默认不开启自动曝光设置  范围 [0-63] 0为关闭
+        //                  如果自动曝光开启 EXP_TIME命令设置自动曝光时间的上限
+        //                  一般情况是不需要开启自动曝光设置
+        //                  如果遇到光线非常不均匀的情况可以尝试设置自动曝光，增加图像稳定性
 #define MT9V03X_EXP_TIME_DEF \
-    (512)  // 曝光时间
-           // 摄像头收到后会自动计算出最大曝光时间，如果设置过大则设置为计算出来的最大曝光值
+    (512) // 曝光时间
+          // 摄像头收到后会自动计算出最大曝光时间，如果设置过大则设置为计算出来的最大曝光值
 #define MT9V03X_FPS_DEF \
-    (50)  // 图像帧率
-          // 摄像头收到后会自动计算出最大FPS，如果过大则设置为计算出来的最大FPS
+    (50) // 图像帧率
+         // 摄像头收到后会自动计算出最大FPS，如果过大则设置为计算出来的最大FPS
 #define MT9V03X_LR_OFFSET_DEF \
-    (0)  // 图像左右偏移量   正值 右偏移   负值 左偏移  列为188 376
-         // 752时无法设置偏移
-         //                  摄像头收偏移数据后会自动计算最大偏移，如果超出则设置计算出来的最大偏移
+    (0) // 图像左右偏移量   正值 右偏移   负值 左偏移  列为188 376
+        // 752时无法设置偏移
+        //                  摄像头收偏移数据后会自动计算最大偏移，如果超出则设置计算出来的最大偏移
 #define MT9V03X_UD_OFFSET_DEF \
-    (0)  // 图像上下偏移量   正值 上偏移   负值 下偏移  行为120 240
-         // 480时无法设置偏移
-         //                  摄像头收偏移数据后会自动计算最大偏移，如果超出则设置计算出来的最大偏移
+    (0) // 图像上下偏移量   正值 上偏移   负值 下偏移  行为120 240
+        // 480时无法设置偏移
+        //                  摄像头收偏移数据后会自动计算最大偏移，如果超出则设置计算出来的最大偏移
 #define MT9V03X_GAIN_DEF \
-    (32)  // 图像增益         范围 [16-64]
-          // 增益可以在曝光时间固定的情况下改变图像亮暗程度
+    (32) // 图像增益         范围 [16-64]
+         // 增益可以在曝光时间固定的情况下改变图像亮暗程度
 #define MT9V03X_PCLK_MODE_DEF \
-    (0)  // 像素时钟模式     范围 [0-1]    默认：0
-         // 可选参数为：[0：不输出消隐信号,1：输出消隐信号]
-         //                  通常都设置为0，如果使用CH32V307的DVP接口或STM32的DCMI接口采集需要设置为1
-         //                  仅总钻风 MT9V034 V1.5 以及以上版本支持该命令
+    (0) // 像素时钟模式     范围 [0-1]    默认：0
+        // 可选参数为：[0：不输出消隐信号,1：输出消隐信号]
+        //                  通常都设置为0，如果使用CH32V307的DVP接口或STM32的DCMI接口采集需要设置为1
+        //                  仅总钻风 MT9V034 V1.5 以及以上版本支持该命令
 //================================================定义 MT9V03X
 // 参数配置================================================
 
 //================================================定义 MT9V03X
 // 参数结构体===============================================
-typedef enum {
-    MT9V03X_INIT = 0,       // 摄像头初始化命令
-    MT9V03X_AUTO_EXP,       // 自动曝光命令
-    MT9V03X_EXP_TIME,       // 曝光时间命令
-    MT9V03X_FPS,            // 摄像头帧率命令
-    MT9V03X_SET_COL,        // 图像列命令
-    MT9V03X_SET_ROW,        // 图像行命令
-    MT9V03X_LR_OFFSET,      // 图像左右偏移命令
-    MT9V03X_UD_OFFSET,      // 图像上下偏移命令
-    MT9V03X_GAIN,           // 图像偏移命令
-    MT9V03X_PCLK_MODE,      // 像素时钟模式命令(仅总钻风MT9V034
-                            // V1.5以及以上版本支持该命令)
-    MT9V03X_CONFIG_FINISH,  // 非命令位，主要用来占位计数
+typedef enum
+{
+    MT9V03X_INIT = 0,      // 摄像头初始化命令
+    MT9V03X_AUTO_EXP,      // 自动曝光命令
+    MT9V03X_EXP_TIME,      // 曝光时间命令
+    MT9V03X_FPS,           // 摄像头帧率命令
+    MT9V03X_SET_COL,       // 图像列命令
+    MT9V03X_SET_ROW,       // 图像行命令
+    MT9V03X_LR_OFFSET,     // 图像左右偏移命令
+    MT9V03X_UD_OFFSET,     // 图像上下偏移命令
+    MT9V03X_GAIN,          // 图像偏移命令
+    MT9V03X_PCLK_MODE,     // 像素时钟模式命令(仅总钻风MT9V034
+                           // V1.5以及以上版本支持该命令)
+    MT9V03X_CONFIG_FINISH, // 非命令位，主要用来占位计数
 
     MT9V03X_COLOR_GET_WHO_AM_I = 0xEF,
-    MT9V03X_SET_EXP_TIME = 0XF0,  // 单独设置曝光时间命令
-    MT9V03X_GET_STATUS,           // 获取摄像头配置命令
-    MT9V03X_GET_VERSION,          // 固件版本号命令
+    MT9V03X_SET_EXP_TIME = 0XF0, // 单独设置曝光时间命令
+    MT9V03X_GET_STATUS,          // 获取摄像头配置命令
+    MT9V03X_GET_VERSION,         // 固件版本号命令
 
-    MT9V03X_SET_ADDR = 0XFE,  // 寄存器地址命令
-    MT9V03X_SET_DATA          // 寄存器数据命令
+    MT9V03X_SET_ADDR = 0XFE, // 寄存器地址命令
+    MT9V03X_SET_DATA         // 寄存器数据命令
 } m9v03x_cmd_enum;
 
 // 摄像头接口类型枚举
-typedef enum {
-    MT9V03X_UART,  // 通过串口配置参数
-    MT9V03X_SCCB,  // 通过SCCB配置参数
+typedef enum
+{
+    MT9V03X_UART, // 通过串口配置参数
+    MT9V03X_SCCB, // 通过SCCB配置参数
 } m9v03x_type_enum;
 //================================================定义 MT9V03X
 // 参数结构体===============================================
 
 //================================================声明 MT9V03X
 // 全局变量================================================
-extern vuint8 mt9v03x_finish_flag;                 // 一场图像采集完成标志位
-extern uint8 mt9v03x_image[MT9V03X_H][MT9V03X_W];  // 图像数据存储数组
+extern vuint8 mt9v03x_finish_flag;                // 一场图像采集完成标志位
+extern uint8 mt9v03x_image[MT9V03X_H][MT9V03X_W]; // 图像数据存储数组
 //================================================声明 MT9V03X
 // 全局变量================================================
 
 //================================================声明 MT9V03X
 // 基础函数================================================
-uint16 mt9v03x_get_version(void);                // 获取摄像头固件版本
-uint8 mt9v03x_set_exposure_time(uint16 light);   // 单独设置摄像头曝光时间
-uint8 mt9v03x_set_reg(uint8 addr, uint16 data);  // 对摄像头内部寄存器进行写操作
-uint8 mt9v03x_init(void);                        // MT9V03X 摄像头初始化
+uint16 mt9v03x_get_version(void);               // 获取摄像头固件版本
+uint8 mt9v03x_set_exposure_time(uint16 light);  // 单独设置摄像头曝光时间
+uint8 mt9v03x_set_reg(uint8 addr, uint16 data); // 对摄像头内部寄存器进行写操作
+uint8 mt9v03x_init(void);                       // MT9V03X 摄像头初始化
 //================================================声明 MT9V03X
 // 基础函数================================================
 

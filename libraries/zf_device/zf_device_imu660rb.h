@@ -60,40 +60,40 @@
 
 // IMU660RB_USE_SOFT_IIC定义为0表示使用硬件SPI驱动 定义为1表示使用软件IIC驱动
 // 当更改IMU660RB_USE_SOFT_IIC定义后，需要先编译并下载程序，单片机与模块需要断电重启才能正常通讯
-#define IMU660RB_USE_SOFT_IIC (0)  // 默认使用硬件 SPI 方式驱动
+#define IMU660RB_USE_SOFT_IIC (0) // 默认使用硬件 SPI 方式驱动
 
-#if IMU660RB_USE_SOFT_IIC  // 这两段 颜色正常的才是正确的 颜色灰的就是没有用的
+#if IMU660RB_USE_SOFT_IIC // 这两段 颜色正常的才是正确的 颜色灰的就是没有用的
 //====================================================软件 IIC
 // 驱动====================================================
 #define IMU660RB_SOFT_IIC_DELAY \
-    (59)  // 软件 IIC 的时钟延时周期 数值越小 IIC 通信速率越快
+    (59) // 软件 IIC 的时钟延时周期 数值越小 IIC 通信速率越快
 #define IMU660RB_SCL_PIN \
-    (P20_11)  // 软件 IIC SCL 引脚 连接 IMU660RB 的 SCL 引脚
+    (P20_11) // 软件 IIC SCL 引脚 连接 IMU660RB 的 SCL 引脚
 #define IMU660RB_SDA_PIN \
-    (P20_14)  // 软件 IIC SDA 引脚 连接 IMU660RB 的 SDA 引脚
+    (P20_14) // 软件 IIC SDA 引脚 连接 IMU660RB 的 SDA 引脚
 //====================================================软件 IIC
 // 驱动====================================================
 #else
 
 //====================================================硬件 SPI
 // 驱动====================================================
-#define IMU660RB_SPI_SPEED (10 * 1000 * 1000)  // 硬件 SPI 速率
-#define IMU660RB_SPI (SPI_2)                   // 硬件 SPI 号
-#define IMU660RB_SPC_PIN (SPI2_SCLK_P15_3)     // 硬件 SPI SCK 引脚
-#define IMU660RB_SDI_PIN (SPI2_MOSI_P15_5)     // 硬件 SPI MOSI 引脚
-#define IMU660RB_SDO_PIN (SPI2_MISO_P15_7)     // 硬件 SPI MISO 引脚
+#define IMU660RB_SPI_SPEED (10 * 1000 * 1000) // 硬件 SPI 速率
+#define IMU660RB_SPI IMU_SPI                  // 硬件 SPI 号
+#define IMU660RB_SPC_PIN IMU_SPC_PIN          // 硬件 SPI SCK 引脚
+#define IMU660RB_SDI_PIN IMU_SDI_PIN          // 硬件 SPI MOSI 引脚
+#define IMU660RB_SDO_PIN IMU_SDO_PIN          // 硬件 SPI MISO 引脚
 //====================================================硬件 SPI
 // 驱动====================================================
 #endif
-#define IMU660RB_CS_PIN (P14_6)  // CS 片选引脚
+#define IMU660RB_CS_PIN IMU_CS_PIN // CS 片选引脚
 #define IMU660RB_CS(x) \
     ((x) ? (gpio_high(IMU660RB_CS_PIN)) : (gpio_low(IMU660RB_CS_PIN)))
 
-#define IMU660RB_TIMEOUT_COUNT (0x00FF)  // IMU660 超时计数
+#define IMU660RB_TIMEOUT_COUNT (0x00FF) // IMU660 超时计数
 
 //================================================定义 imu660rb
 // 内部地址================================================
-#define IMU660RB_DEV_ADDR (0x6B)  // SA0接地：0x68 SA0上拉：0x69 模块默认上拉
+#define IMU660RB_DEV_ADDR (0x6B) // SA0接地：0x68 SA0上拉：0x69 模块默认上拉
 #define IMU660RB_SPI_W (0x00)
 #define IMU660RB_SPI_R (0x80)
 
@@ -112,7 +112,7 @@
 #define IMU660RB_ACC_ADDRESS (0x28)
 #define IMU660RB_GYRO_ADDRESS (0x22)
 
-#define IMU660RB_ACC_SAMPLE (0x3C)  // 加速度计量程
+#define IMU660RB_ACC_SAMPLE (0x3C) // 加速度计量程
 // 设置为:0x30 加速度量程为:±2G      获取到的加速度计数据
 // 除以16393，可以转化为带物理单位的数据，单位：g(m/s^2) 设置为:0x38
 // 加速度量程为:±4G      获取到的加速度计数据 除以8197，
@@ -121,7 +121,7 @@
 // 设置为:0x34 加速度量程为:±16G     获取到的加速度计数据 除以2049，
 // 可以转化为带物理单位的数据，单位：g(m/s^2)
 
-#define IMU660RB_GYR_SAMPLE (0x5C)  // 陀螺仪量程
+#define IMU660RB_GYR_SAMPLE (0x5C) // 陀螺仪量程
 // 设置为:0x52 陀螺仪量程为:±125dps  获取到的陀螺仪数据除以228.6，
 // 可以转化为带物理单位的数据，单位为：°/s 设置为:0x50 陀螺仪量程为:±250dps
 // 获取到的陀螺仪数据除以114.3，   可以转化为带物理单位的数据，单位为：°/s
@@ -135,21 +135,21 @@
 //================================================声明 IMU963RB
 // 全局变量================================================
 extern int16 imu660rb_gyro_x, imu660rb_gyro_y,
-    imu660rb_gyro_z;  // 三轴陀螺仪数据      gyro (陀螺仪)
+    imu660rb_gyro_z; // 三轴陀螺仪数据      gyro (陀螺仪)
 extern int16 imu660rb_acc_x, imu660rb_acc_y,
-    imu660rb_acc_z;  // 三轴加速度计数据     acc (accelerometer 加速度计)
+    imu660rb_acc_z; // 三轴加速度计数据     acc (accelerometer 加速度计)
 //================================================声明 IMU963RB
 // 全局变量================================================
 
 //================================================声明 IMU963RB
 // 基础函数================================================
-void imu660rb_get_acc(void);   // 获取 IMU660RB 加速度计数据
-void imu660rb_get_gyro(void);  // 获取 IMU660RB 陀螺仪数据
+void imu660rb_get_acc(void);  // 获取 IMU660RB 加速度计数据
+void imu660rb_get_gyro(void); // 获取 IMU660RB 陀螺仪数据
 float imu660rb_acc_transition(
-    int16 acc_value);  // 将 IMU660RB 加速度计数据转换为实际物理数据
+    int16 acc_value); // 将 IMU660RB 加速度计数据转换为实际物理数据
 float imu660rb_gyro_transition(
-    int16 gyro_value);      // 将 IMU660RB 陀螺仪数据转换为实际物理数据
-uint8 imu660rb_init(void);  // 初始化 IMU660RB
+    int16 gyro_value);     // 将 IMU660RB 陀螺仪数据转换为实际物理数据
+uint8 imu660rb_init(void); // 初始化 IMU660RB
 //================================================声明 IMU963RB
 // 基础函数================================================
 

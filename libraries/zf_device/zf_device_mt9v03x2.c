@@ -1,53 +1,52 @@
 /*********************************************************************************************************************
-* TC264 Opensourec Library ¼´£¨TC264 ¿ªÔ´¿â£©ÊÇÒ»¸ö»ùÓÚ¹Ù·½ SDK ½Ó¿ÚµÄµÚÈı·½¿ªÔ´¿â
-* Copyright (c) 2022 SEEKFREE Öğ·É¿Æ¼¼
-*
-* ±¾ÎÄ¼şÊÇ TC264 ¿ªÔ´¿âµÄÒ»²¿·Ö
-*
-* TC264 ¿ªÔ´¿â ÊÇÃâ·ÑÈí¼ş
-* Äú¿ÉÒÔ¸ù¾İ×ÔÓÉÈí¼ş»ù½ğ»á·¢²¼µÄ GPL£¨GNU General Public License£¬¼´ GNUÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤£©µÄÌõ¿î
-* ¼´ GPL µÄµÚ3°æ£¨¼´ GPL3.0£©»ò£¨ÄúÑ¡ÔñµÄ£©ÈÎºÎºóÀ´µÄ°æ±¾£¬ÖØĞÂ·¢²¼ºÍ/»òĞŞ¸ÄËü
-*
-* ±¾¿ªÔ´¿âµÄ·¢²¼ÊÇÏ£ÍûËüÄÜ·¢»Ó×÷ÓÃ£¬µ«²¢Î´¶ÔÆä×÷ÈÎºÎµÄ±£Ö¤
-* ÉõÖÁÃ»ÓĞÒşº¬µÄÊÊÏúĞÔ»òÊÊºÏÌØ¶¨ÓÃÍ¾µÄ±£Ö¤
-* ¸ü¶àÏ¸½ÚÇë²Î¼û GPL
-*
-* ÄúÓ¦¸ÃÔÚÊÕµ½±¾¿ªÔ´¿âµÄÍ¬Ê±ÊÕµ½Ò»·İ GPL µÄ¸±±¾
-* Èç¹ûÃ»ÓĞ£¬Çë²ÎÔÄ<https://www.gnu.org/licenses/>
-*
-* ¶îÍâ×¢Ã÷£º
-* ±¾¿ªÔ´¿âÊ¹ÓÃ GPL3.0 ¿ªÔ´Ğí¿ÉÖ¤Ğ­Òé ÒÔÉÏĞí¿ÉÉêÃ÷ÎªÒëÎÄ°æ±¾
-* Ğí¿ÉÉêÃ÷Ó¢ÎÄ°æÔÚ libraries/doc ÎÄ¼ş¼ĞÏÂµÄ GPL3_permission_statement.txt ÎÄ¼şÖĞ
-* Ğí¿ÉÖ¤¸±±¾ÔÚ libraries ÎÄ¼ş¼ĞÏÂ ¼´¸ÃÎÄ¼ş¼ĞÏÂµÄ LICENSE ÎÄ¼ş
-* »¶Ó­¸÷Î»Ê¹ÓÃ²¢´«²¥±¾³ÌĞò µ«ĞŞ¸ÄÄÚÈİÊ±±ØĞë±£ÁôÖğ·É¿Æ¼¼µÄ°æÈ¨ÉùÃ÷£¨¼´±¾ÉùÃ÷£©
-*
-* ÎÄ¼şÃû³Æ          zf_device_mt9v03x2
-* ¹«Ë¾Ãû³Æ          ³É¶¼Öğ·É¿Æ¼¼ÓĞÏŞ¹«Ë¾
-* °æ±¾ĞÅÏ¢          ²é¿´ libraries/doc ÎÄ¼ş¼ĞÄÚ version ÎÄ¼ş °æ±¾ËµÃ÷
-* ¿ª·¢»·¾³          ADS v1.10.2
-* ÊÊÓÃÆ½Ì¨          TC264D
-* µêÆÌÁ´½Ó          https://seekfree.taobao.com/
-*
-* ĞŞ¸Ä¼ÇÂ¼
-* ÈÕÆÚ              ×÷Õß                ±¸×¢
-* 2022-09-15       pudding            first version
-* 2023-04-28       pudding            Ôö¼ÓÖĞÎÄ×¢ÊÍËµÃ÷
-********************************************************************************************************************/
+ * TC264 Opensourec Library å³ï¼ˆTC264 å¼€æºåº“ï¼‰æ˜¯ä¸€ä¸ªåŸºäºå®˜æ–¹ SDK æ¥å£çš„ç¬¬ä¸‰æ–¹å¼€æºåº“
+ * Copyright (c) 2022 SEEKFREE é€é£ç§‘æŠ€
+ *
+ * æœ¬æ–‡ä»¶æ˜¯ TC264 å¼€æºåº“çš„ä¸€éƒ¨åˆ†
+ *
+ * TC264 å¼€æºåº“ æ˜¯å…è´¹è½¯ä»¶
+ * æ‚¨å¯ä»¥æ ¹æ®è‡ªç”±è½¯ä»¶åŸºé‡‘ä¼šå‘å¸ƒçš„ GPLï¼ˆGNU General Public Licenseï¼Œå³ GNUé€šç”¨å…¬å…±è®¸å¯è¯ï¼‰çš„æ¡æ¬¾
+ * å³ GPL çš„ç¬¬3ç‰ˆï¼ˆå³ GPL3.0ï¼‰æˆ–ï¼ˆæ‚¨é€‰æ‹©çš„ï¼‰ä»»ä½•åæ¥çš„ç‰ˆæœ¬ï¼Œé‡æ–°å‘å¸ƒå’Œ/æˆ–ä¿®æ”¹å®ƒ
+ *
+ * æœ¬å¼€æºåº“çš„å‘å¸ƒæ˜¯å¸Œæœ›å®ƒèƒ½å‘æŒ¥ä½œç”¨ï¼Œä½†å¹¶æœªå¯¹å…¶ä½œä»»ä½•çš„ä¿è¯
+ * ç”šè‡³æ²¡æœ‰éšå«çš„é€‚é”€æ€§æˆ–é€‚åˆç‰¹å®šç”¨é€”çš„ä¿è¯
+ * æ›´å¤šç»†èŠ‚è¯·å‚è§ GPL
+ *
+ * æ‚¨åº”è¯¥åœ¨æ”¶åˆ°æœ¬å¼€æºåº“çš„åŒæ—¶æ”¶åˆ°ä¸€ä»½ GPL çš„å‰¯æœ¬
+ * å¦‚æœæ²¡æœ‰ï¼Œè¯·å‚é˜…<https://www.gnu.org/licenses/>
+ *
+ * é¢å¤–æ³¨æ˜ï¼š
+ * æœ¬å¼€æºåº“ä½¿ç”¨ GPL3.0 å¼€æºè®¸å¯è¯åè®® ä»¥ä¸Šè®¸å¯ç”³æ˜ä¸ºè¯‘æ–‡ç‰ˆæœ¬
+ * è®¸å¯ç”³æ˜è‹±æ–‡ç‰ˆåœ¨ libraries/doc æ–‡ä»¶å¤¹ä¸‹çš„ GPL3_permission_statement.txt æ–‡ä»¶ä¸­
+ * è®¸å¯è¯å‰¯æœ¬åœ¨ libraries æ–‡ä»¶å¤¹ä¸‹ å³è¯¥æ–‡ä»¶å¤¹ä¸‹çš„ LICENSE æ–‡ä»¶
+ * æ¬¢è¿å„ä½ä½¿ç”¨å¹¶ä¼ æ’­æœ¬ç¨‹åº ä½†ä¿®æ”¹å†…å®¹æ—¶å¿…é¡»ä¿ç•™é€é£ç§‘æŠ€çš„ç‰ˆæƒå£°æ˜ï¼ˆå³æœ¬å£°æ˜ï¼‰
+ *
+ * æ–‡ä»¶åç§°          zf_device_mt9v03x2
+ * å…¬å¸åç§°          æˆéƒ½é€é£ç§‘æŠ€æœ‰é™å…¬å¸
+ * ç‰ˆæœ¬ä¿¡æ¯          æŸ¥çœ‹ libraries/doc æ–‡ä»¶å¤¹å†… version æ–‡ä»¶ ç‰ˆæœ¬è¯´æ˜
+ * å¼€å‘ç¯å¢ƒ          ADS v1.10.2
+ * é€‚ç”¨å¹³å°          TC264D
+ * åº—é“ºé“¾æ¥          https://seekfree.taobao.com/
+ *
+ * ä¿®æ”¹è®°å½•
+ * æ—¥æœŸ              ä½œè€…                å¤‡æ³¨
+ * 2022-09-15       pudding            first version
+ * 2023-04-28       pudding            å¢åŠ ä¸­æ–‡æ³¨é‡Šè¯´æ˜
+ ********************************************************************************************************************/
 /*********************************************************************************************************************
-* ½ÓÏß¶¨Òå£º
-*                  ------------------------------------
-*                  Ä£¿é¹Ü½Å             µ¥Æ¬»ú¹Ü½Å
-*                  TXD                ²é¿´ zf_device_mt9v03x2.h ÖĞ MT9V03X2_COF_UART_TX ºê¶¨Òå
-*                  RXD                ²é¿´ zf_device_mt9v03x2.h ÖĞ MT9V03X2_COF_UART_RX ºê¶¨Òå
-*                  PCLK               ²é¿´ zf_device_mt9v03x2.h ÖĞ MT9V03X2_PCLK_PIN ºê¶¨Òå
-*                  VSY                ²é¿´ zf_device_mt9v03x2.h ÖĞ MT9V03X2_VSYNC_PIN ºê¶¨Òå
-*                  D0-D7              ²é¿´ zf_device_mt9v03x2.h ÖĞ MT9V03X2_DATA_PIN ºê¶¨Òå ´Ó¸Ã¶¨Òå¿ªÊ¼µÄÁ¬Ğø°Ë¸öÒı½Å
-*                  VCC                3.3VµçÔ´
-*                  GND                µçÔ´µØ
-*                  ÆäÓàÒı½ÅĞü¿Õ
-*                  ------------------------------------
-********************************************************************************************************************/
-
+ * æ¥çº¿å®šä¹‰ï¼š
+ *                  ------------------------------------
+ *                  æ¨¡å—ç®¡è„š             å•ç‰‡æœºç®¡è„š
+ *                  TXD                æŸ¥çœ‹ zf_device_mt9v03x2.h ä¸­ MT9V03X2_COF_UART_TX å®å®šä¹‰
+ *                  RXD                æŸ¥çœ‹ zf_device_mt9v03x2.h ä¸­ MT9V03X2_COF_UART_RX å®å®šä¹‰
+ *                  PCLK               æŸ¥çœ‹ zf_device_mt9v03x2.h ä¸­ MT9V03X2_PCLK_PIN å®å®šä¹‰
+ *                  VSY                æŸ¥çœ‹ zf_device_mt9v03x2.h ä¸­ MT9V03X2_VSYNC_PIN å®å®šä¹‰
+ *                  D0-D7              æŸ¥çœ‹ zf_device_mt9v03x2.h ä¸­ MT9V03X2_DATA_PIN å®å®šä¹‰ ä»è¯¥å®šä¹‰å¼€å§‹çš„è¿ç»­å…«ä¸ªå¼•è„š
+ *                  VCC                3.3Vç”µæº
+ *                  GND                ç”µæºåœ°
+ *                  å…¶ä½™å¼•è„šæ‚¬ç©º
+ *                  ------------------------------------
+ ********************************************************************************************************************/
 
 #include "zf_common_interrupt.h"
 #include "zf_common_debug.h"
@@ -61,74 +60,79 @@
 #include "zf_device_camera.h"
 #include "zf_device_config.h"
 #include "isr_config.h"
+#include "../code/device/pin.h"
 #include "zf_device_mt9v03x2.h"
-vuint8  mt9v03x2_finish_flag = 0;                            // Ò»³¡Í¼Ïñ²É¼¯Íê³É±êÖ¾Î»
-IFX_ALIGN(4) uint8  mt9v03x2_image[MT9V03X2_H][MT9V03X2_W];    // ±ØĞë4×Ö½Ú¶ÔÆë
+vuint8 mt9v03x2_finish_flag = 0; // ä¸€åœºå›¾åƒé‡‡é›†å®Œæˆæ ‡å¿—ä½
+IFX_ALIGN(4)
+uint8 mt9v03x2_image[MT9V03X2_H][MT9V03X2_W]; // å¿…é¡»4å­—èŠ‚å¯¹é½
 
-static  m9v03x2_type_enum mt9v03x2_type;                      // ¶¨ÒåÉãÏñÍ·ÀàĞÍ
-static  uint16    mt9v03x2_version = 0x00;                   // ¶¨ÒåÉãÏñÍ·°æ±¾ºÅ
+static m9v03x2_type_enum mt9v03x2_type; // å®šä¹‰æ‘„åƒå¤´ç±»å‹
+static uint16 mt9v03x2_version = 0x00;  // å®šä¹‰æ‘„åƒå¤´ç‰ˆæœ¬å·
 
+int16 timeout_2 = MT9V03X2_INIT_TIMEOUT; // å®šä¹‰è¶…æ—¶æº¢å‡ºæ—¶é•¿
 
-int16   timeout_2 = MT9V03X2_INIT_TIMEOUT;                     // ¶¨Òå³¬Ê±Òç³öÊ±³¤
+uint8 mt9v03x2_lost_flag = 1; // å›¾åƒä¸¢å¤±æ ‡å¿—ä½
+uint8 mt9v03x2_dma_int_num;   // å½“å‰DMAä¸­æ–­æ¬¡æ•°
+uint8 mt9v03x2_dma_init_flag; // æ˜¯å¦éœ€è¦é‡æ–°åˆå§‹åŒ–
+uint8 mt9v03x2_link_list_num;
 
-uint8   mt9v03x2_lost_flag = 1;                              // Í¼Ïñ¶ªÊ§±êÖ¾Î»
-uint8   mt9v03x2_dma_int_num;                                // µ±Ç°DMAÖĞ¶Ï´ÎÊı
-uint8   mt9v03x2_dma_init_flag;                              // ÊÇ·ñĞèÒªÖØĞÂ³õÊ¼»¯
-uint8   mt9v03x2_link_list_num;
-
-// ĞèÒªÅäÖÃµ½ÉãÏñÍ·µÄÊı¾İ ²»ÔÊĞíÔÚÕâĞŞ¸Ä²ÎÊı
-static int16 mt9v03x2_set_confing_buffer[MT9V03X2_CONFIG_FINISH][2]=
-{
-    {MT9V03X2_INIT,              0},                                             // ÉãÏñÍ·¿ªÊ¼³õÊ¼»¯
-    {MT9V03X2_AUTO_EXP,          MT9V03X2_AUTO_EXP_DEF},                          // ×Ô¶¯ÆØ¹âÉèÖÃ   ·¶Î§1-63 0Îª¹Ø±Õ Èç¹û×Ô¶¯ÆØ¹â¿ªÆô  EXP_TIMEÃüÁîÉèÖÃµÄÊı¾İ½«»á±äÎª×î´óÆØ¹âÊ±¼ä£¬Ò²¾ÍÊÇ×Ô¶¯ÆØ¹âÊ±¼äµÄÉÏÏŞ
-    {MT9V03X2_EXP_TIME,          MT9V03X2_EXP_TIME_DEF},                          // ÆØ¹âÊ±¼ä      ÉãÏñÍ·ÊÕµ½ºó»á×Ô¶¯¼ÆËã³ö×î´óÆØ¹âÊ±¼ä£¬Èç¹ûÉèÖÃ¹ı´óÔòÉèÖÃÎª¼ÆËã³öÀ´µÄ×î´óÆØ¹âÖµ
-    {MT9V03X2_FPS,               MT9V03X2_FPS_DEF},                               // Í¼ÏñÖ¡ÂÊ      ÉãÏñÍ·ÊÕµ½ºó»á×Ô¶¯¼ÆËã³ö×î´óFPS£¬Èç¹û¹ı´óÔòÉèÖÃÎª¼ÆËã³öÀ´µÄ×î´óFPS
-    {MT9V03X2_SET_COL,           MT9V03X2_W},                                     // Í¼ÏñÁĞÊıÁ¿    ·¶Î§1-752
-    {MT9V03X2_SET_ROW,           MT9V03X2_H},                                     // Í¼ÏñĞĞÊıÁ¿    ·¶Î§1-480
-    {MT9V03X2_LR_OFFSET,         MT9V03X2_LR_OFFSET_DEF},                         // Í¼Ïñ×óÓÒÆ«ÒÆÁ¿  ÕıÖµ ÓÒÆ«ÒÆ   ¸ºÖµ ×óÆ«ÒÆ  ÁĞÎª188 376 752Ê±ÎŞ·¨ÉèÖÃÆ«ÒÆ    ÉãÏñÍ·ÊÕÆ«ÒÆÊı¾İºó»á×Ô¶¯¼ÆËã×î´óÆ«ÒÆ£¬Èç¹û³¬³öÔòÉèÖÃ¼ÆËã³öÀ´µÄ×î´óÆ«ÒÆ
-    {MT9V03X2_UD_OFFSET,         MT9V03X2_UD_OFFSET_DEF},                         // Í¼ÏñÉÏÏÂÆ«ÒÆÁ¿  ÕıÖµ ÉÏÆ«ÒÆ   ¸ºÖµ ÏÂÆ«ÒÆ  ĞĞÎª120 240 480Ê±ÎŞ·¨ÉèÖÃÆ«ÒÆ    ÉãÏñÍ·ÊÕÆ«ÒÆÊı¾İºó»á×Ô¶¯¼ÆËã×î´óÆ«ÒÆ£¬Èç¹û³¬³öÔòÉèÖÃ¼ÆËã³öÀ´µÄ×î´óÆ«ÒÆ
-    {MT9V03X2_GAIN,              MT9V03X2_GAIN_DEF},                              // Í¼ÏñÔöÒæ      ·¶Î§16-64     ÔöÒæ¿ÉÒÔÔÚÆØ¹âÊ±¼ä¹Ì¶¨µÄÇé¿öÏÂ¸Ä±äÍ¼ÏñÁÁ°µ³Ì¶È
-    {MT9V03X2_PCLK_MODE,         MT9V03X2_PCLK_MODE_DEF},                         // ÏñËØÊ±ÖÓÄ£Ê½   ½ö×Ü×ê·çMT9V034 V2.0ÒÔ¼°ÒÔÉÏ°æ±¾Ö§³Ö¸ÃÃüÁî
+// éœ€è¦é…ç½®åˆ°æ‘„åƒå¤´çš„æ•°æ® ä¸å…è®¸åœ¨è¿™ä¿®æ”¹å‚æ•°
+static int16 mt9v03x2_set_confing_buffer[MT9V03X2_CONFIG_FINISH][2] =
+    {
+        {MT9V03X2_INIT, 0},                           // æ‘„åƒå¤´å¼€å§‹åˆå§‹åŒ–
+        {MT9V03X2_AUTO_EXP, MT9V03X2_AUTO_EXP_DEF},   // è‡ªåŠ¨æ›å…‰è®¾ç½®   èŒƒå›´1-63 0ä¸ºå…³é—­ å¦‚æœè‡ªåŠ¨æ›å…‰å¼€å¯  EXP_TIMEå‘½ä»¤è®¾ç½®çš„æ•°æ®å°†ä¼šå˜ä¸ºæœ€å¤§æ›å…‰æ—¶é—´ï¼Œä¹Ÿå°±æ˜¯è‡ªåŠ¨æ›å…‰æ—¶é—´çš„ä¸Šé™
+        {MT9V03X2_EXP_TIME, MT9V03X2_EXP_TIME_DEF},   // æ›å…‰æ—¶é—´      æ‘„åƒå¤´æ”¶åˆ°åä¼šè‡ªåŠ¨è®¡ç®—å‡ºæœ€å¤§æ›å…‰æ—¶é—´ï¼Œå¦‚æœè®¾ç½®è¿‡å¤§åˆ™è®¾ç½®ä¸ºè®¡ç®—å‡ºæ¥çš„æœ€å¤§æ›å…‰å€¼
+        {MT9V03X2_FPS, MT9V03X2_FPS_DEF},             // å›¾åƒå¸§ç‡      æ‘„åƒå¤´æ”¶åˆ°åä¼šè‡ªåŠ¨è®¡ç®—å‡ºæœ€å¤§FPSï¼Œå¦‚æœè¿‡å¤§åˆ™è®¾ç½®ä¸ºè®¡ç®—å‡ºæ¥çš„æœ€å¤§FPS
+        {MT9V03X2_SET_COL, MT9V03X2_W},               // å›¾åƒåˆ—æ•°é‡    èŒƒå›´1-752
+        {MT9V03X2_SET_ROW, MT9V03X2_H},               // å›¾åƒè¡Œæ•°é‡    èŒƒå›´1-480
+        {MT9V03X2_LR_OFFSET, MT9V03X2_LR_OFFSET_DEF}, // å›¾åƒå·¦å³åç§»é‡  æ­£å€¼ å³åç§»   è´Ÿå€¼ å·¦åç§»  åˆ—ä¸º188 376 752æ—¶æ— æ³•è®¾ç½®åç§»    æ‘„åƒå¤´æ”¶åç§»æ•°æ®åä¼šè‡ªåŠ¨è®¡ç®—æœ€å¤§åç§»ï¼Œå¦‚æœè¶…å‡ºåˆ™è®¾ç½®è®¡ç®—å‡ºæ¥çš„æœ€å¤§åç§»
+        {MT9V03X2_UD_OFFSET, MT9V03X2_UD_OFFSET_DEF}, // å›¾åƒä¸Šä¸‹åç§»é‡  æ­£å€¼ ä¸Šåç§»   è´Ÿå€¼ ä¸‹åç§»  è¡Œä¸º120 240 480æ—¶æ— æ³•è®¾ç½®åç§»    æ‘„åƒå¤´æ”¶åç§»æ•°æ®åä¼šè‡ªåŠ¨è®¡ç®—æœ€å¤§åç§»ï¼Œå¦‚æœè¶…å‡ºåˆ™è®¾ç½®è®¡ç®—å‡ºæ¥çš„æœ€å¤§åç§»
+        {MT9V03X2_GAIN, MT9V03X2_GAIN_DEF},           // å›¾åƒå¢ç›Š      èŒƒå›´16-64     å¢ç›Šå¯ä»¥åœ¨æ›å…‰æ—¶é—´å›ºå®šçš„æƒ…å†µä¸‹æ”¹å˜å›¾åƒäº®æš—ç¨‹åº¦
+        {MT9V03X2_PCLK_MODE, MT9V03X2_PCLK_MODE_DEF}, // åƒç´ æ—¶é’Ÿæ¨¡å¼   ä»…æ€»é’»é£MT9V034 V2.0ä»¥åŠä»¥ä¸Šç‰ˆæœ¬æ”¯æŒè¯¥å‘½ä»¤
 };
 
-// ´ÓÉãÏñÍ·ÄÚ²¿»ñÈ¡µ½µÄÅäÖÃÊı¾İ ²»ÔÊĞíÔÚÕâĞŞ¸Ä²ÎÊı
-static int16 mt9v03x2_get_confing_buffer[MT9V03X2_CONFIG_FINISH - 1][2]=
-{
-    {MT9V03X2_AUTO_EXP,          0},                                             // ×Ô¶¯ÆØ¹âÉèÖÃ
-    {MT9V03X2_EXP_TIME,          0},                                             // ÆØ¹âÊ±¼ä
-    {MT9V03X2_FPS,               0},                                             // Í¼ÏñÖ¡ÂÊ
-    {MT9V03X2_SET_COL,           0},                                             // Í¼ÏñÁĞÊıÁ¿
-    {MT9V03X2_SET_ROW,           0},                                             // Í¼ÏñĞĞÊıÁ¿
-    {MT9V03X2_LR_OFFSET,         0},                                             // Í¼Ïñ×óÓÒÆ«ÒÆÁ¿
-    {MT9V03X2_UD_OFFSET,         0},                                             // Í¼ÏñÉÏÏÂÆ«ÒÆÁ¿
-    {MT9V03X2_GAIN,              0},                                             // Í¼ÏñÔöÒæ
-    {MT9V03X2_PCLK_MODE,         0},                                             // ÏñËØÊ±ÖÓÄ£Ê½ÃüÁî PCLKÄ£Ê½ < ½ö×Ü×ê·ç MT9V034 V1.5 ÒÔ¼°ÒÔÉÏ°æ±¾Ö§³Ö¸ÃÃüÁî >
+// ä»æ‘„åƒå¤´å†…éƒ¨è·å–åˆ°çš„é…ç½®æ•°æ® ä¸å…è®¸åœ¨è¿™ä¿®æ”¹å‚æ•°
+static int16 mt9v03x2_get_confing_buffer[MT9V03X2_CONFIG_FINISH - 1][2] =
+    {
+        {MT9V03X2_AUTO_EXP, 0},  // è‡ªåŠ¨æ›å…‰è®¾ç½®
+        {MT9V03X2_EXP_TIME, 0},  // æ›å…‰æ—¶é—´
+        {MT9V03X2_FPS, 0},       // å›¾åƒå¸§ç‡
+        {MT9V03X2_SET_COL, 0},   // å›¾åƒåˆ—æ•°é‡
+        {MT9V03X2_SET_ROW, 0},   // å›¾åƒè¡Œæ•°é‡
+        {MT9V03X2_LR_OFFSET, 0}, // å›¾åƒå·¦å³åç§»é‡
+        {MT9V03X2_UD_OFFSET, 0}, // å›¾åƒä¸Šä¸‹åç§»é‡
+        {MT9V03X2_GAIN, 0},      // å›¾åƒå¢ç›Š
+        {MT9V03X2_PCLK_MODE, 0}, // åƒç´ æ—¶é’Ÿæ¨¡å¼å‘½ä»¤ PCLKæ¨¡å¼ < ä»…æ€»é’»é£ MT9V034 V1.5 ä»¥åŠä»¥ä¸Šç‰ˆæœ¬æ”¯æŒè¯¥å‘½ä»¤ >
 };
 
 //-------------------------------------------------------------------------------------------------------------------
-// º¯Êı¼ò½é     ÅäÖÃÉãÏñÍ·ÄÚ²¿ÅäÖÃĞÅÏ¢
-// ²ÎÊıËµÃ÷     buff            ·¢ËÍÅäÖÃĞÅÏ¢µÄµØÖ·
-// ·µ»Ø²ÎÊı     uint8           1-Ê§°Ü 0-³É¹¦
-// Ê¹ÓÃÊ¾Àı     mt9v03x2_set_config(mt9v03x2_set_confing_buffer);
-// ±¸×¢ĞÅÏ¢     ÄÚ²¿µ÷ÓÃ
+// å‡½æ•°ç®€ä»‹     é…ç½®æ‘„åƒå¤´å†…éƒ¨é…ç½®ä¿¡æ¯
+// å‚æ•°è¯´æ˜     buff            å‘é€é…ç½®ä¿¡æ¯çš„åœ°å€
+// è¿”å›å‚æ•°     uint8           1-å¤±è´¥ 0-æˆåŠŸ
+// ä½¿ç”¨ç¤ºä¾‹     mt9v03x2_set_config(mt9v03x2_set_confing_buffer);
+// å¤‡æ³¨ä¿¡æ¯     å†…éƒ¨è°ƒç”¨
 //-------------------------------------------------------------------------------------------------------------------
-static uint8 mt9v03x2_set_config (int16 buff[MT9V03X2_CONFIG_FINISH][2])
+static uint8 mt9v03x2_set_config(int16 buff[MT9V03X2_CONFIG_FINISH][2])
 {
     uint8 return_state = 1;
-    uint8  uart_buffer[4];
+    uint8 uart_buffer[4];
     uint16 temp = 0;
     uint16 timeout_count = 0;
     uint32 loop_count = 0;
     uint32 uart_buffer_index = 0;
 
-    switch(mt9v03x2_version)
+    switch (mt9v03x2_version)
     {
-        case 0x0230:    loop_count = MT9V03X2_PCLK_MODE;  break;
-        default:        loop_count = MT9V03X2_GAIN;       break;
+    case 0x0230:
+        loop_count = MT9V03X2_PCLK_MODE;
+        break;
+    default:
+        loop_count = MT9V03X2_GAIN;
+        break;
     }
-    // ÉèÖÃ²ÎÊı  ¾ßÌåÇë²Î¿´ÎÊÌâ½õ¼¯ÊÖ²á
-    // ¿ªÊ¼ÅäÖÃÉãÏñÍ·²¢ÖØĞÂ³õÊ¼»¯
-    for(; MT9V03X2_SET_DATA > loop_count; loop_count --)
+    // è®¾ç½®å‚æ•°  å…·ä½“è¯·å‚çœ‹é—®é¢˜é”¦é›†æ‰‹å†Œ
+    // å¼€å§‹é…ç½®æ‘„åƒå¤´å¹¶é‡æ–°åˆå§‹åŒ–
+    for (; MT9V03X2_SET_DATA > loop_count; loop_count--)
     {
         uart_buffer[0] = 0xA5;
         uart_buffer[1] = (uint8)buff[loop_count][0];
@@ -142,48 +146,52 @@ static uint8 mt9v03x2_set_config (int16 buff[MT9V03X2_CONFIG_FINISH][2])
 
     do
     {
-        if(3 <= fifo_used(&camera_receiver_fifo))
+        if (3 <= fifo_used(&camera_receiver_fifo))
         {
             uart_buffer_index = 3;
             fifo_read_buffer(&camera_receiver_fifo, uart_buffer, &uart_buffer_index, FIFO_READ_AND_CLEAN);
-            if((0xff == uart_buffer[1]) || (0xff == uart_buffer[2]))
+            if ((0xff == uart_buffer[1]) || (0xff == uart_buffer[2]))
             {
                 return_state = 0;
                 break;
             }
         }
         system_delay_ms(1);
-    }while(MT9V03X2_INIT_TIMEOUT > timeout_count ++);
-    // ÒÔÉÏ²¿·Ö¶ÔÉãÏñÍ·ÅäÖÃµÄÊı¾İÈ«²¿¶¼»á±£´æÔÚÉãÏñÍ·ÉÏ51µ¥Æ¬»úµÄeepromÖĞ
-    // ÀûÓÃset_exposure_timeº¯Êıµ¥¶ÀÅäÖÃµÄÆØ¹âÊı¾İ²»´æ´¢ÔÚeepromÖĞ
+    } while (MT9V03X2_INIT_TIMEOUT > timeout_count++);
+    // ä»¥ä¸Šéƒ¨åˆ†å¯¹æ‘„åƒå¤´é…ç½®çš„æ•°æ®å…¨éƒ¨éƒ½ä¼šä¿å­˜åœ¨æ‘„åƒå¤´ä¸Š51å•ç‰‡æœºçš„eepromä¸­
+    // åˆ©ç”¨set_exposure_timeå‡½æ•°å•ç‹¬é…ç½®çš„æ›å…‰æ•°æ®ä¸å­˜å‚¨åœ¨eepromä¸­
     return return_state;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-// º¯Êı¼ò½é     »ñÈ¡ÉãÏñÍ·ÄÚ²¿ÅäÖÃĞÅÏ¢
-// ²ÎÊıËµÃ÷     buff            ½ÓÊÕÅäÖÃĞÅÏ¢µÄµØÖ·
-// ·µ»Ø²ÎÊı     uint8           1-Ê§°Ü 0-³É¹¦
-// Ê¹ÓÃÊ¾Àı     mt9v03x2_get_config(mt9v03x2_get_confing_buffer);
-// ±¸×¢ĞÅÏ¢     ÄÚ²¿µ÷ÓÃ
+// å‡½æ•°ç®€ä»‹     è·å–æ‘„åƒå¤´å†…éƒ¨é…ç½®ä¿¡æ¯
+// å‚æ•°è¯´æ˜     buff            æ¥æ”¶é…ç½®ä¿¡æ¯çš„åœ°å€
+// è¿”å›å‚æ•°     uint8           1-å¤±è´¥ 0-æˆåŠŸ
+// ä½¿ç”¨ç¤ºä¾‹     mt9v03x2_get_config(mt9v03x2_get_confing_buffer);
+// å¤‡æ³¨ä¿¡æ¯     å†…éƒ¨è°ƒç”¨
 //-------------------------------------------------------------------------------------------------------------------
-static uint8 mt9v03x2_get_config (int16 buff[MT9V03X2_CONFIG_FINISH - 1][2])
+static uint8 mt9v03x2_get_config(int16 buff[MT9V03X2_CONFIG_FINISH - 1][2])
 {
     uint8 return_state = 0;
-    uint8  uart_buffer[4];
+    uint8 uart_buffer[4];
     uint16 temp = 0;
     uint16 timeout_count = 0;
     uint32 loop_count = 0;
     uint32 uart_buffer_index = 0;
 
-    switch(mt9v03x2_version)
+    switch (mt9v03x2_version)
     {
-        case 0x0230:    loop_count = MT9V03X2_PCLK_MODE;  break;
-        default:        loop_count = MT9V03X2_GAIN;       break;
+    case 0x0230:
+        loop_count = MT9V03X2_PCLK_MODE;
+        break;
+    default:
+        loop_count = MT9V03X2_GAIN;
+        break;
     }
 
-    for(loop_count = loop_count - 1; 1 <= loop_count; loop_count --)
+    for (loop_count = loop_count - 1; 1 <= loop_count; loop_count--)
     {
-        if((0x0230 > mt9v03x2_version) && (MT9V03X2_PCLK_MODE == buff[loop_count][0]))
+        if ((0x0230 > mt9v03x2_version) && (MT9V03X2_PCLK_MODE == buff[loop_count][0]))
         {
             continue;
         }
@@ -194,10 +202,10 @@ static uint8 mt9v03x2_get_config (int16 buff[MT9V03X2_CONFIG_FINISH - 1][2])
         uart_buffer[3] = (uint8)temp;
         uart_write_buffer(MT9V03X2_COF_UART, uart_buffer, 4);
 
-        timeout_count = 0;    
+        timeout_count = 0;
         do
         {
-            if(3 <= fifo_used(&camera_receiver_fifo))
+            if (3 <= fifo_used(&camera_receiver_fifo))
             {
                 uart_buffer_index = 3;
                 fifo_read_buffer(&camera_receiver_fifo, uart_buffer, &uart_buffer_index, FIFO_READ_AND_CLEAN);
@@ -205,8 +213,8 @@ static uint8 mt9v03x2_get_config (int16 buff[MT9V03X2_CONFIG_FINISH - 1][2])
                 break;
             }
             system_delay_ms(1);
-        }while(MT9V03X2_INIT_TIMEOUT > timeout_count ++);
-        if(MT9V03X2_INIT_TIMEOUT < timeout_count)                                // ³¬Ê±
+        } while (MT9V03X2_INIT_TIMEOUT > timeout_count++);
+        if (MT9V03X2_INIT_TIMEOUT < timeout_count) // è¶…æ—¶
         {
             return_state = 1;
             break;
@@ -215,18 +223,17 @@ static uint8 mt9v03x2_get_config (int16 buff[MT9V03X2_CONFIG_FINISH - 1][2])
     return return_state;
 }
 
-
 //-------------------------------------------------------------------------------------------------------------------
-//  º¯Êı¼ò½é      MT9V03X2ÉãÏñÍ·´®¿ÚÍ¨ĞÅ»Øµ÷
-//  ²ÎÊıËµÃ÷      void
-//  ·µ»Ø²ÎÊı      void
-//  Ê¹ÓÃÊ¾Àı      mt9v03x2_uart_callback();
+//  å‡½æ•°ç®€ä»‹      MT9V03X2æ‘„åƒå¤´ä¸²å£é€šä¿¡å›è°ƒ
+//  å‚æ•°è¯´æ˜      void
+//  è¿”å›å‚æ•°      void
+//  ä½¿ç”¨ç¤ºä¾‹      mt9v03x2_uart_callback();
 //-------------------------------------------------------------------------------------------------------------------
-static void mt9v03x2_uart_handler (void)
+static void mt9v03x2_uart_handler(void)
 {
     uint8 data = 0;
     uart_query_byte(MT9V03X2_COF_UART, &data);
-    if(0xA5 == data)
+    if (0xA5 == data)
     {
         fifo_clear(&camera_receiver_fifo);
     }
@@ -234,33 +241,33 @@ static void mt9v03x2_uart_handler (void)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  º¯Êı¼ò½é      MT9V03X2ÉãÏñÍ·³¡ÖĞ¶Ï
-//  ²ÎÊıËµÃ÷      void
-//  ·µ»Ø²ÎÊı      void
-//  Ê¹ÓÃÊ¾Àı      mt9v03x2_vsync_handler();
+//  å‡½æ•°ç®€ä»‹      MT9V03X2æ‘„åƒå¤´åœºä¸­æ–­
+//  å‚æ•°è¯´æ˜      void
+//  è¿”å›å‚æ•°      void
+//  ä½¿ç”¨ç¤ºä¾‹      mt9v03x2_vsync_handler();
 //-------------------------------------------------------------------------------------------------------------------
 static void mt9v03x2_vsync_handler(void)
 {
     exti_flag_clear(MT9V03X2_VSYNC_PIN);
     mt9v03x2_dma_int_num = 0;
-    if(mt9v03x2_dma_init_flag )
+    if (mt9v03x2_dma_init_flag)
     {
         mt9v03x2_dma_init_flag = 0;
         IfxDma_resetChannel(&MODULE_DMA, MT9V03X2_DMA_CH);
         mt9v03x2_link_list_num = dma_init_2(MT9V03X2_DMA_CH,
-                                         MT9V03X2_DATA_ADD,
-                                         mt9v03x2_image[0],
-                                         MT9V03X2_PCLK_PIN,
-                                         EXTI_TRIGGER_RISING,
-                                         MT9V03X2_IMAGE_SIZE,
-                                         DMA_INT_PRIO_2);           // Èç¹û³¬Æµµ½300M µ¹ÊıµÚ¶ş¸ö²ÎÊıÇëÉèÖÃÎªFALLING
+                                            MT9V03X2_DATA_ADD,
+                                            mt9v03x2_image[0],
+                                            MT9V03X2_PCLK_PIN,
+                                            EXTI_TRIGGER_RISING,
+                                            MT9V03X2_IMAGE_SIZE,
+                                            DMA_INT_PRIO_2); // å¦‚æœè¶…é¢‘åˆ°300M å€’æ•°ç¬¬äºŒä¸ªå‚æ•°è¯·è®¾ç½®ä¸ºFALLING
         dma_enable(MT9V03X2_DMA_CH);
     }
     else
     {
-        if(1 == mt9v03x2_link_list_num)
+        if (1 == mt9v03x2_link_list_num)
         {
-            dma_set_destination(MT9V03X2_DMA_CH, mt9v03x2_image[0]);      // Ã»ÓĞ²ÉÓÃÁ´½Ó´«ÊäÄ£Ê½ ÖØĞÂÉèÖÃÄ¿µÄµØÖ·
+            dma_set_destination(MT9V03X2_DMA_CH, mt9v03x2_image[0]); // æ²¡æœ‰é‡‡ç”¨é“¾æ¥ä¼ è¾“æ¨¡å¼ é‡æ–°è®¾ç½®ç›®çš„åœ°å€
         }
         dma_enable(MT9V03X2_DMA_CH);
     }
@@ -268,16 +275,16 @@ static void mt9v03x2_vsync_handler(void)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  º¯Êı¼ò½é      MT9V03X2ÉãÏñÍ·DMAÍê³ÉÖĞ¶Ï
-//  ²ÎÊıËµÃ÷      void
-//  ·µ»Ø²ÎÊı      void
-//  Ê¹ÓÃÊ¾Àı      mt9v03x2_dma_handler();
+//  å‡½æ•°ç®€ä»‹      MT9V03X2æ‘„åƒå¤´DMAå®Œæˆä¸­æ–­
+//  å‚æ•°è¯´æ˜      void
+//  è¿”å›å‚æ•°      void
+//  ä½¿ç”¨ç¤ºä¾‹      mt9v03x2_dma_handler();
 //-------------------------------------------------------------------------------------------------------------------
 static void mt9v03x2_dma_handler(void)
 {
     clear_dma_flag(MT9V03X2_DMA_CH);
 
-    if(IfxDma_getChannelTransactionRequestLost(&MODULE_DMA, MT9V03X2_DMA_CH)) // Í¼Ïñ´íÎ»ÅĞ¶Ï
+    if (IfxDma_getChannelTransactionRequestLost(&MODULE_DMA, MT9V03X2_DMA_CH)) // å›¾åƒé”™ä½åˆ¤æ–­
     {
         mt9v03x2_finish_flag = 0;
         dma_disable(MT9V03X2_DMA_CH);
@@ -287,12 +294,12 @@ static void mt9v03x2_dma_handler(void)
     else
     {
         mt9v03x2_dma_int_num++;
-        if(mt9v03x2_dma_int_num >= mt9v03x2_link_list_num)
+        if (mt9v03x2_dma_int_num >= mt9v03x2_link_list_num)
         {
-            // ²É¼¯Íê³É
-            // Ò»¸±Í¼Ïñ´Ó²É¼¯¿ªÊ¼µ½²É¼¯½áÊøºÄÊ±3.8MS×óÓÒ(50FPS¡¢188*120·Ö±æÂÊ)
+            // é‡‡é›†å®Œæˆ
+            // ä¸€å‰¯å›¾åƒä»é‡‡é›†å¼€å§‹åˆ°é‡‡é›†ç»“æŸè€—æ—¶3.8MSå·¦å³(50FPSã€188*120åˆ†è¾¨ç‡)
             mt9v03x2_dma_int_num = 0;
-            mt9v03x2_lost_flag   = 0;
+            mt9v03x2_lost_flag = 0;
             mt9v03x2_finish_flag = 1;
             dma_disable(MT9V03X2_DMA_CH);
         }
@@ -300,16 +307,16 @@ static void mt9v03x2_dma_handler(void)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-// º¯Êı¼ò½é     »ñÈ¡ÉãÏñÍ·¹Ì¼ş°æ±¾
-// ²ÎÊıËµÃ÷     void
-// ·µ»Ø²ÎÊı     uint16          0-»ñÈ¡´íÎó N-°æ±¾ºÅ
-// Ê¹ÓÃÊ¾Àı     mt9v03x2_get_version();                          // µ÷ÓÃ¸Ãº¯ÊıÇ°ÇëÏÈ³õÊ¼»¯´®¿Ú
-// ±¸×¢ĞÅÏ¢
+// å‡½æ•°ç®€ä»‹     è·å–æ‘„åƒå¤´å›ºä»¶ç‰ˆæœ¬
+// å‚æ•°è¯´æ˜     void
+// è¿”å›å‚æ•°     uint16          0-è·å–é”™è¯¯ N-ç‰ˆæœ¬å·
+// ä½¿ç”¨ç¤ºä¾‹     mt9v03x2_get_version();                          // è°ƒç”¨è¯¥å‡½æ•°å‰è¯·å…ˆåˆå§‹åŒ–ä¸²å£
+// å¤‡æ³¨ä¿¡æ¯
 //-------------------------------------------------------------------------------------------------------------------
-uint16 mt9v03x2_get_version (void)
+uint16 mt9v03x2_get_version(void)
 {
     uint16 temp;
-    uint8  uart_buffer[4];
+    uint8 uart_buffer[4];
     uint16 timeout_count = 0;
     uint16 return_value = 0;
     uint32 uart_buffer_index = 0;
@@ -323,7 +330,7 @@ uint16 mt9v03x2_get_version (void)
 
     do
     {
-        if(3 <= fifo_used(&camera_receiver_fifo))
+        if (3 <= fifo_used(&camera_receiver_fifo))
         {
             uart_buffer_index = 3;
             fifo_read_buffer(&camera_receiver_fifo, uart_buffer, &uart_buffer_index, FIFO_READ_AND_CLEAN);
@@ -331,26 +338,26 @@ uint16 mt9v03x2_get_version (void)
             break;
         }
         system_delay_ms(1);
-    }while(MT9V03X2_INIT_TIMEOUT > timeout_count ++);
+    } while (MT9V03X2_INIT_TIMEOUT > timeout_count++);
     return return_value;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-// º¯Êı¼ò½é     µ¥¶ÀÉèÖÃÉãÏñÍ·ÆØ¹âÊ±¼ä
-// ²ÎÊıËµÃ÷     light           Éè¶¨ÆØ¹âÊ±¼ä
-// ·µ»Ø²ÎÊı     uint8           1-Ê§°Ü 0-³É¹¦
-// Ê¹ÓÃÊ¾Àı     mt9v03x2_set_exposure_time(100);                 // µ÷ÓÃ¸Ãº¯ÊıÇ°ÇëÏÈ³õÊ¼»¯´®¿Ú
-// ±¸×¢ĞÅÏ¢     ÉèÖÃÆØ¹âÊ±¼äÔ½´óÍ¼ÏñÔ½ÁÁ
-//              ÉãÏñÍ·ÊÕµ½ºó»á¸ù¾İ·Ö±æÂÊ¼°FPS¼ÆËã×î´óÆØ¹âÊ±¼äÈç¹ûÉèÖÃµÄÊı¾İ¹ı´ó
-//              ÄÇÃ´ÉãÏñÍ·½«»áÉèÖÃÕâ¸ö×î´óÖµ
+// å‡½æ•°ç®€ä»‹     å•ç‹¬è®¾ç½®æ‘„åƒå¤´æ›å…‰æ—¶é—´
+// å‚æ•°è¯´æ˜     light           è®¾å®šæ›å…‰æ—¶é—´
+// è¿”å›å‚æ•°     uint8           1-å¤±è´¥ 0-æˆåŠŸ
+// ä½¿ç”¨ç¤ºä¾‹     mt9v03x2_set_exposure_time(100);                 // è°ƒç”¨è¯¥å‡½æ•°å‰è¯·å…ˆåˆå§‹åŒ–ä¸²å£
+// å¤‡æ³¨ä¿¡æ¯     è®¾ç½®æ›å…‰æ—¶é—´è¶Šå¤§å›¾åƒè¶Šäº®
+//              æ‘„åƒå¤´æ”¶åˆ°åä¼šæ ¹æ®åˆ†è¾¨ç‡åŠFPSè®¡ç®—æœ€å¤§æ›å…‰æ—¶é—´å¦‚æœè®¾ç½®çš„æ•°æ®è¿‡å¤§
+//              é‚£ä¹ˆæ‘„åƒå¤´å°†ä¼šè®¾ç½®è¿™ä¸ªæœ€å¤§å€¼
 //-------------------------------------------------------------------------------------------------------------------
-uint8 mt9v03x2_set_exposure_time (uint16 light)
+uint8 mt9v03x2_set_exposure_time(uint16 light)
 {
     uint8 return_state = 0;
-    if(MT9V03X2_UART == mt9v03x2_type)
+    if (MT9V03X2_UART == mt9v03x2_type)
     {
         set_camera_type(CAMERA_GRAYSCALE2, mt9v03x2_vsync_handler, mt9v03x2_dma_handler, mt9v03x2_uart_handler);
-        uint8  uart_buffer[4];
+        uint8 uart_buffer[4];
         uint16 temp = 0;
         uint16 timeout_count = 0;
         uint32 uart_buffer_index = 0;
@@ -364,7 +371,7 @@ uint8 mt9v03x2_set_exposure_time (uint16 light)
 
         do
         {
-            if(3 <= fifo_used(&camera_receiver_fifo))
+            if (3 <= fifo_used(&camera_receiver_fifo))
             {
                 uart_buffer_index = 3;
                 fifo_read_buffer(&camera_receiver_fifo, uart_buffer, &uart_buffer_index, FIFO_READ_AND_CLEAN);
@@ -372,8 +379,8 @@ uint8 mt9v03x2_set_exposure_time (uint16 light)
                 break;
             }
             system_delay_ms(1);
-        }while(MT9V03X2_INIT_TIMEOUT > timeout_count ++);
-        if((temp != light) || (MT9V03X2_INIT_TIMEOUT <= timeout_count))
+        } while (MT9V03X2_INIT_TIMEOUT > timeout_count++);
+        if ((temp != light) || (MT9V03X2_INIT_TIMEOUT <= timeout_count))
         {
             return_state = 1;
         }
@@ -387,20 +394,20 @@ uint8 mt9v03x2_set_exposure_time (uint16 light)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-// º¯Êı¼ò½é     ¶ÔÉãÏñÍ·ÄÚ²¿¼Ä´æÆ÷½øĞĞĞ´²Ù×÷
-// ²ÎÊıËµÃ÷     addr            ÉãÏñÍ·ÄÚ²¿¼Ä´æÆ÷µØÖ·
-// ²ÎÊıËµÃ÷     data            ĞèÒªĞ´ÈëµÄÊı¾İ
-// ·µ»Ø²ÎÊı     uint8           1-Ê§°Ü 0-³É¹¦
-// Ê¹ÓÃÊ¾Àı     mt9v03x2_set_reg(addr, data);                    // µ÷ÓÃ¸Ãº¯ÊıÇ°ÇëÏÈ³õÊ¼»¯´®¿Ú
-// ±¸×¢ĞÅÏ¢
+// å‡½æ•°ç®€ä»‹     å¯¹æ‘„åƒå¤´å†…éƒ¨å¯„å­˜å™¨è¿›è¡Œå†™æ“ä½œ
+// å‚æ•°è¯´æ˜     addr            æ‘„åƒå¤´å†…éƒ¨å¯„å­˜å™¨åœ°å€
+// å‚æ•°è¯´æ˜     data            éœ€è¦å†™å…¥çš„æ•°æ®
+// è¿”å›å‚æ•°     uint8           1-å¤±è´¥ 0-æˆåŠŸ
+// ä½¿ç”¨ç¤ºä¾‹     mt9v03x2_set_reg(addr, data);                    // è°ƒç”¨è¯¥å‡½æ•°å‰è¯·å…ˆåˆå§‹åŒ–ä¸²å£
+// å¤‡æ³¨ä¿¡æ¯
 //-------------------------------------------------------------------------------------------------------------------
-uint8 mt9v03x2_set_reg (uint8 addr, uint16 data)
+uint8 mt9v03x2_set_reg(uint8 addr, uint16 data)
 {
     uint8 return_state = 0;
-    if(MT9V03X2_UART == mt9v03x2_type)
+    if (MT9V03X2_UART == mt9v03x2_type)
     {
         set_camera_type(CAMERA_GRAYSCALE2, mt9v03x2_vsync_handler, mt9v03x2_dma_handler, mt9v03x2_uart_handler);
-        uint8  uart_buffer[4];
+        uint8 uart_buffer[4];
         uint16 temp = 0;
         uint16 timeout_count = 0;
         uint32 uart_buffer_index = 0;
@@ -422,7 +429,7 @@ uint8 mt9v03x2_set_reg (uint8 addr, uint16 data)
 
         do
         {
-            if(3 <= fifo_used(&camera_receiver_fifo))
+            if (3 <= fifo_used(&camera_receiver_fifo))
             {
                 uart_buffer_index = 3;
                 fifo_read_buffer(&camera_receiver_fifo, uart_buffer, &uart_buffer_index, FIFO_READ_AND_CLEAN);
@@ -430,8 +437,8 @@ uint8 mt9v03x2_set_reg (uint8 addr, uint16 data)
                 break;
             }
             system_delay_ms(1);
-        }while(MT9V03X2_INIT_TIMEOUT > timeout_count ++);
-        if((temp != data) || (MT9V03X2_INIT_TIMEOUT <= timeout_count))
+        } while (MT9V03X2_INIT_TIMEOUT > timeout_count++);
+        if ((temp != data) || (MT9V03X2_INIT_TIMEOUT <= timeout_count))
         {
             return_state = 1;
         }
@@ -445,54 +452,54 @@ uint8 mt9v03x2_set_reg (uint8 addr, uint16 data)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-// º¯Êı¼ò½é     MT9V03X2 ÉãÏñÍ·³õÊ¼»¯
-// ²ÎÊıËµÃ÷     void
-// ·µ»Ø²ÎÊı     uint8           1-Ê§°Ü 0-³É¹¦
-// Ê¹ÓÃÊ¾Àı     zf_log(mt9v03x2_init(), "mt9v03x2 init error");
-// ±¸×¢ĞÅÏ¢
+// å‡½æ•°ç®€ä»‹     MT9V03X2 æ‘„åƒå¤´åˆå§‹åŒ–
+// å‚æ•°è¯´æ˜     void
+// è¿”å›å‚æ•°     uint8           1-å¤±è´¥ 0-æˆåŠŸ
+// ä½¿ç”¨ç¤ºä¾‹     zf_log(mt9v03x2_init(), "mt9v03x2 init error");
+// å¤‡æ³¨ä¿¡æ¯
 //-------------------------------------------------------------------------------------------------------------------
-uint8 mt9v03x2_init (void)
+uint8 mt9v03x2_init(void)
 {
     uint8 return_state = 0;
     soft_iic_info_struct mt9v03x2_iic_struct;
     do
     {
         // system_delay_ms(200);
-        // Ê×ÏÈ³¢ÊÔSCCBÍ¨Ñ¶
+        // é¦–å…ˆå°è¯•SCCBé€šè®¯
         mt9v03x2_type = MT9V03X2_SCCB;
         set_camera_type_2(CAMERA_GRAYSCALE2, mt9v03x2_vsync_handler, mt9v03x2_dma_handler, NULL);
         soft_iic_init(&mt9v03x2_iic_struct, 0, MT9V03X2_COF_IIC_DELAY, MT9V03X2_COF_IIC_SCL, MT9V03X2_COF_IIC_SDA);
-        if(mt9v03x_set_config_sccb(&mt9v03x2_iic_struct, mt9v03x2_set_confing_buffer))
+        if (mt9v03x_set_config_sccb(&mt9v03x2_iic_struct, mt9v03x2_set_confing_buffer))
         {
-            // SCCBÍ¨Ñ¶Ê§°Ü£¬³¢ÊÔ´®¿ÚÍ¨Ñ¶
+            // SCCBé€šè®¯å¤±è´¥ï¼Œå°è¯•ä¸²å£é€šè®¯
             mt9v03x2_type = MT9V03X2_UART;
             // set_camera_type(CAMERA_GRAYSCALE2, mt9v03x2_vsync_handler, mt9v03x2_dma_handler, mt9v03x2_uart_handler);
             camera_fifo_init();
 
-            // ³õÊ¼»»´®¿Ú ÅäÖÃÉãÏñÍ·
+            // åˆå§‹æ¢ä¸²å£ é…ç½®æ‘„åƒå¤´
             uart_init(MT9V03X2_COF_UART, MT9V03X2_COF_BAUR, MT9V03X2_COF_UART_RX, MT9V03X2_COF_UART_TX);
             uart_rx_interrupt(MT9V03X2_COF_UART, 1);
             fifo_clear(&camera_receiver_fifo);
-            // µÈ´ıÉãÏñÍ·ÉÏµç³õÊ¼»¯³É¹¦ ·½Ê½ÓĞÁ½ÖÖ£ºÑÓÊ±»òÕßÍ¨¹ı»ñÈ¡ÅäÖÃµÄ·½Ê½ ¶şÑ¡Ò»
-            // system_delay_ms(1000);                                               // ÑÓÊ±·½Ê½
+            // ç­‰å¾…æ‘„åƒå¤´ä¸Šç”µåˆå§‹åŒ–æˆåŠŸ æ–¹å¼æœ‰ä¸¤ç§ï¼šå»¶æ—¶æˆ–è€…é€šè¿‡è·å–é…ç½®çš„æ–¹å¼ äºŒé€‰ä¸€
+            // system_delay_ms(1000);                                               // å»¶æ—¶æ–¹å¼
 
             // if(mt9v03x2_get_config(mt9v03x2_get_confing_buffer))
             // {
-            //     // Èç¹û³ÌĞòÔÚÊä³öÁË¶ÏÑÔĞÅÏ¢ ²¢ÇÒÌáÊ¾³ö´íÎ»ÖÃÔÚÕâÀï
-            //     // ÄÇÃ´¾ÍÊÇ´®¿ÚÍ¨ĞÅ³ö´í²¢³¬Ê±ÍË³öÁË
-            //     // ¼ì²éÒ»ÏÂ½ÓÏßÓĞÃ»ÓĞÎÊÌâ Èç¹ûÃ»ÎÊÌâ¿ÉÄÜ¾ÍÊÇ»µÁË
+            //     // å¦‚æœç¨‹åºåœ¨è¾“å‡ºäº†æ–­è¨€ä¿¡æ¯ å¹¶ä¸”æç¤ºå‡ºé”™ä½ç½®åœ¨è¿™é‡Œ
+            //     // é‚£ä¹ˆå°±æ˜¯ä¸²å£é€šä¿¡å‡ºé”™å¹¶è¶…æ—¶é€€å‡ºäº†
+            //     // æ£€æŸ¥ä¸€ä¸‹æ¥çº¿æœ‰æ²¡æœ‰é—®é¢˜ å¦‚æœæ²¡é—®é¢˜å¯èƒ½å°±æ˜¯åäº†
             //     zf_log(0, "MT9V03X2 get config error.");
             //     set_camera_type(NO_CAMERE, NULL, NULL, NULL);
             //     return_state = 1;
             //     break;
             // }
-            mt9v03x2_version = mt9v03x2_get_version();                                // »ñÈ¡ÅäÖÃµÄ·½Ê½
+            mt9v03x2_version = mt9v03x2_get_version(); // è·å–é…ç½®çš„æ–¹å¼
 
-            if(mt9v03x2_set_config(mt9v03x2_set_confing_buffer))
+            if (mt9v03x2_set_config(mt9v03x2_set_confing_buffer))
             {
-                // Èç¹û³ÌĞòÔÚÊä³öÁË¶ÏÑÔĞÅÏ¢ ²¢ÇÒÌáÊ¾³ö´íÎ»ÖÃÔÚÕâÀï
-                // ÄÇÃ´¾ÍÊÇ´®¿ÚÍ¨ĞÅ³ö´í²¢³¬Ê±ÍË³öÁË
-                // ¼ì²éÒ»ÏÂ½ÓÏßÓĞÃ»ÓĞÎÊÌâ Èç¹ûÃ»ÎÊÌâ¿ÉÄÜ¾ÍÊÇ»µÁË
+                // å¦‚æœç¨‹åºåœ¨è¾“å‡ºäº†æ–­è¨€ä¿¡æ¯ å¹¶ä¸”æç¤ºå‡ºé”™ä½ç½®åœ¨è¿™é‡Œ
+                // é‚£ä¹ˆå°±æ˜¯ä¸²å£é€šä¿¡å‡ºé”™å¹¶è¶…æ—¶é€€å‡ºäº†
+                // æ£€æŸ¥ä¸€ä¸‹æ¥çº¿æœ‰æ²¡æœ‰é—®é¢˜ å¦‚æœæ²¡é—®é¢˜å¯èƒ½å°±æ˜¯åäº†
                 zf_log(0, "MT9V03X2 set config error.");
                 uart_rx_interrupt(MT9V03X2_COF_UART, 0);
                 set_camera_type_2(NO_CAMERE, NULL, NULL, NULL);
@@ -500,12 +507,12 @@ uint8 mt9v03x2_init (void)
                 break;
             }
 
-            // »ñÈ¡ÅäÖÃ±ãÓÚ²é¿´ÅäÖÃÊÇ·ñÕıÈ·
-            if(mt9v03x2_get_config(mt9v03x2_get_confing_buffer))
+            // è·å–é…ç½®ä¾¿äºæŸ¥çœ‹é…ç½®æ˜¯å¦æ­£ç¡®
+            if (mt9v03x2_get_config(mt9v03x2_get_confing_buffer))
             {
-                // Èç¹û³ÌĞòÔÚÊä³öÁË¶ÏÑÔĞÅÏ¢ ²¢ÇÒÌáÊ¾³ö´íÎ»ÖÃÔÚÕâÀï
-                // ÄÇÃ´¾ÍÊÇ´®¿ÚÍ¨ĞÅ³ö´í²¢³¬Ê±ÍË³öÁË
-                // ¼ì²éÒ»ÏÂ½ÓÏßÓĞÃ»ÓĞÎÊÌâ Èç¹ûÃ»ÎÊÌâ¿ÉÄÜ¾ÍÊÇ»µÁË
+                // å¦‚æœç¨‹åºåœ¨è¾“å‡ºäº†æ–­è¨€ä¿¡æ¯ å¹¶ä¸”æç¤ºå‡ºé”™ä½ç½®åœ¨è¿™é‡Œ
+                // é‚£ä¹ˆå°±æ˜¯ä¸²å£é€šä¿¡å‡ºé”™å¹¶è¶…æ—¶é€€å‡ºäº†
+                // æ£€æŸ¥ä¸€ä¸‹æ¥çº¿æœ‰æ²¡æœ‰é—®é¢˜ å¦‚æœæ²¡é—®é¢˜å¯èƒ½å°±æ˜¯åäº†
                 zf_log(0, "MT9V03X2 get config error.");
                 uart_rx_interrupt(MT9V03X2_COF_UART, 0);
                 set_camera_type_2(NO_CAMERE, NULL, NULL, NULL);
@@ -514,7 +521,6 @@ uint8 mt9v03x2_init (void)
             }
         }
         mt9v03x2_link_list_num = camera_init_2(MT9V03X2_DATA_ADD, mt9v03x2_image[0], MT9V03X2_IMAGE_SIZE);
-    }while(0);
+    } while (0);
     return return_state;
 }
-
