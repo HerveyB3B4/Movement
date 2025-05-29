@@ -101,7 +101,7 @@
 
 //===================================================DMA中断参数相关定义===============================================
 #define DMA_INT_SERVICE \
-    IfxSrc_Tos_cpu0  // ERU触发DMA中断服务类型，即中断是由谁响应处理
+    IfxSrc_Tos_cpu2  // ERU触发DMA中断服务类型，即中断是由谁响应处理
                      // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
                      // 不可设置为其他值
 #define DMA_INT_PRIO \
@@ -109,7 +109,7 @@
         // 与平时使用的单片机不一样
 
 #define DMA_INT_SERVICE_2 \
-    IfxSrc_Tos_cpu0  // ERU触发DMA中断服务类型，即中断是由谁响应处理
+    IfxSrc_Tos_cpu2  // ERU触发DMA中断服务类型，即中断是由谁响应处理
                      // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
                      // 不可设置为其他值
 #define DMA_INT_PRIO_2 \
@@ -132,33 +132,33 @@
         // 与平时使用的单片机不一样
 
 #define UART1_INT_SERVICE IfxSrc_Tos_cpu0
-#define UART1_TX_INT_PRIO 13
-#define UART1_RX_INT_PRIO 14
-#define UART1_ER_INT_PRIO 15
+#define UART1_TX_INT_PRIO 17
+#define UART1_RX_INT_PRIO 18
+#define UART1_ER_INT_PRIO 19
 
 #define UART2_INT_SERVICE IfxSrc_Tos_cpu0
-#define UART2_TX_INT_PRIO 16
-#define UART2_RX_INT_PRIO 17
-#define UART2_ER_INT_PRIO 18
+#define UART2_TX_INT_PRIO 20
+#define UART2_RX_INT_PRIO 21
+#define UART2_ER_INT_PRIO 22
 
 #define UART3_INT_SERVICE IfxSrc_Tos_cpu1
-#define UART3_TX_INT_PRIO 19
-#define UART3_RX_INT_PRIO 20
-#define UART3_ER_INT_PRIO 21
+#define UART3_TX_INT_PRIO 13
+#define UART3_RX_INT_PRIO 15
+#define UART3_ER_INT_PRIO 23
 
 #define UART4_INT_SERVICE IfxSrc_Tos_cpu0
-#define UART4_TX_INT_PRIO 22
-#define UART4_RX_INT_PRIO 23
-#define UART4_ER_INT_PRIO 24
+#define UART4_TX_INT_PRIO 24
+#define UART4_RX_INT_PRIO 25
+#define UART4_ER_INT_PRIO 26
 
 #define UART5_INT_SERVICE IfxSrc_Tos_cpu0
-#define UART5_TX_INT_PRIO 25
-#define UART5_RX_INT_PRIO 26
-#define UART5_ER_INT_PRIO 27
+#define UART5_TX_INT_PRIO 27
+#define UART5_RX_INT_PRIO 28
+#define UART5_ER_INT_PRIO 29
 
-#define UART6_INT_SERVICE IfxSrc_Tos_cpu2
-#define UART6_TX_INT_PRIO 28
-#define UART6_RX_INT_PRIO 29
+#define UART6_INT_SERVICE IfxSrc_Tos_cpu1
+#define UART6_TX_INT_PRIO 14
+#define UART6_RX_INT_PRIO 16
 #define UART6_ER_INT_PRIO 30
 
 #define UART8_INT_SERVICE IfxSrc_Tos_cpu0
