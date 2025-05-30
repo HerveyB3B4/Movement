@@ -13,5 +13,6 @@ void test_double_camera();
 void test_image();
 void test_wireless_uart();
 void test_key();
+void test_sd_card(); // 添加SD卡测试函数声明
 extern uint8 wireless_flag;
 #endif

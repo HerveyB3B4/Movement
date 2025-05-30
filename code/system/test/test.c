@@ -8,6 +8,7 @@
 #include "small_driver_uart_control.h"
 #include "velocity.h"
 #include "zf_common_headfile.h"
+#include "sd_card.h" // 添加SD卡操作头文件
 
 void test_bottom_motor()
 {
@@ -465,5 +466,111 @@ void test_key()
 
         system_delay_ms(1); // 减少刷新频率
     }
+    lcd_clear();
+}
+
+void test_sd_card()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "SD Card Test");
+    lcd_show_string(0, 1, "Initializing...");
+
+    sd_result_t result = sd_init();
+    if (result != SD_OK)
+    {
+        lcd_show_string(0, 2, "Init Failed!");
+        lcd_show_string(0, 3, "Check connection");
+        lcd_show_string(0, 7, "Press L to exit");
+        while (keymsg.key != KEY_L)
+        {
+            system_delay_ms(100);
+        }
+        lcd_clear();
+        return;
+    }
+
+    lcd_show_string(0, 2, "Init Success!");
+    system_delay_ms(500);
+
+    // Clear previous data
+    sd_clear_data();
+
+    lcd_clear();
+    lcd_show_string(0, 0, "Writing data...");
+
+    // Int
+    uint32 int_value = 12345;
+    result = sd_write_data((uint8 *)&int_value, sizeof(int_value), SD_WRITE_OVERRIDE);
+
+    // String
+    char str_value[] = "SD Card Test OK!";
+    result = sd_write_data((uint8 *)str_value, strlen(str_value) + 1, SD_WRITE_APPEND);
+
+    // Float
+    float float_value = 3.14159;
+    result = sd_write_data((uint8 *)&float_value, sizeof(float_value), SD_WRITE_APPEND);
+
+    lcd_show_string(0, 1, "Write completed");
+    system_delay_ms(500);
+
+    lcd_clear();
+    lcd_show_string(0, 0, "Reading data...");
+
+    // Get total data size
+    uint32 total_size = sd_get_data_size();
+    lcd_show_string(0, 1, "Data size:");
+    lcd_show_uint(10, 1, total_size, 5);
+
+    // Allocate buffer for all data
+    uint8 *buffer = (uint8 *)malloc(total_size);
+    if (buffer == NULL)
+    {
+        lcd_show_string(0, 2, "Memory error!");
+        system_delay_ms(1000);
+        lcd_clear();
+        return;
+    }
+
+    // Read
+    uint32 read_size = 0;
+    result = sd_read_data(buffer, total_size, &read_size);
+
+    if (result != SD_OK)
+    {
+        lcd_show_string(0, 2, "Read failed!");
+        free(buffer);
+        system_delay_ms(1000);
+        lcd_clear();
+        return;
+    }
+
+    lcd_show_string(0, 2, "Read success!");
+
+    // Display the data
+    // Int
+    uint32 *int_ptr = (uint32 *)buffer;
+    lcd_show_string(0, 3, "Int:");
+    lcd_show_uint(5, 3, *int_ptr, 5);
+
+    // String
+    char *str_ptr = (char *)(buffer + sizeof(uint32));
+    lcd_show_string(0, 4, "Str:");
+    lcd_show_string(5, 4, str_ptr);
+
+    // Float
+    float *float_ptr = (float *)(buffer + sizeof(uint32) + strlen(str_ptr) + 1);
+    lcd_show_string(0, 5, "Float:");
+    lcd_show_float(7, 5, *float_ptr, 3, 4);
+
+    // Free memory
+    free(buffer);
+
+    // Wait for user to exit
+    lcd_show_string(0, 7, "Press L to exit");
+    while (keymsg.key != KEY_L)
+    {
+        system_delay_ms(100);
+    }
+
     lcd_clear();
 }

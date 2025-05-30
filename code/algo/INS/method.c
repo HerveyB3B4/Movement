@@ -17,27 +17,28 @@
 INS_State g_ins_state;
 
 /* 内部辅助函数声明 */
-static void Vector3f_Add(const Vector3f* a,
-                         const Vector3f* b,
-                         Vector3f* result);
-static void Vector3f_Subtract(const Vector3f* a,
-                              const Vector3f* b,
-                              Vector3f* result);
-static void Vector3f_Multiply(const Vector3f* v,
+static void Vector3f_Add(const Vector3f *a,
+                         const Vector3f *b,
+                         Vector3f *result);
+static void Vector3f_Subtract(const Vector3f *a,
+                              const Vector3f *b,
+                              Vector3f *result);
+static void Vector3f_Multiply(const Vector3f *v,
                               float scalar,
-                              Vector3f* result);
-static void Vector3f_ScaleAdd(const Vector3f* v1,
+                              Vector3f *result);
+static void Vector3f_ScaleAdd(const Vector3f *v1,
                               float scale1,
-                              const Vector3f* v2,
+                              const Vector3f *v2,
                               float scale2,
-                              Vector3f* result);
-static float Vector3f_Magnitude(const Vector3f* v);
-static void Matrix_Multiply3x3(const float* A, const float* B, float* C);
+                              Vector3f *result);
+static float Vector3f_Magnitude(const Vector3f *v);
+static void Matrix_Multiply3x3(const float *A, const float *B, float *C);
 
-void INS_Init(INS_State* ins,
+void INS_Init(INS_State *ins,
               float sample_time,
               INS_Mode mode,
-              ZUPT_Method zupt_method) {
+              ZUPT_Method zupt_method)
+{
     /* 清零所有数据 */
     memset(ins, 0, sizeof(INS_State));
 
@@ -45,7 +46,7 @@ void INS_Init(INS_State* ins,
     ins->dt = sample_time;
 
     /* 设置加速度阈值 */
-    ins->accel_threshold = 0.05f * GRAVITY;  // 静止状态默认为0.05g阈值
+    ins->accel_threshold = 0.05f * GRAVITY; // 静止状态默认为0.05g阈值
 
     /* 设置导航模式和ZUPT方法 */
     ins->mode = mode;
@@ -55,21 +56,24 @@ void INS_Init(INS_State* ins,
     ins->accel_scale.x = ins->accel_scale.y = ins->accel_scale.z = 1.0f;
 
     /* 如果使用卡尔曼滤波模式，初始化滤波器 */
-    if (mode == INS_MODE_KALMAN) {
+    if (mode == INS_MODE_KALMAN)
+    {
         INS_InitKalmanFilter(ins);
     }
 
-    ins->is_initialized = 0;  // 标记为未初始化，需要校准
+    ins->is_initialized = 0; // 标记为未初始化，需要校准
 }
 
-void INS_UpdateSensorData(INS_State* ins,
-                          const Vector3f* accel_raw,
-                          const Vector3f* gyro) {
+void INS_UpdateSensorData(INS_State *ins,
+                          const Vector3f *accel_raw,
+                          const Vector3f *gyro)
+{
     /* 保存原始数据 */
     ins->accel_raw = *accel_raw;
 
     /* 如果提供了陀螺仪数据，保存它用于高级ZUPT */
-    if (gyro != NULL) {
+    if (gyro != NULL)
+    {
         ins->gyro = *gyro;
     }
 
@@ -79,15 +83,16 @@ void INS_UpdateSensorData(INS_State* ins,
     ins->accel.z = (accel_raw->z - ins->accel_bias.z) * ins->accel_scale.z;
 }
 
-void INS_ConvertAccelToWorldFrame(INS_State* ins,
-                                  const struct EulerAngle* euler_angle) {
+void INS_ConvertAccelToWorldFrame(INS_State *ins,
+                                  const struct EulerAngle *euler_angle)
+{
     /* 保存上一次的世界坐标系加速度，用于高阶积分 */
-    ins->accel_world_last = ins->accel_world;
+    ins->accel_world_last = ins->accel_world;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 
     /* 从欧拉角计算旋转矩阵 */
-    float roll = euler_angle->roll * DEG_TO_RAD;    // 横滚角转弧度
-    float pitch = euler_angle->pitch * DEG_TO_RAD;  // 俯仰角转弧度
-    float yaw = euler_angle->yaw * DEG_TO_RAD;      // 偏航角转弧度
+    float roll = euler_angle->roll * DEG_TO_RAD;   // 横滚角转弧度
+    float pitch = euler_angle->pitch * DEG_TO_RAD; // 俯仰角转弧度
+    float yaw = euler_angle->yaw * DEG_TO_RAD;     // 偏航角转弧度
 
     float cos_roll = cosf(roll);
     float sin_roll = sinf(roll);
@@ -124,14 +129,15 @@ void INS_ConvertAccelToWorldFrame(INS_State* ins,
     ins->accel_world.z -= GRAVITY;
 }
 
-void INS_UpdatePositionVelocityEuler(INS_State* ins) {
+void INS_UpdatePositionVelocityEuler(INS_State *ins)
+{
     if (!ins->is_initialized)
         return;
 
     /* 保存上一次状态 */
-    ins->position_k1 = ins->position_last;  // 上上次位置
-    ins->position_last = ins->position;     // 上次位置
-    ins->velocity_last = ins->velocity;     // 上次速度
+    ins->position_k1 = ins->position_last; // 上上次位置
+    ins->position_last = ins->position;    // 上次位置
+    ins->velocity_last = ins->velocity;    // 上次速度
 
     /* 简单的一阶欧拉积分 */
     /* 速度更新 (一阶积分) */
@@ -145,8 +151,9 @@ void INS_UpdatePositionVelocityEuler(INS_State* ins) {
     ins->position.z += ins->velocity.z * ins->dt;
 }
 
-void INS_UpdatePositionVelocityRK4(INS_State* ins,
-                                   const struct EulerAngle* euler_angle) {
+void INS_UpdatePositionVelocityRK4(INS_State *ins,
+                                   const struct EulerAngle *euler_angle)
+{
     if (!ins->is_initialized)
         return;
 
@@ -245,20 +252,24 @@ void INS_UpdatePositionVelocityRK4(INS_State* ins,
                                               2.0f * ins->l3.z + ins->l4.z);
 }
 
-void INS_InitKalmanFilter(INS_State* ins) {
+void INS_InitKalmanFilter(INS_State *ins)
+{
     int i, j;
 
     /* 初始化状态协方差矩阵 P */
-    for (i = 0; i < 6; i++) {
-        for (j = 0; j < 6; j++) {
+    for (i = 0; i < 6; i++)
+    {
+        for (j = 0; j < 6; j++)
+        {
             ins->kf.P[i][j] = 0.0f;
         }
         /* 对角线元素设置初始不确定性 */
-        ins->kf.P[i][i] = (i < 3) ? 0.01f : 1.0f;  // 位置和速度不确定性
+        ins->kf.P[i][i] = (i < 3) ? 0.01f : 1.0f; // 位置和速度不确定性
     }
 
     /* 设置过程噪声 Q */
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i++)
+    {
         /* 位置噪声 */
         ins->kf.Q[i] = 0.001f;
         /* 速度噪声 */
@@ -266,12 +277,14 @@ void INS_InitKalmanFilter(INS_State* ins) {
     }
 
     /* 设置测量噪声 R */
-    for (i = 0; i < 3; i++) {
-        ins->kf.R[i] = 0.1f;  // 加速度测量噪声
+    for (i = 0; i < 3; i++)
+    {
+        ins->kf.R[i] = 0.1f; // 加速度测量噪声
     }
 }
 
-void INS_UpdatePositionVelocityKalman(INS_State* ins) {
+void INS_UpdatePositionVelocityKalman(INS_State *ins)
+{
     if (!ins->is_initialized)
         return;
 
@@ -298,46 +311,55 @@ void INS_UpdatePositionVelocityKalman(INS_State* ins) {
     /* 步骤2: 预测协方差 */
     /* P_k = F * P_{k-1} * F^T + Q */
     /* 构建状态转移矩阵 F */
-    float F[36] = {0};  // 6x6矩阵，线性化
+    float F[36] = {0}; // 6x6矩阵，线性化
 
     /* 对角线元素为1 */
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 6; i++)
+    {
         F[i * 6 + i] = 1.0f;
     }
 
     /* 位置关于速度的偏导数 */
-    F[0 * 6 + 3] = dt;  // x关于vx
-    F[1 * 6 + 4] = dt;  // y关于vy
-    F[2 * 6 + 5] = dt;  // z关于vz
+    F[0 * 6 + 3] = dt; // x关于vx
+    F[1 * 6 + 4] = dt; // y关于vy
+    F[2 * 6 + 5] = dt; // z关于vz
 
     /* 计算 F * P * F^T + Q */
-    float temp[36] = {0};   // 临时矩阵
-    float temp2[36] = {0};  // 临时矩阵2
+    float temp[36] = {0};  // 临时矩阵
+    float temp2[36] = {0}; // 临时矩阵2
 
     /* temp = F * P */
-    for (i = 0; i < 6; i++) {
-        for (j = 0; j < 6; j++) {
+    for (i = 0; i < 6; i++)
+    {
+        for (j = 0; j < 6; j++)
+        {
             temp[i * 6 + j] = 0;
-            for (k = 0; k < 6; k++) {
+            for (k = 0; k < 6; k++)
+            {
                 temp[i * 6 + j] += F[i * 6 + k] * ins->kf.P[k][j];
             }
         }
     }
 
     /* temp2 = temp * F^T = F * P * F^T */
-    for (i = 0; i < 6; i++) {
-        for (j = 0; j < 6; j++) {
+    for (i = 0; i < 6; i++)
+    {
+        for (j = 0; j < 6; j++)
+        {
             temp2[i * 6 + j] = 0;
-            for (k = 0; k < 6; k++) {
+            for (k = 0; k < 6; k++)
+            {
                 temp2[i * 6 + j] +=
-                    temp[i * 6 + k] * F[j * 6 + k];  // F^T[k,j] = F[j,k]
+                    temp[i * 6 + k] * F[j * 6 + k]; // F^T[k,j] = F[j,k]
             }
         }
     }
 
     /* P = temp2 + Q */
-    for (i = 0; i < 6; i++) {
-        for (j = 0; j < 6; j++) {
+    for (i = 0; i < 6; i++)
+    {
+        for (j = 0; j < 6; j++)
+        {
             ins->kf.P[i][j] = temp2[i * 6 + j];
         }
         /* 添加过程噪声 (只在对角线) */
@@ -349,14 +371,15 @@ void INS_UpdatePositionVelocityKalman(INS_State* ins) {
     /* 如果需要融合GPS或其他位置传感器，可以在此处添加代码 */
 }
 
-void INS_UpdateMotionIntensity(INS_State* ins) {
+void INS_UpdateMotionIntensity(INS_State *ins)
+{
     /* 计算加速度和角速度的强度 */
     float accel_magnitude = Vector3f_Magnitude(&ins->accel);
     float gyro_magnitude = Vector3f_Magnitude(&ins->gyro);
 
     /* 计算运动强度指标 - 结合加速度和角速度 */
     float accel_intensity = fabsf(accel_magnitude - GRAVITY) / GRAVITY;
-    float gyro_intensity = gyro_magnitude * RAD_TO_DEG * 0.01f;  // 归一化处理
+    float gyro_intensity = gyro_magnitude * RAD_TO_DEG * 0.01f; // 归一化处理
 
     /* 结合加速度和角速度计算综合运动强度 */
     ins->motion_intensity = 0.7f * accel_intensity + 0.3f * gyro_intensity;
@@ -365,7 +388,8 @@ void INS_UpdateMotionIntensity(INS_State* ins) {
     ins->high_dynamic = (ins->motion_intensity > 0.5f) ? 1 : 0;
 }
 
-void INS_Calibrate(INS_State* ins, uint16_t samples) {
+void INS_Calibrate(INS_State *ins, uint16_t samples)
+{
     if (samples == 0)
         return;
 
@@ -379,7 +403,8 @@ void INS_Calibrate(INS_State* ins, uint16_t samples) {
     ins->accel_bias.x = ins->accel_bias.y = ins->accel_bias.z = 0.0f;
 
     /* 累加多个采样 */
-    for (uint16_t i = 0; i < samples; i++) {
+    for (uint16_t i = 0; i < samples; i++)
+    {
         accel_sum.x += ins->accel_raw.x;
         accel_sum.y += ins->accel_raw.y;
         accel_sum.z += ins->accel_raw.z;
@@ -391,10 +416,10 @@ void INS_Calibrate(INS_State* ins, uint16_t samples) {
     /* 计算平均值作为零偏 */
     ins->accel_bias.x = accel_sum.x / samples;
     ins->accel_bias.y = accel_sum.y / samples;
-    ins->accel_bias.z = accel_sum.z / samples - GRAVITY;  // 去除重力加速度
+    ins->accel_bias.z = accel_sum.z / samples - GRAVITY; // 去除重力加速度
 
     /* 可以考虑与先前零偏进行融合 */
-    float alpha = 0.3f;  // 新数据的权重
+    float alpha = 0.3f; // 新数据的权重
     ins->accel_bias.x =
         alpha * ins->accel_bias.x + (1.0f - alpha) * accel_bias_old.x;
     ins->accel_bias.y =
@@ -406,9 +431,10 @@ void INS_Calibrate(INS_State* ins, uint16_t samples) {
     ins->is_initialized = 1;
 }
 
-void INS_CalibrateAdvanced(INS_State* ins,
+void INS_CalibrateAdvanced(INS_State *ins,
                            uint8_t num_positions,
-                           uint16_t samples_per_position) {
+                           uint16_t samples_per_position)
+{
     if (num_positions < 4 || samples_per_position == 0)
         return;
 
@@ -420,15 +446,17 @@ void INS_CalibrateAdvanced(INS_State* ins,
      */
 
     /* 储存每个位置的平均加速度值 */
-    Vector3f positions[6];  // 最多支持6个位置
+    Vector3f positions[6]; // 最多支持6个位置
     uint8_t actual_positions = (num_positions > 6) ? 6 : num_positions;
 
-    for (uint8_t pos = 0; pos < actual_positions; pos++) {
+    for (uint8_t pos = 0; pos < actual_positions; pos++)
+    {
         /* 临时存储累加值 */
         Vector3f accel_sum = {0.0f, 0.0f, 0.0f};
 
         /* 累加该位置的多个采样 */
-        for (uint16_t i = 0; i < samples_per_position; i++) {
+        for (uint16_t i = 0; i < samples_per_position; i++)
+        {
             accel_sum.x += ins->accel_raw.x;
             accel_sum.y += ins->accel_raw.y;
             accel_sum.z += ins->accel_raw.z;
@@ -446,7 +474,8 @@ void INS_CalibrateAdvanced(INS_State* ins,
     }
 
     /* 使用多个位置数据计算加速度计零偏和比例因子 */
-    if (actual_positions >= 4) {
+    if (actual_positions >= 4)
+    {
         /* 假设前两个位置是Z轴上下，后两个位置是X和Y轴 */
 
         /* 计算零偏 - 取相反方向的平均值 */
@@ -482,7 +511,9 @@ void INS_CalibrateAdvanced(INS_State* ins,
                              : (ins->accel_scale.z > max_scale)
                                  ? max_scale
                                  : ins->accel_scale.z;
-    } else {
+    }
+    else
+    {
         /* 如果位置不足，则使用基本校准方法 */
         INS_Calibrate(ins, samples_per_position);
         return;
@@ -492,7 +523,8 @@ void INS_CalibrateAdvanced(INS_State* ins,
     ins->is_initialized = 1;
 }
 
-void INS_Reset(INS_State* ins) {
+void INS_Reset(INS_State *ins)
+{
     /* 保留校准参数和采样时间 */
     float dt = ins->dt;
     Vector3f accel_bias = ins->accel_bias;
@@ -517,7 +549,8 @@ void INS_Reset(INS_State* ins) {
     ins->kf = kf;
 }
 
-void INS_Update(INS_State* ins, const struct EulerAngle* euler_angle) {
+void INS_Update(INS_State *ins, const struct EulerAngle *euler_angle)
+{
     if (!ins->is_initialized)
         return;
 
@@ -525,95 +558,105 @@ void INS_Update(INS_State* ins, const struct EulerAngle* euler_angle) {
     INS_ConvertAccelToWorldFrame(ins, euler_angle);
 
     /* 更新运动强度指标 (用于自适应模式) */
-    if (ins->mode == INS_MODE_ADAPTIVE) {
+    if (ins->mode == INS_MODE_ADAPTIVE)
+    {
         INS_UpdateMotionIntensity(ins);
     }
 
     /* 根据当前模式选择合适的更新方法 */
-    switch (ins->mode) {
-        case INS_MODE_BASIC:
-            INS_UpdatePositionVelocityEuler(ins);
-            break;
+    switch (ins->mode)
+    {
+    case INS_MODE_BASIC:
+        INS_UpdatePositionVelocityEuler(ins);
+        break;
 
-        case INS_MODE_RUNGE_KUTTA:
+    case INS_MODE_RUNGE_KUTTA:
+        INS_UpdatePositionVelocityRK4(ins, euler_angle);
+        break;
+
+    case INS_MODE_KALMAN:
+        INS_UpdatePositionVelocityKalman(ins);
+        break;
+
+    case INS_MODE_ADAPTIVE:
+        /* 根据运动强度选择合适的算法 */
+        if (ins->high_dynamic)
+        {
+            /* 高动态运动情况下使用龙格库塔 */
             INS_UpdatePositionVelocityRK4(ins, euler_angle);
-            break;
-
-        case INS_MODE_KALMAN:
+        }
+        else
+        {
+            /* 低动态运动情况下使用卡尔曼滤波 */
             INS_UpdatePositionVelocityKalman(ins);
-            break;
+        }
+        break;
 
-        case INS_MODE_ADAPTIVE:
-            /* 根据运动强度选择合适的算法 */
-            if (ins->high_dynamic) {
-                /* 高动态运动情况下使用龙格库塔 */
-                INS_UpdatePositionVelocityRK4(ins, euler_angle);
-            } else {
-                /* 低动态运动情况下使用卡尔曼滤波 */
-                INS_UpdatePositionVelocityKalman(ins);
-            }
-            break;
-
-        default:
-            INS_UpdatePositionVelocityEuler(ins);
-            break;
+    default:
+        INS_UpdatePositionVelocityEuler(ins);
+        break;
     }
 
     /* 进行零速度检测和更新 */
     uint8_t is_stationary = 0;
 
-    switch (ins->zupt_method) {
-        case ZUPT_BASIC:
-            /* 基本阈值检测 */
-            {
-                float accel_magnitude = Vector3f_Magnitude(&ins->accel);
-                is_stationary =
-                    (fabsf(accel_magnitude - GRAVITY) < ins->accel_threshold)
-                        ? 1
-                        : 0;
-            }
-            break;
-
-        case ZUPT_ADVANCED:
-            /* 高级检测 - 同时考虑加速度和角速度 */
-            is_stationary = INS_ZeroVelocityDetectionAdvanced(ins);
-            break;
-
-        case ZUPT_ADAPTIVE:
-            /* 自适应检测 - 根据运动强度动态调整阈值 */
-            {
-                float adaptive_threshold = ins->accel_threshold;
-
-                /* 根据运动强度调整阈值 */
-                if (ins->motion_intensity > 0.3f) {
-                    adaptive_threshold *= (1.0f + ins->motion_intensity);
-                }
-
-                float accel_magnitude = Vector3f_Magnitude(&ins->accel);
-                float gyro_magnitude = Vector3f_Magnitude(&ins->gyro);
-
-                /* 结合加速度和角速度判断静止状态 */
-                is_stationary =
-                    (fabsf(accel_magnitude - GRAVITY) < adaptive_threshold &&
-                     gyro_magnitude < 0.05f)
-                        ? 1
-                        : 0;
-            }
-            break;
-
-        default: {
+    switch (ins->zupt_method)
+    {
+    case ZUPT_BASIC:
+        /* 基本阈值检测 */
+        {
             float accel_magnitude = Vector3f_Magnitude(&ins->accel);
             is_stationary =
-                (fabsf(accel_magnitude - GRAVITY) < ins->accel_threshold) ? 1
-                                                                          : 0;
-        } break;
+                (fabsf(accel_magnitude - GRAVITY) < ins->accel_threshold)
+                    ? 1
+                    : 0;
+        }
+        break;
+
+    case ZUPT_ADVANCED:
+        /* 高级检测 - 同时考虑加速度和角速度 */
+        is_stationary = INS_ZeroVelocityDetectionAdvanced(ins);
+        break;
+
+    case ZUPT_ADAPTIVE:
+        /* 自适应检测 - 根据运动强度动态调整阈值 */
+        {
+            float adaptive_threshold = ins->accel_threshold;
+
+            /* 根据运动强度调整阈值 */
+            if (ins->motion_intensity > 0.3f)
+            {
+                adaptive_threshold *= (1.0f + ins->motion_intensity);
+            }
+
+            float accel_magnitude = Vector3f_Magnitude(&ins->accel);
+            float gyro_magnitude = Vector3f_Magnitude(&ins->gyro);
+
+            /* 结合加速度和角速度判断静止状态 */
+            is_stationary =
+                (fabsf(accel_magnitude - GRAVITY) < adaptive_threshold &&
+                 gyro_magnitude < 0.05f)
+                    ? 1
+                    : 0;
+        }
+        break;
+
+    default:
+    {
+        float accel_magnitude = Vector3f_Magnitude(&ins->accel);
+        is_stationary =
+            (fabsf(accel_magnitude - GRAVITY) < ins->accel_threshold) ? 1
+                                                                      : 0;
+    }
+    break;
     }
 
     /* 应用零速度更新 */
     INS_ZeroVelocityUpdate(ins, is_stationary);
 }
 
-uint8_t INS_ZeroVelocityDetectionAdvanced(INS_State* ins) {
+uint8_t INS_ZeroVelocityDetectionAdvanced(INS_State *ins)
+{
     /* 计算加速度和角速度幅值 */
     float accel_magnitude = Vector3f_Magnitude(&ins->accel);
     float gyro_magnitude = Vector3f_Magnitude(&ins->gyro);
@@ -624,14 +667,16 @@ uint8_t INS_ZeroVelocityDetectionAdvanced(INS_State* ins) {
 
     /* 角速度检测：接近零 */
     uint8_t gyro_stationary =
-        (gyro_magnitude < 0.05f) ? 1 : 0;  // 阈值为0.05弧度/秒
+        (gyro_magnitude < 0.05f) ? 1 : 0; // 阈值为0.05弧度/秒
 
     /* 同时满足加速度和角速度条件才判断为静止 */
     return accel_stationary && gyro_stationary;
 }
 
-void INS_ZeroVelocityUpdate(INS_State* ins, uint8_t is_stationary) {
-    if (!is_stationary) {
+void INS_ZeroVelocityUpdate(INS_State *ins, uint8_t is_stationary)
+{
+    if (!is_stationary)
+    {
         ins->zero_velocity = 0;
         return;
     }
@@ -639,16 +684,19 @@ void INS_ZeroVelocityUpdate(INS_State* ins, uint8_t is_stationary) {
     /* 零速度更新：如果检测到静止状态，缓慢衰减速度以减轻漂移影响 */
     float damping_factor = 0.95f;
 
-    if (ins->zero_velocity < 100) {
+    if (ins->zero_velocity < 100)
+    {
         ins->zero_velocity++;
     }
 
     /* 速度积累更多的零速度检测样本，阻尼系数增大 */
-    if (ins->zero_velocity > 20) {
+    if (ins->zero_velocity > 20)
+    {
         damping_factor = 0.8f;
     }
 
-    if (ins->zero_velocity > 50) {
+    if (ins->zero_velocity > 50)
+    {
         damping_factor = 0.5f;
     }
 
@@ -658,82 +706,97 @@ void INS_ZeroVelocityUpdate(INS_State* ins, uint8_t is_stationary) {
     ins->velocity.z *= damping_factor;
 
     /* 完全静止状态下直接清零速度 */
-    if (ins->zero_velocity > 75) {
+    if (ins->zero_velocity > 75)
+    {
         ins->velocity.x = 0.0f;
         ins->velocity.y = 0.0f;
         ins->velocity.z = 0.0f;
     }
 }
 
-void INS_SetMode(INS_State* ins, INS_Mode mode) {
-    if (ins->mode != mode) {
+void INS_SetMode(INS_State *ins, INS_Mode mode)
+{
+    if (ins->mode != mode)
+    {
         ins->mode = mode;
 
         /* 如果切换到卡尔曼滤波模式，确保初始化滤波器 */
-        if (mode == INS_MODE_KALMAN && ins->kf.P[0][0] == 0.0f) {
+        if (mode == INS_MODE_KALMAN && ins->kf.P[0][0] == 0.0f)
+        {
             INS_InitKalmanFilter(ins);
         }
     }
 }
 
-void INS_SetZuptMethod(INS_State* ins, ZUPT_Method method) {
+void INS_SetZuptMethod(INS_State *ins, ZUPT_Method method)
+{
     ins->zupt_method = method;
 }
 
 /* 向量操作辅助函数 */
-static void Vector3f_Add(const Vector3f* a,
-                         const Vector3f* b,
-                         Vector3f* result) {
+static void Vector3f_Add(const Vector3f *a,
+                         const Vector3f *b,
+                         Vector3f *result)
+{
     result->x = a->x + b->x;
     result->y = a->y + b->y;
     result->z = a->z + b->z;
 }
 
-static void Vector3f_Subtract(const Vector3f* a,
-                              const Vector3f* b,
-                              Vector3f* result) {
+static void Vector3f_Subtract(const Vector3f *a,
+                              const Vector3f *b,
+                              Vector3f *result)
+{
     result->x = a->x - b->x;
     result->y = a->y - b->y;
     result->z = a->z - b->z;
 }
 
-static void Vector3f_Multiply(const Vector3f* v,
+static void Vector3f_Multiply(const Vector3f *v,
                               float scalar,
-                              Vector3f* result) {
+                              Vector3f *result)
+{
     result->x = v->x * scalar;
     result->y = v->y * scalar;
     result->z = v->z * scalar;
 }
 
-static void Vector3f_ScaleAdd(const Vector3f* v1,
+static void Vector3f_ScaleAdd(const Vector3f *v1,
                               float scale1,
-                              const Vector3f* v2,
+                              const Vector3f *v2,
                               float scale2,
-                              Vector3f* result) {
+                              Vector3f *result)
+{
     result->x = v1->x * scale1 + v2->x * scale2;
     result->y = v1->y * scale1 + v2->y * scale2;
     result->z = v1->z * scale1 + v2->z * scale2;
 }
 
-static float Vector3f_Magnitude(const Vector3f* v) {
+static float Vector3f_Magnitude(const Vector3f *v)
+{
     return sqrtf(v->x * v->x + v->y * v->y + v->z * v->z);
 }
 
-static void Matrix_Multiply3x3(const float* A, const float* B, float* C) {
+static void Matrix_Multiply3x3(const float *A, const float *B, float *C)
+{
     int i, j, k;
     float temp[9] = {0};
 
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
             temp[i * 3 + j] = 0;
-            for (k = 0; k < 3; k++) {
+            for (k = 0; k < 3; k++)
+            {
                 temp[i * 3 + j] += A[i * 3 + k] * B[k * 3 + j];
             }
         }
     }
 
     /* 复制结果 */
-    for (i = 0; i < 9; i++) {
+    for (i = 0; i < 9; i++)
+    {
         C[i] = temp[i];
     }
 }
