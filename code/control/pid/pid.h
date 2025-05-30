@@ -8,19 +8,23 @@
  * @description: 输出限幅函数
  * @param input: 需要限制的值  max最大限幅
  */
-#define LimitMax(input, max)           \
-    {                                  \
-        if ((input) > (max)) {         \
-            (input) = max;             \
-        } else if ((input) < -(max)) { \
-            (input) = -(max);          \
-        }                              \
+#define LimitMax(input, max)       \
+    {                              \
+        if ((input) > (max))       \
+        {                          \
+            (input) = max;         \
+        }                          \
+        else if ((input) < -(max)) \
+        {                          \
+            (input) = -(max);      \
+        }                          \
     }
 //====================================================================================================
 
 //===================================================================================================
 
-typedef struct PIDparam_st {
+typedef struct PIDparam_st
+{
     uint32 P;
     uint32 I;
     uint32 D;
@@ -29,7 +33,8 @@ typedef struct PIDparam_st {
     float ki;
 } PIDparam_st;
 
-typedef struct {
+typedef struct
+{
     float SumError;
     int32 LastError;
     int32 PrevError;
@@ -39,14 +44,15 @@ typedef struct {
 //========================================================DJI
 // PID========================================================
 
-typedef struct {
+typedef struct
+{
     // PID 三参数
     float32 Kp;
     float32 Ki;
     float32 Kd;
 
-    float32 max_out;   // 最大输出
-    float32 max_iout;  // 最大积分输出
+    float32 max_out;  // 最大输出
+    float32 max_iout; // 最大积分输出
 
     float32 set;
     float32 fdb;
@@ -55,8 +61,8 @@ typedef struct {
     float32 Pout;
     float32 Iout;
     float32 Dout;
-    float32 Dbuf[3];   // 微分项 0最新 1上一次 2上上次
-    float32 error[3];  // 误差项 0最新 1上一次 2上上次
+    float32 Dbuf[3];  // 微分项 0最新 1上一次 2上上次
+    float32 error[3]; // 误差项 0最新 1上一次 2上上次
 
 } pid_type_def;
 /**
@@ -77,10 +83,11 @@ typedef struct {
  * @param[in]      max_iout: pid最大积分输出
  * @retval         none
  */
-void PID_init_Position(pid_type_def* pid,
+void PID_init_Position(pid_type_def *pid,
                        const float32 PID[3],
                        float32 max_out,
-                       float32 max_iout);
+                       float32 max_iout,
+                       uint32 polarity);
 
 /**
  * @brief          pid calculate
@@ -96,7 +103,7 @@ void PID_init_Position(pid_type_def* pid,
  * @param[in]      set: 设定值
  * @retval         pid输出
  */
-float32 PID_calc_Position(pid_type_def* pid, float32 ref, float32 set);
+float32 PID_calc_Position(pid_type_def *pid, float32 ref, float32 set);
 /**
  * @brief          pid struct data init
  * @param[out]     pid: PID struct data point
@@ -115,7 +122,7 @@ float32 PID_calc_Position(pid_type_def* pid, float32 ref, float32 set);
  * @param[in]      max_iout: pid最大积分输出
  * @retval         none
  */
-void PID_init_DELTA(pid_type_def* pid,
+void PID_init_DELTA(pid_type_def *pid,
                     const float32 PID[3],
                     float32 max_out,
                     float32 max_iout);
@@ -133,7 +140,7 @@ void PID_init_DELTA(pid_type_def* pid,
  * @param[in]      set: 设定值
  * @retval         pid输出
  */
-float32 PID_calc_DELTA(pid_type_def* pid, float32 ref, float32 set);
+float32 PID_calc_DELTA(pid_type_def *pid, float32 ref, float32 set);
 /**
  * @brief          pid out clear
  * @param[out]     pid: PID struct data point
@@ -144,33 +151,34 @@ float32 PID_calc_DELTA(pid_type_def* pid, float32 ref, float32 set);
  * @param[out]     pid: PID结构数据指针
  * @retval         none
  */
-void PID_clear(pid_type_def* pid);
+void PID_clear(pid_type_def *pid);
 
 /*
  * @brief          动态修改Pid参数
  */
-static inline void Change_Pid_Para(pid_type_def* pid, float32* pid_para) {
+static inline void Change_Pid_Para(pid_type_def *pid, float32 *pid_para)
+{
     pid->Kp = pid_para[0];
     pid->Ki = pid_para[1];
     pid->Kd = pid_para[2];
 }
 
-void Set_Pid_Limit(pid_type_def* pid, float32 max_out, float32 max_iout);
-void Set_Pid_Para(pid_type_def* pid, float32 PID[3]);
+void Set_Pid_Limit(pid_type_def *pid, float32 max_out, float32 max_iout);
+void Set_Pid_Para(pid_type_def *pid, float32 PID[3]);
 //========================================================DJI
 // PID========================================================
 
 //=================================================================================================
 
-float PID_Realize_Curvature(pid_type_def* pid,
+float PID_Realize_Curvature(pid_type_def *pid,
                             float NowPiont,
                             float TarPoint,
                             int32 speed);
 
 float Speed_Control_turn(float32 encoder, const float pid_para[3]);
 
-float PID_calc_Position_LowPassD(pid_type_def* pid, float ref, float set);
-float32 PID_calc_Position_DynamicI(pid_type_def* pid,
+float PID_calc_Position_LowPassD(pid_type_def *pid, float ref, float set);
+float32 PID_calc_Position_DynamicI(pid_type_def *pid,
                                    float32 ref,
                                    float32 set,
                                    float range,

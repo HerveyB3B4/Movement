@@ -144,6 +144,6 @@ void control_shutdown(struct Control_Target *control_target,
 
 int32 get_bottom_duty();
 int32 get_side_duty();
-void control_pid_preset();
+void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_params);
 
 #endif

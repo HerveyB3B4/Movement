@@ -19,16 +19,29 @@
  * @param[in]      max_iout: pid最大积分输出
  * @retval         none
  */
-void PID_init_Position(pid_type_def* pid,
+void PID_init_Position(pid_type_def *pid,
                        const float32 PID[3],
                        float32 max_out,
-                       float32 max_iout) {
-    if (pid == NULL || PID == NULL) {
+                       float32 max_iout,
+                       uint32 polarity)
+{
+    if (pid == NULL || PID == NULL)
+    {
         return;
     }
-    pid->Kp = PID[0];
-    pid->Ki = PID[1];
-    pid->Kd = PID[2];
+    // 设置极性
+    if (polarity == 0)
+    {
+        pid->Kp = PID[0];
+        pid->Ki = PID[1];
+        pid->Kd = PID[2];
+    }
+    else
+    {
+        pid->Kp = -PID[0];
+        pid->Ki = -PID[1];
+        pid->Kd = -PID[2];
+    }
     pid->max_out = max_out;
     pid->max_iout = max_iout;
     pid->Dbuf[0] = pid->Dbuf[1] = pid->Dbuf[2] = 0.0f;
@@ -50,8 +63,10 @@ void PID_init_Position(pid_type_def* pid,
  * @param[in]      set: 设定值
  * @retval         pid输出
  */
-float32 PID_calc_Position(pid_type_def* pid, float32 ref, float32 set) {
-    if (pid == NULL) {
+float32 PID_calc_Position(pid_type_def *pid, float32 ref, float32 set)
+{
+    if (pid == NULL)
+    {
         return 0.0f;
     }
     pid->error[2] = pid->error[1];
@@ -85,8 +100,10 @@ float32 PID_calc_Position(pid_type_def* pid, float32 ref, float32 set) {
  * @param[in]      set: 设定值
  * @retval         pid输出
  */
-float32 PID_calc_DELTA(pid_type_def* pid, float32 ref, float32 set) {
-    if (pid == NULL) {
+float32 PID_calc_DELTA(pid_type_def *pid, float32 ref, float32 set)
+{
+    if (pid == NULL)
+    {
         return 0.0f;
     }
     pid->error[2] = pid->error[1];
@@ -116,8 +133,10 @@ float32 PID_calc_DELTA(pid_type_def* pid, float32 ref, float32 set) {
  * @param[out]     pid: PID结构数据指针
  * @retval         none
  */
-void PID_clear(pid_type_def* pid) {
-    if (pid == NULL) {
+void PID_clear(pid_type_def *pid)
+{
+    if (pid == NULL)
+    {
         return;
     }
     pid->error[0] = pid->error[1] = pid->error[2] = 0.0f;
@@ -146,7 +165,8 @@ void PID_clear(pid_type_def* pid) {
  * @param pid
  * @param PID
  *********************************************************************************/
-void Set_Pid_Para(pid_type_def* pid, float32 PID[3]) {
+void Set_Pid_Para(pid_type_def *pid, float32 PID[3])
+{
     pid->Kp = PID[0];
     pid->Ki = PID[1];
     pid->Kd = PID[2];
@@ -158,20 +178,22 @@ void Set_Pid_Para(pid_type_def* pid, float32 PID[3]) {
  * @param max_out  //最大输出限幅
  * @param max_iout //最大积分限幅
  *********************************************************************************/
-void Set_Pid_Limit(pid_type_def* pid, float32 max_out, float32 max_iout) {
+void Set_Pid_Limit(pid_type_def *pid, float32 max_out, float32 max_iout)
+{
     pid->max_out = max_out;
     pid->max_iout = max_iout;
 }
 
-float PID_Realize_Curvature(pid_type_def* pid,
+float PID_Realize_Curvature(pid_type_def *pid,
                             float NowPoint,
                             float TarPoint,
-                            int32 speed) {
+                            int32 speed)
+{
     // 定义为寄存器变量，只能用于整型和字符型变量，提高运算速度
-    float iError,                  // 当前误差
-        Actual;                    // 最后得出的实际输出值
-    float Kp;                      // 动态P
-    iError = TarPoint - NowPoint;  // 计算当前误差
+    float iError,                 // 当前误差
+        Actual;                   // 最后得出的实际输出值
+    float Kp;                     // 动态P
+    iError = TarPoint - NowPoint; // 计算当前误差
     Kp = pid->Kp;
     Actual = (float)(Kp * iError);
     return Actual;
@@ -182,8 +204,10 @@ float PID_Realize_Curvature(pid_type_def* pid,
 /// @param ref 参考值
 /// @param set 实际值
 /// @return
-float32 PID_calc_Position_Square(pid_type_def* pid, float32 ref, float32 set) {
-    if (pid == NULL) {
+float32 PID_calc_Position_Square(pid_type_def *pid, float32 ref, float32 set)
+{
+    if (pid == NULL)
+    {
         return 0.0f;
     }
     pid->error[2] = pid->error[1];
@@ -191,9 +215,12 @@ float32 PID_calc_Position_Square(pid_type_def* pid, float32 ref, float32 set) {
     pid->set = set;
     pid->fdb = ref;
     pid->error[0] = set - ref;
-    if (pid->error[0] >= 0) {
+    if (pid->error[0] >= 0)
+    {
         pid->error[0] = pid->error[0] * pid->error[0];
-    } else {
+    }
+    else
+    {
         pid->error[0] = -pid->error[0] * pid->error[0];
     }
     pid->Pout = pid->Kp * pid->error[0];
@@ -212,8 +239,10 @@ float32 PID_calc_Position_Square(pid_type_def* pid, float32 ref, float32 set) {
 /// @param ref 参考值
 /// @param set 实际值
 /// @return
-float32 PID_calc_DELTA_Square(pid_type_def* pid, float32 ref, float32 set) {
-    if (pid == NULL) {
+float32 PID_calc_DELTA_Square(pid_type_def *pid, float32 ref, float32 set)
+{
+    if (pid == NULL)
+    {
         return 0.0f;
     }
     pid->error[2] = pid->error[1];
@@ -221,9 +250,12 @@ float32 PID_calc_DELTA_Square(pid_type_def* pid, float32 ref, float32 set) {
     pid->set = set;
     pid->fdb = ref;
     pid->error[0] = set - ref;
-    if (pid->error[0] >= 0) {
+    if (pid->error[0] >= 0)
+    {
         pid->error[0] = pid->error[0] * pid->error[0];
-    } else {
+    }
+    else
+    {
         pid->error[0] = -pid->error[0] * pid->error[0];
     }
     pid->Pout = pid->Kp * (pid->error[0] - pid->error[1]);
@@ -243,12 +275,14 @@ float32 PID_calc_DELTA_Square(pid_type_def* pid, float32 ref, float32 set) {
 /// @param ref
 /// @param set
 /// @return
-float32 PID_calc_Position_DynamicI(pid_type_def* pid,
+float32 PID_calc_Position_DynamicI(pid_type_def *pid,
                                    float32 ref,
                                    float32 set,
                                    float range,
-                                   float iMax) {
-    if (pid == NULL) {
+                                   float iMax)
+{
+    if (pid == NULL)
+    {
         return 0.0f;
     }
     pid->error[2] = pid->error[1];
@@ -274,8 +308,10 @@ float32 PID_calc_Position_DynamicI(pid_type_def* pid,
     LimitMax(pid->out, pid->max_out);
     return pid->out;
 }
-float PID_calc_Position_LowPassD(pid_type_def* pid, float ref, float set) {
-    if (pid == NULL) {
+float PID_calc_Position_LowPassD(pid_type_def *pid, float ref, float set)
+{
+    if (pid == NULL)
+    {
         return 0.0f;
     }
     pid->error[2] = pid->error[1];

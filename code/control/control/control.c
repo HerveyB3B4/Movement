@@ -37,14 +37,16 @@ static void control_param_init(pid_type_def *pid,
                                const uint32 para[3],
                                float coefficient,
                                float maxOut,
-                               float maxIOut);
+                               float maxIOut,
+                               uint32 polarity);
 void control_param_split_init(pid_type_def *pid,
                               const uint32 para[3],
                               float kp_coefficient,
                               float ki_coefficient,
                               float kd_coefficient,
                               float maxOut,
-                              float maxIOut);
+                              float maxIOut,
+                              uint32 polarity);
 // static float control_bottom_feedforward();
 // static void control_shutdown(struct Control_Target* control_target,
 //                              struct EulerAngle* euler_angle_bias);
@@ -153,7 +155,7 @@ void control_bottom_balance(struct Control_Target *control_target,
         s_bottom_balance_duty -= bottom_motor_deadzone;
     }
 
-    restrictValueI(&s_bottom_balance_duty, -10000, 10000);
+    restrictValueI(&s_bottom_balance_duty, -9999, 9999);
 
     set_bottom_motor_pwn(
         (int32)(s_bottom_balance_duty)); // set bottom motor pwm to
@@ -164,7 +166,7 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
                                     struct Control_Target *control_target)
 {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle = -PID_calc_Position(
+    control_target->frontAngle = PID_calc_Position(
         &bottom_velocity_PID, (float)vel_motor->bottomFiltered, 0.0f);
 #endif
 #ifndef VELOCITY_KALMAN_FILTER
@@ -192,7 +194,7 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
     // noiseFilter(angleControlFilter[0],0.002f);
 
     // simpleFuzzyProcess(&frontBalanceSimpleFuzzy,angleControlFilter[0],control_target->frontAngle,&bottom_angle_PID);
-    control_target->frontAngleVelocity = -(PID_calc_Position(
+    control_target->frontAngleVelocity = (PID_calc_Position(
         &bottom_angle_PID, (angleControlFilter[0] - euler_angle_bias->pitch),
         control_target->frontAngle));
 
@@ -306,10 +308,10 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
 {
     static float momentumAngleFilter[2] = {0}; // 角度滤波
     momentumAngleFilter[1] = momentumAngleFilter[0];
-    momentumAngleFilter[0] = -currentSideAngle;
+    momentumAngleFilter[0] = currentSideAngle;
     // noiseFilter(momentumAngleFilter[0],0.02f);
     // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
-    control_target->sideAngleVelocity = PID_calc_Position(
+    control_target->sideAngleVelocity = (float)PID_calc_Position(
         &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
         control_target->sideAngle);
 
@@ -430,44 +432,43 @@ static void control_turn_velocity(struct Control_Target *control_target,
 
 void control_init(struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    // control_param_init(&bottom_angle_velocity_PID,
-    //                    control_motion_params->bottom_angle_velocity_parameter,
-    //                    100, MOTOR_PWM_MAX, 9999);
-    // // control_param_init(&bottom_angle_PID,
-    // //                    control_motion_params->bottom_angle_parameter, 10,
-    // //                    100, 10);
-    // control_param_split_init(&bottom_angle_PID,
-    //                          control_motion_params->bottom_angle_parameter,
-    //                          10, 1000, 10, 100, 10);
-    // control_param_init(&bottom_velocity_PID,
-    //                    control_motion_params->bottom_velocity_parameter,
-    //                    100000, 50, 2.5f);
-
-    control_pid_preset();
+    // control_pid_preset(control_motion_params);
+    control_param_init(&bottom_angle_velocity_PID,
+                       control_motion_params->bottom_angle_velocity_parameter,
+                       100, MOTOR_PWM_MAX, 9999, control_motion_params->bottom_angle_velocity_polarity);
+    // control_param_init(&bottom_angle_PID,
+    //                    control_motion_params->bottom_angle_parameter, 10,
+    //                    100, 10);
+    control_param_split_init(&bottom_angle_PID,
+                             control_motion_params->bottom_angle_parameter,
+                             10, 1000, 10, 100, 10, control_motion_params->bottom_angle_polarity);
+    control_param_init(&bottom_velocity_PID,
+                       control_motion_params->bottom_velocity_parameter,
+                       100000, 50, 2.5f, control_motion_params->bottom_velocity_polarity);
 
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
                        control_motion_params->side_angle_velocity_parameter,
-                       100, MOMENTUM_MOTOR_PWM_MAX, 8000);
+                       100, MOMENTUM_MOTOR_PWM_MAX, 8000, control_motion_params->side_angle_velocity_polarity);
     // control_param_init(&side_angle_PID,
     //                    control_motion_params->side_angle_parameter, 10, 9999,
     //                    2.5);
     control_param_split_init(&side_angle_PID,
                              control_motion_params->side_angle_parameter, 10,
-                             10, 100, 9999, 2.5f);
+                             10, 100, 9999, 2.5f, control_motion_params->side_angle_polarity);
     control_param_init(&side_velocity_PID,
                        control_motion_params->side_velocity_parameter, 10000,
-                       10, 10);
-    // turn pid
-    // control_param_init(&turn_angle_velocity_PID,
-    //                    control_motion_params->turn_angle_velocity_parameter, 1,
+                       10, 10, control_motion_params->side_velocity_polarity);
+    // // turn pid
+    // // control_param_init(&turn_angle_velocity_PID,
+    // //                    control_motion_params->turn_angle_velocity_parameter, 1,
+    // //                    9999, 500);
+    // control_param_init(&turn_angle_PID,
+    //                    control_motion_params->turn_angle_parameter, 100, 9999,
+    //                    500);
+    // control_param_init(&turn_velocity_PID,
+    //                    control_motion_params->turn_velocity_parameter, 1000,
     //                    9999, 500);
-    control_param_init(&turn_angle_PID,
-                       control_motion_params->turn_angle_parameter, 100, 9999,
-                       500);
-    control_param_init(&turn_velocity_PID,
-                       control_motion_params->turn_velocity_parameter, 1000,
-                       9999, 500);
 }
 
 /// @brief init the control parameter in the menu
@@ -503,13 +504,14 @@ static void control_param_init(pid_type_def *pid,
                                const uint32 para[3],
                                float coefficient,
                                float maxOut,
-                               float maxIOut)
+                               float maxIOut,
+                               uint32 polarity)
 {
     float temp_pid[3];
     temp_pid[0] = (float)para[0] / coefficient;
     temp_pid[1] = (float)para[1] / coefficient;
     temp_pid[2] = (float)para[2] / coefficient;
-    PID_init_Position(pid, temp_pid, maxOut, maxIOut);
+    PID_init_Position(pid, temp_pid, maxOut, maxIOut, polarity);
 }
 
 static void control_param_split_init(pid_type_def *pid,
@@ -518,16 +520,17 @@ static void control_param_split_init(pid_type_def *pid,
                                      float ki_coefficient,
                                      float kd_coefficient,
                                      float maxOut,
-                                     float maxIOut)
+                                     float maxIOut,
+                                     uint32 polarity)
 {
     float temp_pid[3];
     temp_pid[0] = (float)para[0] / kp_coefficient;
     temp_pid[1] = (float)para[1] / ki_coefficient;
     temp_pid[2] = (float)para[2] / kd_coefficient;
-    PID_init_Position(pid, temp_pid, maxOut, maxIOut);
+    PID_init_Position(pid, temp_pid, maxOut, maxIOut, polarity);
 }
 
-void control_pid_preset()
+void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     // bottom wheel
     // float bottom_angle_velocity_pid[3] = {0.6, 0.1, 1.2};
@@ -538,21 +541,34 @@ void control_pid_preset()
     // float bottom_angle_pid[3] = {4.5, 0.02, 2.0};
     // float bottom_velocity_pid[3] = {0.0030, 0.00, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {0.0, 0.05, 0};
-    float bottom_angle_pid[3] = {7, 0.00, 0};
+    float bottom_angle_velocity_pid[3] = {0.0, 0.00, 0};
+    float bottom_angle_pid[3] = {0, 0.00, 0};
     float bottom_velocity_pid[3] = {0.0000, 0.00, 0.00};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
-                      9999, 9999);
-    PID_init_Position(&bottom_angle_PID, bottom_angle_pid, 100, 0.3);
-    PID_init_Position(&bottom_velocity_PID, bottom_velocity_pid, 50, 2.5f);
+                      9999, 9999, control_motion_params->bottom_angle_velocity_polarity);
+    PID_init_Position(&bottom_angle_PID, bottom_angle_pid, 100, 0.3,
+                      control_motion_params->bottom_angle_polarity);
+    PID_init_Position(&bottom_velocity_PID, bottom_velocity_pid, 50, 2.5f,
+                      control_motion_params->bottom_velocity_polarity);
 
-    printf("fav: kp: %f, ki: %f, kd: %f\n", bottom_angle_velocity_PID.Kp,
-           bottom_angle_velocity_PID.Ki, bottom_angle_velocity_PID.Kd);
-    printf("fa: kp: %f, ki: %f, kd: %f\n", bottom_angle_PID.Kp,
-           bottom_angle_PID.Ki, bottom_angle_PID.Kd);
-    printf("fv: kp: %f, ki: %f, kd: %f\n", bottom_velocity_PID.Kp,
-           bottom_velocity_PID.Ki, bottom_velocity_PID.Kd);
+    // printf("fav: kp: %f, ki: %f, kd: %f\n", bottom_angle_velocity_PID.Kp,
+    //        bottom_angle_velocity_PID.Ki, bottom_angle_velocity_PID.Kd);
+    // printf("fa: kp: %f, ki: %f, kd: %f\n", bottom_angle_PID.Kp,
+    //        bottom_angle_PID.Ki, bottom_angle_PID.Kd);
+    // printf("fv: kp: %f, ki: %f, kd: %f\n", bottom_velocity_PID.Kp,
+    //        bottom_velocity_PID.Ki, bottom_velocity_PID.Kd);
+
+    float side_angle_velocity_pid[3] = {0.0, 0.00, 0};
+    float side_angle_pid[3] = {0, 0.00, 0};
+    float side_velocity_pid[3] = {0.0000, 0.00, 0.00};
+
+    PID_init_Position(&side_angle_velocity_PID, side_angle_velocity_pid, MOMENTUM_MOTOR_PWM_MAX,
+                      8000, control_motion_params->side_angle_velocity_polarity);
+    PID_init_Position(&side_angle_PID, side_angle_pid, 9999, 2.5f,
+                      control_motion_params->side_angle_polarity);
+    PID_init_Position(&side_velocity_PID, side_velocity_pid, 10, 10,
+                      control_motion_params->side_velocity_polarity);
 }
 
 void control_reset(struct Control_Target *control_target)
