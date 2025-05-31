@@ -42,36 +42,43 @@ void test_side_motor()
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: left  forward");
     lcd_show_string(0, 1, "KEY_D: left backward");
-    lcd_show_string(0, 2, "KEY_B: right forward");
-    lcd_show_string(0, 3, "KEY_R:right backward");
-    lcd_show_string(0, 4, "Press KEY_L to exit");
-    // int count = 0;
-    while (keymsg.key != KEY_L)
+    lcd_show_string(0, 2, "KEY_R: right forward");
+    lcd_show_string(0, 3, "KEY_L:right backward");
+    lcd_show_string(0, 4, "Release to stop");
+    lcd_show_string(0, 5, "Press KEY_B to exit");
+    system_delay_ms(200); // 等待按键稳定
+    while (keymsg.key != KEY_B)
     {
-        if (keymsg.key == KEY_U) // 向前
+        // 根据按键状态设置电机速度
+        if (keymsg.key == KEY_U) // 左电机向前
         {
             small_driver_set_duty(2000, 0);
         }
-        if (keymsg.key == KEY_D) // 向后
+        else if (keymsg.key == KEY_D) // 左电机向后
         {
             small_driver_set_duty(-2000, 0);
         }
-        if (keymsg.key == KEY_B) // 向前
+        else if (keymsg.key == KEY_R) // 右电机向前
         {
             small_driver_set_duty(0, 2000);
         }
-        if (keymsg.key == KEY_R) // 向后
+        else if (keymsg.key == KEY_L) // 右电机向后
         {
             small_driver_set_duty(0, -2000);
         }
-        // count++;
-        lcd_show_string(0, 5, "Front:");
-        lcd_show_int(8, 5, g_vel_motor.momentumFront, 5);
-        lcd_show_string(0, 6, "Back:");
-        lcd_show_int(8, 6, g_vel_motor.momentumBack, 5);
-        // lcd_show_string(0, 7, "count:");
-        // lcd_show_int(8, 7, count, 5);
+        else // 没有按键按下时停止电机
+        {
+            small_driver_set_duty(0, 0);
+        }
+
+        // 显示电机状态
+        lcd_show_string(0, 6, "Front:");
+        lcd_show_int(8, 6, g_vel_motor.momentumFront, 5);
+        lcd_show_string(0, 7, "Back:");
+        lcd_show_int(8, 7, g_vel_motor.momentumBack, 5);
     }
+
+    // 退出前确保电机停止
     small_driver_set_duty(0, 0);
     lcd_clear();
 }
