@@ -245,7 +245,7 @@ void system_set_runstate(RunState_t state)
         // 在切换到运行状态时重置控制目标和标志
         control_reset(&g_control_target);
 
-        pit_enable(CCU61_CH0);  // 使能控制中断
+        // pit_enable(CCU61_CH0);  // 使能控制中断
         pit_disable(CCU60_CH1); // 失能按键中断
         break;
     }

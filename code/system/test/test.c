@@ -109,8 +109,10 @@ void test_attitude()
     {
         lcd_show_string(0, 0, "Pitch:");
         lcd_show_float(0, 1, currentFrontAngle, 3, 3);
+        lcd_show_float(8, 1, currentFrontAngle - g_menu_manual_param.mechanicalPitchAngle * 0.1f, 3, 3);
         lcd_show_string(0, 2, "Row:");
         lcd_show_float(0, 3, currentSideAngle, 3, 3);
+        lcd_show_float(8, 3, currentSideAngle - g_menu_manual_param.mechanicalRollAngle * 0.1f, 3, 3);
         lcd_show_string(0, 4, "Yaw:");
         lcd_show_float(0, 5, yawAngle, 3, 3);
     }
