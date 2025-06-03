@@ -98,7 +98,8 @@ void bottom_control_timer(struct Control_Time *control_time,
                           struct Control_Flag *control_flag,
                           struct Control_Target *control_target,
                           struct Velocity_Motor *vel_motor,
-                          struct EulerAngle *euler_angle_bias)
+                          struct EulerAngle *euler_angle_bias,
+                          struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     uint32 frontAngleTime = control_time->bottom[0];
     uint32 frontAngleVelocityTime = control_time->bottom[1];
@@ -136,7 +137,7 @@ void bottom_control_timer(struct Control_Time *control_time,
         control_flag->frontVelocity = 0;
     }
     control_bottom_balance(control_target, control_flag, vel_motor,
-                           euler_angle_bias);
+                           euler_angle_bias, control_motion_params);
 }
 
 void side_control_timer(struct Control_Time *control_time,
@@ -144,7 +145,8 @@ void side_control_timer(struct Control_Time *control_time,
                         struct Control_Target *control_target,
                         struct Control_Turn_Manual_Params *control_turn_params,
                         struct Velocity_Motor *vel_motor,
-                        struct EulerAngle *euler_angle_bias)
+                        struct EulerAngle *euler_angle_bias,
+                        struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     uint32 sideAngleTime = control_time->side[0];
     uint32 sideAngleVelocityTime = control_time->side[1];
@@ -180,7 +182,7 @@ void side_control_timer(struct Control_Time *control_time,
         control_flag->sideAngleVelocity = 0;
     }
     control_side_balance(control_target, control_flag, control_turn_params,
-                         vel_motor, euler_angle_bias);
+                         vel_motor, euler_angle_bias, control_motion_params);
 }
 
 void turn_control_timer(struct Control_Time *control_time,

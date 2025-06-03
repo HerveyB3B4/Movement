@@ -86,8 +86,7 @@ typedef struct
 void PID_init_Position(pid_type_def *pid,
                        const float32 PID[3],
                        float32 max_out,
-                       float32 max_iout,
-                       uint32 polarity);
+                       float32 max_iout);
 
 /**
  * @brief          pid calculate

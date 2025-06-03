@@ -33,14 +33,14 @@ struct Control_Motion_Manual_Parmas
     uint32 turn_velocity_parameter[3];
 
     // PID极性参数
-    uint32 bottom_velocity_polarity;
-    uint32 bottom_angle_velocity_polarity;
-    uint32 bottom_angle_polarity;
-    uint32 side_angle_velocity_polarity;
-    uint32 side_angle_polarity;
-    uint32 side_velocity_polarity;
-    uint32 turn_angle_polarity;
-    uint32 turn_velocity_polarity;
+    int32 bottom_velocity_polarity;
+    int32 bottom_angle_velocity_polarity;
+    int32 bottom_angle_polarity;
+    int32 side_angle_velocity_polarity;
+    int32 side_angle_polarity;
+    int32 side_velocity_polarity;
+    int32 turn_angle_polarity;
+    int32 turn_velocity_polarity;
 };
 
 struct Control_Time
@@ -130,13 +130,15 @@ void control_manual_param_init();
 void control_bottom_balance(struct Control_Target *control_target,
                             struct Control_Flag *control_flag,
                             struct Velocity_Motor *vel_motor,
-                            struct EulerAngle *euler_angle_bias);
+                            struct EulerAngle *euler_angle_bias,
+                            struct Control_Motion_Manual_Parmas *control_motion_params);
 void control_side_balance(
     struct Control_Target *control_target,
     struct Control_Flag *control_flag,
     struct Control_Turn_Manual_Params *control_turn_params,
     struct Velocity_Motor *vel_motor,
-    struct EulerAngle *euler_angle_bias);
+    struct EulerAngle *euler_angle_bias,
+    struct Control_Motion_Manual_Parmas *control_motion_params);
 
 void control_turn_balance();
 void control_shutdown(struct Control_Target *control_target,

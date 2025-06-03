@@ -22,26 +22,16 @@
 void PID_init_Position(pid_type_def *pid,
                        const float32 PID[3],
                        float32 max_out,
-                       float32 max_iout,
-                       uint32 polarity)
+                       float32 max_iout)
 {
     if (pid == NULL || PID == NULL)
     {
         return;
     }
-    // 设置极性
-    if (polarity == 0)
-    {
-        pid->Kp = PID[0];
-        pid->Ki = PID[1];
-        pid->Kd = PID[2];
-    }
-    else
-    {
-        pid->Kp = -PID[0];
-        pid->Ki = -PID[1];
-        pid->Kd = -PID[2];
-    }
+    pid->Kp = PID[0];
+    pid->Ki = PID[1];
+    pid->Kd = PID[2];
+
     pid->max_out = max_out;
     pid->max_iout = max_iout;
     pid->Dbuf[0] = pid->Dbuf[1] = pid->Dbuf[2] = 0.0f;

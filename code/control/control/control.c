@@ -37,16 +37,14 @@ static void control_param_init(pid_type_def *pid,
                                const uint32 para[3],
                                float coefficient,
                                float maxOut,
-                               float maxIOut,
-                               uint32 polarity);
+                               float maxIOut);
 void control_param_split_init(pid_type_def *pid,
                               const uint32 para[3],
                               float kp_coefficient,
                               float ki_coefficient,
                               float kd_coefficient,
                               float maxOut,
-                              float maxIOut,
-                              uint32 polarity);
+                              float maxIOut);
 // static float control_bottom_feedforward();
 // static void control_shutdown(struct Control_Target* control_target,
 //                              struct EulerAngle* euler_angle_bias);
@@ -56,20 +54,26 @@ void control_reset(struct Control_Target *control_target);
 
 // bottom
 static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
-                                    struct Control_Target *control_target);
+                                    struct Control_Target *control_target,
+                                    struct Control_Motion_Manual_Parmas *control_motion_params);
 static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
-                                 struct Control_Target *control_target);
+                                 struct Control_Target *control_target,
+                                 struct Control_Motion_Manual_Parmas *control_motion_params);
 static void control_bottom_angle_velocity(
-    struct Control_Target *control_target);
+    struct Control_Target *control_target,
+    struct Control_Motion_Manual_Parmas *control_motion_params);
 
 // side
 static void control_side_velocity(
     struct Velocity_Motor *vel_motor,
     struct Control_Target *control_target,
-    struct Control_Turn_Manual_Params *control_turn_params);
+    struct Control_Turn_Manual_Params *control_turn_params,
+    struct Control_Motion_Manual_Parmas *control_motion_params);
 static void control_side_angle(struct EulerAngle *euler_angle_bias,
-                               struct Control_Target *control_target);
-static void control_side_angle_velocity(struct Control_Target *control_target);
+                               struct Control_Target *control_target,
+                               struct Control_Motion_Manual_Parmas *control_motion_params);
+static void control_side_angle_velocity(struct Control_Target *control_target,
+                                        struct Control_Motion_Manual_Parmas *control_motion_params);
 
 static void control_turn_velocity(struct Control_Target *control_target,
                                   struct Velocity_Motor *vel_motor);
@@ -110,22 +114,23 @@ int get_momentum_diff()
 void control_bottom_balance(struct Control_Target *control_target,
                             struct Control_Flag *control_flag,
                             struct Velocity_Motor *vel_motor,
-                            struct EulerAngle *euler_angle_bias)
+                            struct EulerAngle *euler_angle_bias,
+                            struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     if (control_flag->frontVelocity)
     {
         control_flag->frontVelocity = 0;
-        control_bottom_velocity(vel_motor, control_target);
+        control_bottom_velocity(vel_motor, control_target, control_motion_params);
     }
     if (control_flag->frontAngle)
     {
         control_flag->frontAngle = 0;
-        control_bottom_angle(euler_angle_bias, control_target);
+        control_bottom_angle(euler_angle_bias, control_target, control_motion_params);
     }
     if (control_flag->frontAngleVelocity)
     {
         control_flag->frontAngleVelocity = 0;
-        control_bottom_angle_velocity(control_target);
+        control_bottom_angle_velocity(control_target, control_motion_params);
     }
     // restrictValueI(&s_bottom_balance_duty,-3000,3000);
     // fuzzyBottomMotorHertz();
@@ -145,7 +150,7 @@ void control_bottom_balance(struct Control_Target *control_target,
     //             bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
     //     }
     // }
-
+    s_bottom_balance_duty = control_target->frontAngleVelocity;
     if (s_bottom_balance_duty > 0)
     {
         s_bottom_balance_duty += bottom_motor_deadzone;
@@ -163,11 +168,12 @@ void control_bottom_balance(struct Control_Target *control_target,
 }
 
 static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
-                                    struct Control_Target *control_target)
+                                    struct Control_Target *control_target,
+                                    struct Control_Motion_Manual_Parmas *control_motion_params)
 {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle = PID_calc_Position(
-        &bottom_velocity_PID, (float)vel_motor->bottomFiltered, 0.0f);
+    control_target->frontAngle = control_motion_params->bottom_angle_polarity * PID_calc_Position(
+                                                                                    &bottom_velocity_PID, (float)vel_motor->bottom, 0.0f);
 #endif
 #ifndef VELOCITY_KALMAN_FILTER
     control_target->frontAngle =
@@ -185,7 +191,8 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
 }
 
 static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
-                                 struct Control_Target *control_target)
+                                 struct Control_Target *control_target,
+                                 struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     static float angleControlFilter[2] = {0};
     angleControlFilter[1] = angleControlFilter[0];
@@ -194,9 +201,9 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
     // noiseFilter(angleControlFilter[0],0.002f);
 
     // simpleFuzzyProcess(&frontBalanceSimpleFuzzy,angleControlFilter[0],control_target->frontAngle,&bottom_angle_PID);
-    control_target->frontAngleVelocity = (PID_calc_Position(
-        &bottom_angle_PID, (angleControlFilter[0] - euler_angle_bias->pitch),
-        control_target->frontAngle));
+    control_target->frontAngleVelocity = control_motion_params->bottom_angle_polarity * (PID_calc_Position(
+                                                                                            &bottom_angle_PID, (angleControlFilter[0] - euler_angle_bias->pitch),
+                                                                                            control_target->frontAngle));
 
     if (g_control_output_fa_flag != 0)
     {
@@ -205,16 +212,17 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
 }
 
 static void control_bottom_angle_velocity(
-    struct Control_Target *control_target)
+    struct Control_Target *control_target,
+    struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     // imu963raPushingSensorData();
     static float angleVelocityControlFilter[2] = {0};
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
     angleVelocityControlFilter[0] = currentFrontAngleVelocity;
 
-    s_bottom_balance_duty = (int32)(PID_calc_DELTA(
-        &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
-        control_target->frontAngleVelocity));
+    s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity * (PID_calc_DELTA(
+                                                                                        &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
+                                                                                        control_target->frontAngleVelocity));
 }
 
 void control_side_balance(
@@ -222,27 +230,28 @@ void control_side_balance(
     struct Control_Flag *control_flag,
     struct Control_Turn_Manual_Params *control_turn_params,
     struct Velocity_Motor *vel_motor,
-    struct EulerAngle *euler_angle_bias)
+    struct EulerAngle *euler_angle_bias,
+    struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     if (control_flag->sideVelocity)
     {
         control_flag->sideVelocity = 0;
-        control_side_velocity(vel_motor, control_target, control_turn_params);
+        control_side_velocity(vel_motor, control_target, control_turn_params, control_motion_params);
     }
 
     if (control_flag->sideAngle)
     {
         control_flag->sideAngle = 0;
-        control_side_angle(euler_angle_bias, control_target);
+        control_side_angle(euler_angle_bias, control_target, control_motion_params);
     }
 
     if (control_flag->sideAngleVelocity)
     {
         control_flag->sideAngleVelocity = 0;
-        control_side_angle_velocity(control_target);
+        control_side_angle_velocity(control_target, control_motion_params);
     }
 
-    // s_side_balance_duty = control_target->sideAngleVelocity * 10;
+    // s_side_balance_duty = control_target->sideAngleVelocity * 100;
     // turnControl();
     int32 left_motor_duty, right_motor_duty;
     left_motor_duty =
@@ -285,16 +294,16 @@ void control_side_balance(
 static void control_side_velocity(
     struct Velocity_Motor *vel_motor,
     struct Control_Target *control_target,
-    struct Control_Turn_Manual_Params *control_turn_params)
+    struct Control_Turn_Manual_Params *control_turn_params,
+    struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     // static float momentumVelocityFilter = 0;
     // momentumVelocityFilter =
     //     (float)(vel_motor->momentumFront - vel_motor->momentumBack);
 
-    control_target->sideAngle = (float)PID_calc_Position(
-        &side_velocity_PID,
-        (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
-        0.0f); // 速度是正反馈，因此set和ref要反过来
+    control_target->sideAngle = control_motion_params->side_velocity_polarity * (&side_velocity_PID,
+                                                                                 (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
+                                                                                 0.0f); // 速度是正反馈，因此set和ref要反过来
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sv_flag != 0)
@@ -304,16 +313,17 @@ static void control_side_velocity(
 }
 
 static void control_side_angle(struct EulerAngle *euler_angle_bias,
-                               struct Control_Target *control_target)
+                               struct Control_Target *control_target,
+                               struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     static float momentumAngleFilter[2] = {0}; // 角度滤波
     momentumAngleFilter[1] = momentumAngleFilter[0];
     momentumAngleFilter[0] = currentSideAngle;
     // noiseFilter(momentumAngleFilter[0],0.02f);
     // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
-    control_target->sideAngleVelocity = (float)PID_calc_Position(
-        &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
-        control_target->sideAngle);
+    control_target->sideAngleVelocity = control_motion_params->side_angle_polarity * PID_calc_Position(
+                                                                                         &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
+                                                                                         control_target->sideAngle);
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0)
@@ -322,7 +332,8 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
     }
 }
 
-static void control_side_angle_velocity(struct Control_Target *control_target)
+static void control_side_angle_velocity(struct Control_Target *control_target,
+                                        struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     static float momentumGyroFilter[2] = {0}; // 角度速度滤波
     momentumGyroFilter[1] = momentumGyroFilter[0];
@@ -330,8 +341,8 @@ static void control_side_angle_velocity(struct Control_Target *control_target)
 
     // lowPassFilterF(&momentumGyroFilter[0], &momentumGyroFilter[1], 0.1f);
     s_side_balance_duty =
-        (int32)(PID_calc_DELTA(&side_angle_velocity_PID, momentumGyroFilter[0],
-                               control_target->sideAngleVelocity));
+        control_motion_params->side_angle_velocity_polarity * (int32)(PID_calc_DELTA(&side_angle_velocity_PID, momentumGyroFilter[0],
+                                                                                     control_target->sideAngleVelocity));
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sav_flag != 0)
@@ -501,14 +512,13 @@ static void control_param_init(pid_type_def *pid,
                                const uint32 para[3],
                                float coefficient,
                                float maxOut,
-                               float maxIOut,
-                               uint32 polarity)
+                               float maxIOut)
 {
     float temp_pid[3];
     temp_pid[0] = (float)para[0] / coefficient;
     temp_pid[1] = (float)para[1] / coefficient;
     temp_pid[2] = (float)para[2] / coefficient;
-    PID_init_Position(pid, temp_pid, maxOut, maxIOut, polarity);
+    PID_init_Position(pid, temp_pid, maxOut, maxIOut);
 }
 
 static void control_param_split_init(pid_type_def *pid,
@@ -517,14 +527,13 @@ static void control_param_split_init(pid_type_def *pid,
                                      float ki_coefficient,
                                      float kd_coefficient,
                                      float maxOut,
-                                     float maxIOut,
-                                     uint32 polarity)
+                                     float maxIOut)
 {
     float temp_pid[3];
     temp_pid[0] = (float)para[0] / kp_coefficient;
     temp_pid[1] = (float)para[1] / ki_coefficient;
     temp_pid[2] = (float)para[2] / kd_coefficient;
-    PID_init_Position(pid, temp_pid, maxOut, maxIOut, polarity);
+    PID_init_Position(pid, temp_pid, maxOut, maxIOut);
 }
 
 void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_params)
@@ -548,16 +557,14 @@ void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_para
     // float bottom_angle_pid[3] = {5.2, 0.0, 55.0};
     // float bottom_velocity_pid[3] = {0.000, 0.00000, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {0.0, 0.0, 80};
-    float bottom_angle_pid[3] = {0, 0.0, 0.0};
-    float bottom_velocity_pid[3] = {0.000, 0.00000, 0.00};
+    float bottom_angle_velocity_pid[3] = {0.00, 0.2, 0};
+    float bottom_angle_pid[3] = {100, 0.0, 0};
+    float bottom_velocity_pid[3] = {0.00, 0.000, 0.00};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
-                      9999, 9999, control_motion_params->bottom_angle_velocity_polarity);
-    PID_init_Position(&bottom_angle_PID, bottom_angle_pid, 9999, 9999,
-                      control_motion_params->bottom_angle_polarity);
-    PID_init_Position(&bottom_velocity_PID, bottom_velocity_pid, 50, 2.5f,
-                      control_motion_params->bottom_velocity_polarity);
+                      9999, 9999);
+    PID_init_Position(&bottom_angle_PID, bottom_angle_pid, 9999, 9999);
+    PID_init_Position(&bottom_velocity_PID, bottom_velocity_pid, 50, 2.5f);
 
     // printf("fav: kp: %f, ki: %f, kd: %f\n", bottom_angle_velocity_PID.Kp,
     //        bottom_angle_velocity_PID.Ki, bottom_angle_velocity_PID.Kd);
@@ -574,12 +581,9 @@ void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_para
     float side_angle_pid[3] = {3.1, 0, 11};
     float side_velocity_pid[3] = {0.0025, 0.0000125, 0.000};
 
-    PID_init_Position(&side_angle_velocity_PID, side_angle_velocity_pid, MOMENTUM_MOTOR_PWM_MAX,
-                      8000, control_motion_params->side_angle_velocity_polarity);
-    PID_init_Position(&side_angle_PID, side_angle_pid, 9999, 2.5f,
-                      control_motion_params->side_angle_polarity);
-    PID_init_Position(&side_velocity_PID, side_velocity_pid, 1000, 10,
-                      control_motion_params->side_velocity_polarity);
+    PID_init_Position(&side_angle_velocity_PID, side_angle_velocity_pid, MOMENTUM_MOTOR_PWM_MAX, 8000);
+    PID_init_Position(&side_angle_PID, side_angle_pid, 9999, 2.5f);
+    PID_init_Position(&side_velocity_PID, side_velocity_pid, 1000, 10);
 }
 
 void control_reset(struct Control_Target *control_target)

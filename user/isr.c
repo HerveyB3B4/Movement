@@ -82,14 +82,15 @@ IFX_INTERRUPT(cc61_pit_ch0_isr,
     interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU61_CH0);
 
-    // printf("exit_menu_flag: %d\n", g_exit_menu_flag);
+    printf("exit_menu_flag: %d\n", g_exit_menu_flag);
 
     g_control_target.frontVelocity = 0;
     if (g_control_bottom_flag != 0)
     {
         bottom_control_timer(&g_control_time, &g_control_flag,
                              &g_control_target, &g_vel_motor,
-                             &g_euler_angle_bias);
+                             &g_euler_angle_bias,
+                             &g_control_turn_manual_params);
     }
 
     // turnControlTimer();
@@ -98,7 +99,8 @@ IFX_INTERRUPT(cc61_pit_ch0_isr,
         side_control_timer(&g_control_time, &g_control_flag,
                            &g_control_target,
                            &g_control_turn_manual_params, &g_vel_motor,
-                           &g_euler_angle_bias);
+                           &g_euler_angle_bias,
+                           &g_control_turn_manual_params);
     }
     control_shutdown(&g_control_target, &g_euler_angle_bias);
 

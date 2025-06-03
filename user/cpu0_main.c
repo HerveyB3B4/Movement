@@ -87,7 +87,8 @@ int core0_main(void)
         {
             bottom_control_timer(&g_control_time, &g_control_flag,
                                  &g_control_target, &g_vel_motor,
-                                 &g_euler_angle_bias);
+                                 &g_euler_angle_bias,
+                                 &g_control_motion_params);
         }
 
         // turnControlTimer();
@@ -96,7 +97,8 @@ int core0_main(void)
             side_control_timer(&g_control_time, &g_control_flag,
                                &g_control_target,
                                &g_control_turn_manual_params, &g_vel_motor,
-                               &g_euler_angle_bias);
+                               &g_euler_angle_bias,
+                               &g_control_motion_params);
         }
         control_shutdown(&g_control_target, &g_euler_angle_bias);
         // 此处编写需要循环执行的代码

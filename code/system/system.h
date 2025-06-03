@@ -44,6 +44,7 @@ struct Control_Target;
 struct Control_Turn_Manual_Params;
 struct Velocity_Motor;
 struct EulerAngle;
+struct Control_Motion_Manual_Parmas;
 
 void system_init();
 void system_attitude_timer(
@@ -55,13 +56,15 @@ void bottom_control_timer(struct Control_Time *control_time,
                           struct Control_Flag *control_flag,
                           struct Control_Target *control_target,
                           struct Velocity_Motor *vel_motor,
-                          struct EulerAngle *euler_angle_bias);
+                          struct EulerAngle *euler_angle_bias,
+                          struct Control_Motion_Manual_Parmas *control_motion_params);
 void side_control_timer(struct Control_Time *control_time,
                         struct Control_Flag *control_flag,
                         struct Control_Target *control_target,
                         struct Control_Turn_Manual_Params *control_turn_params,
                         struct Velocity_Motor *vel_motor,
-                        struct EulerAngle *euler_angle_bias);
+                        struct EulerAngle *euler_angle_bias,
+                        struct Control_Motion_Manual_Parmas *control_motion_params);
 void turn_control_timer(struct Control_Time *control_time,
                         struct Control_Flag *control_flag,
                         struct Control_Target *control_target,
