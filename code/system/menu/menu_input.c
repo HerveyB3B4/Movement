@@ -44,70 +44,70 @@ void menu_get_params(
     }
 
     // 传递PID极性参数
-    if (g_menu_manual_param.bottom_velocity_polarity == 0)
-    {
-        control_motion_params->bottom_velocity_polarity = 1;
-    }
-    else
-    {
-        control_motion_params->bottom_velocity_polarity = -1;
-    }
-    if (g_menu_manual_param.bottom_angle_velocity_polarity == 0)
-    {
-        control_motion_params->bottom_angle_velocity_polarity = 1;
-    }
-    else
-    {
-        control_motion_params->bottom_angle_velocity_polarity = -1;
-    }
-    if (g_menu_manual_param.bottom_angle_polarity == 0)
-    {
-        control_motion_params->bottom_angle_polarity = 1;
-    }
-    else
-    {
-        control_motion_params->bottom_angle_polarity = -1;
-    }
-    if (g_menu_manual_param.side_angle_velocity_polarity == 0)
-    {
-        control_motion_params->side_angle_velocity_polarity = 1;
-    }
-    else
-    {
-        control_motion_params->side_angle_velocity_polarity = -1;
-    }
-    if (g_menu_manual_param.side_angle_polarity == 0)
-    {
-        control_motion_params->side_angle_polarity = 1;
-    }
-    else
-    {
-        control_motion_params->side_angle_polarity = -1;
-    }
-    if (g_menu_manual_param.side_velocity_polarity == 0)
-    {
-        control_motion_params->side_velocity_polarity = 1;
-    }
-    else
-    {
-        control_motion_params->side_velocity_polarity = -1;
-    }
-    if (g_menu_manual_param.turn_angle_polarity == 0)
-    {
-        control_motion_params->turn_angle_polarity = 1;
-    }
-    else
-    {
-        control_motion_params->turn_angle_polarity = -1;
-    }
-    if (g_menu_manual_param.turn_velocity_polarity == 0)
-    {
-        control_motion_params->turn_velocity_polarity = 1;
-    }
-    else
-    {
-        control_motion_params->turn_velocity_polarity = -1;
-    }
+    // if (g_menu_manual_param.bottom_velocity_polarity == 0)
+    // {
+    //     control_motion_params->bottom_velocity_polarity = 1;
+    // }
+    // else
+    // {
+    //     control_motion_params->bottom_velocity_polarity = -1;
+    // }
+    // if (g_menu_manual_param.bottom_angle_velocity_polarity == 0)
+    // {
+    //     control_motion_params->bottom_angle_velocity_polarity = 1;
+    // }
+    // else
+    // {
+    //     control_motion_params->bottom_angle_velocity_polarity = -1;
+    // }
+    // if (g_menu_manual_param.bottom_angle_polarity == 0)
+    // {
+    //     control_motion_params->bottom_angle_polarity = 1;
+    // }
+    // else
+    // {
+    //     control_motion_params->bottom_angle_polarity = -1;
+    // }
+    // if (g_menu_manual_param.side_angle_velocity_polarity == 0)
+    // {
+    //     control_motion_params->side_angle_velocity_polarity = 1;
+    // }
+    // else
+    // {
+    //     control_motion_params->side_angle_velocity_polarity = -1;
+    // }
+    // if (g_menu_manual_param.side_angle_polarity == 0)
+    // {
+    //     control_motion_params->side_angle_polarity = 1;
+    // }
+    // else
+    // {
+    //     control_motion_params->side_angle_polarity = -1;
+    // }
+    // if (g_menu_manual_param.side_velocity_polarity == 0)
+    // {
+    //     control_motion_params->side_velocity_polarity = 1;
+    // }
+    // else
+    // {
+    //     control_motion_params->side_velocity_polarity = -1;
+    // }
+    // if (g_menu_manual_param.turn_angle_polarity == 0)
+    // {
+    //     control_motion_params->turn_angle_polarity = 1;
+    // }
+    // else
+    // {
+    //     control_motion_params->turn_angle_polarity = -1;
+    // }
+    // if (g_menu_manual_param.turn_velocity_polarity == 0)
+    // {
+    //     control_motion_params->turn_velocity_polarity = 1;
+    // }
+    // else
+    // {
+    //     control_motion_params->turn_velocity_polarity = -1;
+    // }
 
     // control_motion_params->bottom_velocity_polarity =
     //     g_menu_manual_param.bottom_velocity_polarity;

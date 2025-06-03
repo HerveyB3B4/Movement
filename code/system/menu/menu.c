@@ -70,6 +70,8 @@ uint32 *EEPROM_DATA_UINT[] = {
     (uint32 *)(&g_control_output_sv_flag),
     (uint32 *)(&g_control_output_sa_flag),
     (uint32 *)(&g_control_output_fa_flag),
+    (uint32 *)(&g_control_output_fv_flag),
+    (uint32 *)(&g_control_output_fav_flag),
     (uint32 *)(&g_show_run_param_flag),
     // 添加PID极性控制参数到EEPROM存储
     (uint32 *)(&g_menu_manual_param.bottom_velocity_polarity),
@@ -343,6 +345,14 @@ MENU_TABLE Setting_MenuTable[] = {
      {.ItemFunc = Menu_Null}},
     {(uint8 *)"fa_output",
      {.INT32 = (int32 *)&g_control_output_fa_flag},
+     Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"fv_output",
+     {.INT32 = (int32 *)&g_control_output_fv_flag},
+     Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"fav_output",
+     {.INT32 = (int32 *)&g_control_output_fav_flag},
      Param_Int,
      {.ItemFunc = Menu_Null}},
 };

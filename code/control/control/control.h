@@ -114,6 +114,8 @@ extern uint32 g_control_output_sv_flag;
 extern uint32 g_control_output_sa_flag;
 
 extern uint32 g_control_output_fa_flag;
+extern uint32 g_control_output_fv_flag;
+extern uint32 g_control_output_fav_flag;
 
 extern struct Control_Turn_Manual_Params g_control_turn_manual_params;
 extern struct Control_Target g_control_target;
