@@ -323,7 +323,7 @@ void test_side_deadzone()
     lcd_clear();
 }
 
-void test_bottom_deadzone()
+void test_bottom_pwm()
 {
     lcd_clear();
     lcd_show_string(0, 0, "KEY_U: PWM +100");
@@ -377,6 +377,95 @@ void test_bottom_deadzone()
     }
 
     pwm_set_duty(MOTOR_BOTTOM, 0); // 停止电机
+    lcd_clear();
+}
+
+void test_bottom_deadzone()
+{
+    lcd_clear();
+    lcd_show_string(0, 1, "Testing Forward...");
+    lcd_show_string(0, 7, "Press KEY_L to exit");
+
+    uint32 forward_deadzone = 0;
+    uint32 backward_deadzone = 0;
+    uint32 found_forward = 0;
+    uint32 found_backward = 0;
+    uint8 forward_done = 0;
+    uint8 backward_done = 0;
+    float speed_threshold = 0.1f; // 速度阈值，当检测到速度超过此值时认为电机已启动
+
+    // 首先测试正向死区
+    gpio_set_level(DIR_BOTTOM, 1); // 设置为正向
+
+    while (keymsg.key != KEY_L)
+    {
+        // 测试正向死区
+        if (!forward_done)
+        {
+            forward_deadzone += 5; // 每次增加5的PWM值
+            pwm_set_duty(MOTOR_BOTTOM, forward_deadzone);
+            system_delay_ms(100); // 给电机一些响应时间
+
+            // 如果速度超过阈值，则确认找到死区值
+            if (fabs(g_vel_motor.bottom) > speed_threshold)
+            {
+                found_forward = forward_deadzone;
+                forward_done = 1;
+
+                // 停止电机，准备测试反向
+                pwm_set_duty(MOTOR_BOTTOM, 0);
+                system_delay_ms(500);          // 等待电机完全停止
+                gpio_set_level(DIR_BOTTOM, 0); // 设置为反向
+            }
+        }
+        // 测试反向死区
+        else if (!backward_done)
+        {
+            backward_deadzone += 5;
+            pwm_set_duty(MOTOR_BOTTOM, backward_deadzone);
+            system_delay_ms(100);
+
+            if (fabs(g_vel_motor.bottom) > speed_threshold)
+            {
+                found_backward = backward_deadzone;
+                backward_done = 1;
+
+                // 停止电机
+                pwm_set_duty(MOTOR_BOTTOM, 0);
+            }
+        }
+
+        // 显示当前测试状态
+        lcd_show_string(0, 2, "FPWM:");
+        lcd_show_int(12, 2, forward_deadzone, 5);
+        lcd_show_string(0, 3, "Speed:");
+        lcd_show_float(7, 3, g_vel_motor.bottomReal, 3, 2);
+
+        // 显示找到的死区值
+        if (forward_done)
+        {
+            lcd_show_string(0, 4, "Fmin:");
+            lcd_show_int(12, 4, found_forward, 5);
+            lcd_show_string(0, 1, "Testing B");
+        }
+
+        if (backward_done)
+        {
+            lcd_show_string(0, 5, "Bmin:");
+            lcd_show_int(12, 5, found_backward, 5);
+            lcd_show_string(0, 1, "Complete");
+        }
+
+        // 如果两个方向都测试完成，就显示结果
+        if (forward_done && backward_done)
+        {
+            lcd_show_string(0, 6, "Test done");
+            system_delay_ms(100);
+        }
+    }
+
+    // 退出前确保电机停止
+    pwm_set_duty(MOTOR_BOTTOM, 0);
     lcd_clear();
 }
 

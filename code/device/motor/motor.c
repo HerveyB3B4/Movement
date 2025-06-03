@@ -1,8 +1,8 @@
 #include "motor.h"
 #include "small_driver_uart_control.h"
 
-uint32 bottom_motor_deadzone = -520;
-
+uint32 bottom_motor_deadzone_backword = 1340;
+uint32 bottom_motor_deadzone_forward = 1370;
 void motor_init()
 {
     gpio_init(P22_3, GPO, 1, GPO_PUSH_PULL);

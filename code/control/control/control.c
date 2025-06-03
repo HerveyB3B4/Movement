@@ -150,14 +150,14 @@ void control_bottom_balance(struct Control_Target *control_target,
     //             bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
     //     }
     // }
-    s_bottom_balance_duty = control_target->frontAngleVelocity;
+    // s_bottom_balance_duty = control_target->frontAngle * 100;
     if (s_bottom_balance_duty > 0)
     {
-        s_bottom_balance_duty += bottom_motor_deadzone;
+        s_bottom_balance_duty += bottom_motor_deadzone_forward;
     }
     else if (s_bottom_balance_duty < 0)
     {
-        s_bottom_balance_duty -= bottom_motor_deadzone;
+        s_bottom_balance_duty -= bottom_motor_deadzone_backword;
     }
 
     restrictValueI(&s_bottom_balance_duty, -9999, 9999);
@@ -557,8 +557,8 @@ void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_para
     // float bottom_angle_pid[3] = {5.2, 0.0, 55.0};
     // float bottom_velocity_pid[3] = {0.000, 0.00000, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {0.00, 0.2, 0};
-    float bottom_angle_pid[3] = {100, 0.0, 0};
+    float bottom_angle_velocity_pid[3] = {0.00, 0.1, 0};
+    float bottom_angle_pid[3] = {0, 0.0, 0};
     float bottom_velocity_pid[3] = {0.00, 0.000, 0.00};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,

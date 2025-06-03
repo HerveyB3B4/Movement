@@ -30,9 +30,12 @@ void wireless_init()
     }
 #else
     // 无线串口/无线蓝牙串口的连接方式
-    if (wireless_uart_init()) {
+    if (wireless_uart_init())
+    {
         printf("wireless_uart_init failed\n");
-    } else {
+    }
+    else
+    {
         printf("wireless_uart_init success\n");
     }
 #endif
@@ -50,9 +53,12 @@ void wireless_send_buffer(const uint8 *buff, uint16 len)
         printf("wifi uart send buffer success, send_len: %u\n", len);
     }
 #else
-    if (wireless_uart_send_buffer(buff, len) != len) {
+    if (wireless_uart_send_buffer(buff, len) != len)
+    {
         printf("wifi uart send buffer failed\n");
-    } else {
+    }
+    else
+    {
         printf("wifi uart send buffer success, send_len: %u\n", len);
     }
 #endif

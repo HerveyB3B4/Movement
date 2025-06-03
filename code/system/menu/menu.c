@@ -63,7 +63,6 @@ uint32 *EEPROM_DATA_UINT[] = {
     (uint32 *)(&g_menu_manual_param.buckingTurnCoefficient),
     (uint32 *)(&g_menu_manual_param.bucklingFrontCoefficientV),
     (uint32 *)(&g_menu_manual_param.bucklingFrontCoefficientT),
-    (uint32 *)(&bottom_motor_deadzone),
     (uint32 *)(&g_control_shutdown_flag),
     (uint32 *)(&g_control_bottom_flag),
     (uint32 *)(&g_control_side_flag),

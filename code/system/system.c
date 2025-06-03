@@ -29,7 +29,7 @@ void system_init()
     // mt9v03x2_init();
 
     // init wireless uart
-    wireless_init();
+    // wireless_init();
 
     // init key
     key_init_rewrite(KEY_NUM);

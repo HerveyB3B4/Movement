@@ -6,7 +6,7 @@
 #define MOTOR_HZ 12500
 #define MOTOR_HZ_RANGE 1000
 
-#define MOTOR_BOTTOM ATOM2_CH1_P33_5  // ATOM1_CH0_P21_2
+#define MOTOR_BOTTOM ATOM2_CH1_P33_5 // ATOM1_CH0_P21_2
 #define DIR_BOTTOM P33_4
 #define ENABLE_BOTTOM P33_6
 
@@ -16,7 +16,8 @@
 #define MOTOR_PWM_MAX 9999
 #define MOTOR_PWM_MIN -9999
 
-extern uint32 bottom_motor_deadzone;
+extern uint32 bottom_motor_deadzone_backword;
+extern uint32 bottom_motor_deadzone_forward;
 
 void motor_init();
 void set_bottom_motor_pwn(int32 pwm);
