@@ -8,6 +8,7 @@
 #include "small_driver_uart_control.h"
 #include "velocity.h"
 #include "zf_common_headfile.h"
+#include "wireless.h"
 #include "sd_card.h" // 添加SD卡操作头文件
 
 void test_bottom_motor()
@@ -446,8 +447,8 @@ void test_image()
     lcd_clear();
 }
 
-uint8 buff[WIRELESS_UART_BUFFER_SIZE];
-uint8 wireless_flag = 0;
+#define WIRELESS_BUFFER_SIZE 256 // 定义无线UART缓冲区大小
+uint8 g_wireless_uart_buffer[WIRELESS_BUFFER_SIZE];
 
 void test_wireless_uart()
 {
@@ -455,9 +456,26 @@ void test_wireless_uart()
     while (keymsg.key != KEY_L)
     {
         // 发送消息示例
-        // lcd_show_uint(0, 0, wireless_uart_read_buffer(buff, 1), 3);
-        // printf("test\n");
-        wireless_uart_send_string("test");
+        lcd_show_string(0, 0, "Press KEY_B to send");
+        if (keymsg.key == KEY_B)
+        {
+            lcd_show_string(0, 1, "Sending data...");
+            // 发送测试数据
+            uint8 test_data[] = "TEST DATA\r\n";
+            wireless_send_buffer(test_data, sizeof(test_data));
+            lcd_show_string(0, 2, "Data sent!");
+            system_delay_ms(500); // 等待发送完成
+        }
+        if (wireless_read_buffer(g_wireless_uart_buffer, WIRELESS_BUFFER_SIZE))
+        {
+            // 显示接收到的数据
+            lcd_show_string(0, 3, "Received data:");
+            lcd_show_string(0, 4, (const uint8 *)g_wireless_uart_buffer);
+        }
+        else
+        {
+            lcd_show_string(0, 3, "No data received");
+        }
     }
     lcd_clear();
 }
