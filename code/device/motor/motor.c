@@ -1,7 +1,7 @@
 #include "motor.h"
 #include "small_driver_uart_control.h"
 
-uint32 bottom_motor_deadzone = 1200;
+uint32 bottom_motor_deadzone = -520;
 
 void motor_init()
 {

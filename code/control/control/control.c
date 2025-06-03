@@ -200,7 +200,7 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
 
     if (g_control_output_fa_flag != 0)
     {
-        printf("%f\n", currentFrontAngle);
+        printf("%f,%f\n", control_target->frontAngleVelocity, currentFrontAngle);
     }
 }
 
@@ -212,7 +212,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
     angleVelocityControlFilter[0] = currentFrontAngleVelocity;
 
-    s_bottom_balance_duty = (int32)(PID_calc_Position(
+    s_bottom_balance_duty = (int32)(PID_calc_DELTA(
         &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
         control_target->frontAngleVelocity));
 }
@@ -346,13 +346,11 @@ void control_shutdown(struct Control_Target *control_target,
 {
     if (g_control_shutdown_flag != 0)
     {
-        if (fabsf(currentSideAngle - euler_angle_bias->roll -
-                  control_target->sideAngle) > 28)
+        if (fabsf(currentSideAngle - euler_angle_bias->roll) > 28)
         {
             system_set_runstate(CAR_STOP);
         }
-        if (fabsf(currentFrontAngle - euler_angle_bias->pitch -
-                  control_target->frontAngle) > 35)
+        if (fabsf(currentFrontAngle - euler_angle_bias->pitch) > 35)
         {
             system_set_runstate(CAR_STOP);
         }
@@ -540,13 +538,23 @@ void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_para
     // float bottom_angle_pid[3] = {4.5, 0.02, 2.0};
     // float bottom_velocity_pid[3] = {0.0030, 0.00, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {10, 0, 0}; // 位置式
-    float bottom_angle_pid[3] = {0, 0, 0};
-    float bottom_velocity_pid[3] = {0.000, 0.00, 0.00};
+    // float bottom_angle_velocity_pid[3] = {0, 0.18, 0};
+    // float bottom_angle_pid[3] = {700, 0.00, 1700};
+    // float bottom_angle_pid[3] = {360, 0.00, 2200};
+    // float bottom_angle_pid[3] = {216, 0.00, 1320};
+    // float bottom_velocity_pid[3] = {0.0010, 0.0000050, 0.00};
+
+    // float bottom_angle_velocity_pid[3] = {0.0, 0.45, 80};
+    // float bottom_angle_pid[3] = {5.2, 0.0, 55.0};
+    // float bottom_velocity_pid[3] = {0.000, 0.00000, 0.00};
+
+    float bottom_angle_velocity_pid[3] = {0.0, 0.0, 80};
+    float bottom_angle_pid[3] = {0, 0.0, 0.0};
+    float bottom_velocity_pid[3] = {0.000, 0.00000, 0.00};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
                       9999, 9999, control_motion_params->bottom_angle_velocity_polarity);
-    PID_init_Position(&bottom_angle_PID, bottom_angle_pid, 9999, 0.3,
+    PID_init_Position(&bottom_angle_PID, bottom_angle_pid, 9999, 9999,
                       control_motion_params->bottom_angle_polarity);
     PID_init_Position(&bottom_velocity_PID, bottom_velocity_pid, 50, 2.5f,
                       control_motion_params->bottom_velocity_polarity);

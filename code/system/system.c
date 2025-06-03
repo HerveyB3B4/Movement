@@ -238,6 +238,7 @@ void system_set_runstate(RunState_t state)
 
         stop_bottom_motor();
         stop_momentum_motor();
+        zf_log(0, "shutdown");
         break;
     case CAR_RUNNING:
         runState = CAR_RUNNING;
