@@ -29,12 +29,7 @@ void system_init()
     // mt9v03x2_init();
 
     // init wireless uart
-    // if (wireless_uart_init()) {
-    //     printf("wireless_uart_init failed\n");
-    // } else {
-    //     printf("wireless_uart_init success\n");
-    // }
-    // wireless_init();
+    wireless_init();
 
     // init key
     key_init_rewrite(KEY_NUM);
