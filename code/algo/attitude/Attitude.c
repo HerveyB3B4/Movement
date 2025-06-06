@@ -10,16 +10,19 @@ struct EulerAngle g_euler_angle_bias;
 uint8 g_attitude_cal_flag = 0;
 uint8 attitude_time = 0;
 
-void attitude_init() {
+void attitude_init()
+{
     // 参数顺序依次为 Q1, Q2, R, lambda,
     // dt(这个已经和计时器中断一致)，根据波形图调整
     // IMU_QuaternionEKF_Init(10000, 100000, 1000000, 0.9996, 0.001f, 0);  //
     // ekf初始化
-    IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0);  // ekf初始化
-    imu_init_offset();                                   // 初始化零飘
+    // IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0); // ekf初始化 (原始参数)
+    IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0); // ekf初始化 - 优化Yaw轴旋转
+    imu_init_offset();                                  // 初始化零飘
 }
 
-void attitude_cal_ekf() {
+void attitude_cal_ekf()
+{
     // EKF 姿态解算
     imu_get_data(&g_imu_data);
     imu_remove_offset(&g_imu_data);
@@ -31,18 +34,23 @@ void attitude_cal_ekf() {
     IMU_QuaternionEKF_Update(&g_imu_data);
 }
 
-void attitude_cal_amend(struct Control_Turn_Manual_Params* turn_param,
-                        struct Control_Target* control_target,
-                        struct Velocity_Motor* velocity_motor,
-                        struct EulerAngle* euler_angle) {
+void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
+                        struct Control_Target *control_target,
+                        struct Velocity_Motor *velocity_motor,
+                        struct EulerAngle *euler_angle)
+{
     // 修正姿态计算
-    if (g_attitude_cal_flag == 0) {
+    if (g_attitude_cal_flag == 0)
+    {
         return;
-    } else {
+    }
+    else
+    {
         g_attitude_cal_flag = 0;
     }
 
-    if (g_turn_start_flag) {
+    if (g_turn_start_flag)
+    {
         float x = (float)control_target->turnAngleVelocity * 0.01f *
                   fabsf((float)velocity_motor->bottomFiltered * 0.01f);
         control_target->bucking = turn_param->buckling_turn_coefficient * x;
@@ -59,21 +67,22 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params* turn_param,
     euler_angle->pitch = getPitch();
     euler_angle->yaw =
         getYaw() - 180 +
-        yawAngleCorrection;  //-180 because the direction of the sensor is
-                             // opposite to the direction of the motor
+        yawAngleCorrection; //-180 because the direction of the sensor is
+                            // opposite to the direction of the motor
 #endif
 #ifdef USE_EKF
     attitude_cal_ekf();
     euler_angle->roll =
-        QEKF_INS.Roll + control_target->bucking;  // + convergenceGain;
+        QEKF_INS.Roll + control_target->bucking; // + convergenceGain;
     euler_angle->pitch = QEKF_INS.Pitch + control_target->Fbucking;
-    euler_angle->yaw = QEKF_INS.Yaw;
+    // 使用独立陀螺仪积分的Yaw角度代替EKF估计的Yaw角度
+    euler_angle->yaw = Get_Gyro_Yaw();
 #endif
     // g_euler_angle->yaw += 180; // transfer to the same direction
-    euler_angle->yaw = 360.0f - euler_angle->yaw;  // opposite direction
+    euler_angle->yaw = 360.0f - euler_angle->yaw; // opposite direction
     // g_euler_angle->yaw += yawAngleCorrection;
     euler_angle->yaw > 360 ? (euler_angle->yaw -= 360)
-                           : euler_angle->yaw;  // 0~360
+                           : euler_angle->yaw; // 0~360
     // update module state
     // moduleState.attitude = 1;
 

@@ -589,7 +589,7 @@ void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_para
     // float bottom_angle_pid[3] = {8, 0.0, 60};
     // float bottom_velocity_pid[3] = {0.005, 0.000025, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {15, 0.18, 0};
+    float bottom_angle_velocity_pid[3] = {10, 0.18, 0};
     float bottom_angle_pid[3] = {3.7, 0.0, 0};
     float bottom_velocity_pid[3] = {0.0006, 0.000000, 0.00};
 
