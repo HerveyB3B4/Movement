@@ -82,25 +82,7 @@ int core0_main(void)
         //     g_imu_data.gyro.z, motor_value.receive_left_speed_data,
         //     g_vel_motor.bottom, get_bottom_duty(), get_side_duty());
         // system_delay_ms(50);
-
-        if (g_control_bottom_flag != 0)
-        {
-            bottom_control_timer(&g_control_time, &g_control_flag,
-                                 &g_control_target, &g_vel_motor,
-                                 &g_euler_angle_bias,
-                                 &g_control_motion_params);
-        }
-
-        // turnControlTimer();
-        if (g_control_side_flag != 0)
-        {
-            side_control_timer(&g_control_time, &g_control_flag,
-                               &g_control_target,
-                               &g_control_turn_manual_params, &g_vel_motor,
-                               &g_euler_angle_bias,
-                               &g_control_motion_params);
-        }
-        control_shutdown(&g_control_target, &g_euler_angle_bias);
+        system_control();
         // 此处编写需要循环执行的代码
     }
 }

@@ -248,3 +248,26 @@ void system_set_runstate(RunState_t state)
         break;
     }
 }
+
+void system_control()
+{
+    if (g_control_bottom_flag != 0)
+    {
+        bottom_control_timer(&g_control_time, &g_control_flag,
+                             &g_control_target, &g_vel_motor,
+                             &g_euler_angle_bias,
+                             &g_control_motion_params);
+    }
+
+    // turnControlTimer();
+    if (g_control_side_flag != 0)
+    {
+        side_control_timer(&g_control_time, &g_control_flag,
+                           &g_control_target,
+                           &g_control_turn_manual_params, &g_vel_motor,
+                           &g_euler_angle_bias,
+                           &g_control_motion_params);
+    }
+
+    control_shutdown(&g_control_target, &g_euler_angle_bias);
+}
