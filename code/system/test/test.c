@@ -690,3 +690,54 @@ void test_sd_card()
 
     lcd_clear();
 }
+
+void test_ble6a20()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "BLE6A20 Test");
+    lcd_show_string(0, 1, "KEY_B: Toggle mode");
+    lcd_show_string(0, 2, "KEY_L: Exit test");
+
+    ble6a20_init(); // 初始化BLE6A20模块
+
+    uint8 mode = 0;                    // 0: 接收模式, 1: 发送模式
+    uint8 buffer[BLE6A20_BUFFER_SIZE]; // 接收缓冲区
+
+    // 初始显示当前模式
+
+    while (keymsg.key != KEY_L)
+    {
+        // 检测是否按下KEY_B切换模式
+        if (keymsg.key == KEY_B)
+        {
+            mode = !mode; // 切换模式
+            lcd_show_string(0, 3, "mode:");
+            lcd_show_int(6, 3, mode, 3);
+            system_delay_ms(200); // 防抖延时
+        }
+
+        // 根据当前模式执行相应操作
+        if (mode == 0) // 发送模式
+        {
+            lcd_show_string(0, 4, "Sending data...");
+            // 发送测试数据
+            ble6a20_send_string("Hello BLE6A20!\r\n");
+            lcd_show_string(0, 4, "Data sent!     ");
+            system_delay_ms(1000); // 发送间隔
+        }
+        else // 接收模式
+        {
+            // 清空缓冲区
+            memset(buffer, 0, BLE6A20_BUFFER_SIZE);
+
+            // 接收数据
+            uint32 len = ble6a20_read_buffer(buffer, BLE6A20_BUFFER_SIZE);
+            if (len > 0)
+            {
+                lcd_show_string(0, 5, "Received:      ");
+                printf("Received: %s", buffer); // 打印接收到的数据
+            }
+        }
+    }
+    lcd_clear();
+}

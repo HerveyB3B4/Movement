@@ -15,4 +15,5 @@ void test_image();
 void test_wireless_uart();
 void test_key();
 void test_sd_card();
+void test_ble6a20();
 #endif

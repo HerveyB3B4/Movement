@@ -3,10 +3,7 @@
 void reciver_init()
 {
     // TODO: uart init
-}
-
-void reciver_callback()
-{
+    ble6a20_init();
 }
 
 /*

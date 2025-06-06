@@ -27,7 +27,7 @@ void system_init()
     // init camera
     mt9v03x_init();
     // mt9v03x2_init();
-
+    // reciver_init();
     // init wireless uart
     // wireless_init();
 

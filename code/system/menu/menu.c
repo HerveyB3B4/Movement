@@ -332,6 +332,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_sd_card}},
+    {(uint8 *)"BLE",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_ble6a20}},
 };
 
 MENU_TABLE Setting_MenuTable[] = {
