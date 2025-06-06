@@ -9,6 +9,7 @@ void test_imu();
 void test_noise();
 void test_side_deadzone();
 void test_bottom_deadzone();
+void test_bottom_pwm();
 void test_double_camera();
 void test_image();
 void test_wireless_uart();

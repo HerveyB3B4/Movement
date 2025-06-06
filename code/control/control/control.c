@@ -152,7 +152,7 @@ void control_bottom_balance(struct Control_Target *control_target,
     //             bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
     //     }
     // }
-    // s_bottom_balance_duty = control_target->frontAngleVelocity * 100;
+    // s_bottom_balance_duty = control_target->frontAngle * 100;
     if (s_bottom_balance_duty > 0)
     {
         s_bottom_balance_duty += bottom_motor_deadzone_forward;
@@ -174,8 +174,8 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
                                     struct Control_Motion_Manual_Parmas *control_motion_params)
 {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle = control_motion_params->bottom_angle_polarity * PID_calc_Position(
-                                                                                    &bottom_velocity_PID, (float)vel_motor->bottom, 0.0f);
+    control_target->frontAngle = control_motion_params->bottom_velocity_polarity * PID_calc_Position(
+                                                                                       &bottom_velocity_PID, (float)vel_motor->bottomFiltered, 0.0f);
 #endif
 #ifndef VELOCITY_KALMAN_FILTER
     control_target->frontAngle =
@@ -190,6 +190,10 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
     // {
     //     control_target->frontAngle = g_euler_angle_bias->roll;
     // }
+    if (g_control_output_fv_flag != 0)
+    {
+        printf("%f\n", control_target->frontAngle);
+    }
 }
 
 static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
@@ -222,7 +226,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
     angleVelocityControlFilter[0] = currentFrontAngleVelocity;
 
-    s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity * (PID_calc_DELTA(
+    s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity * (PID_calc_Position(
                                                                                         &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
                                                                                         control_target->frontAngleVelocity));
     if (g_control_output_fav_flag != 0)
@@ -454,12 +458,13 @@ void control_init(struct Control_Motion_Manual_Parmas *control_motion_params)
     bottom: 0 0 1
     side: 0 1 1
     */
-    control_motion_params->bottom_angle_velocity_polarity = 0;
-    control_motion_params->bottom_angle_polarity = 0;
+    control_motion_params->bottom_angle_velocity_polarity = 1;
+    control_motion_params->bottom_angle_polarity = -1;
     control_motion_params->bottom_velocity_polarity = 1;
-    control_motion_params->side_angle_velocity_polarity = 0;
-    control_motion_params->side_angle_polarity = 1;
-    control_motion_params->side_velocity_polarity = 1;
+
+    control_motion_params->side_angle_velocity_polarity = 1;
+    control_motion_params->side_angle_polarity = -1;
+    control_motion_params->side_velocity_polarity = -1;
     // control_param_init(&bottom_angle_velocity_PID,
     //                    control_motion_params->bottom_angle_velocity_parameter,
     //                    100, MOTOR_PWM_MAX, 9999, control_motion_params->bottom_angle_velocity_polarity);
@@ -576,14 +581,22 @@ void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_para
     // float bottom_angle_pid[3] = {5.2, 0.0, 55.0};
     // float bottom_velocity_pid[3] = {0.000, 0.00000, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {0, 0.12, 0};
-    float bottom_angle_pid[3] = {0.0000000, 0.0, 0};
-    float bottom_velocity_pid[3] = {0.00, 0.000, 0.00};
+    // float bottom_angle_velocity_pid[3] = {10, 0.2, 80};
+    // float bottom_angle_pid[3] = {15, 0.0, 10};
+    // float bottom_velocity_pid[3] = {0.3, 0.0015, 0.00};
+
+    // float bottom_angle_velocity_pid[3] = {7, 0.3, 5};
+    // float bottom_angle_pid[3] = {8, 0.0, 60};
+    // float bottom_velocity_pid[3] = {0.005, 0.000025, 0.00};
+
+    float bottom_angle_velocity_pid[3] = {15, 0.18, 0};
+    float bottom_angle_pid[3] = {3.7, 0.0, 0};
+    float bottom_velocity_pid[3] = {0.0006, 0.000000, 0.00};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
                       9999, 9999);
     PID_init_Position(&bottom_angle_PID, bottom_angle_pid, 9999, 9999);
-    PID_init_Position(&bottom_velocity_PID, bottom_velocity_pid, 50, 2.5f);
+    PID_init_Position(&bottom_velocity_PID, bottom_velocity_pid, 10, 10);
 
     // printf("fav: kp: %f, ki: %f, kd: %f\n", bottom_angle_velocity_PID.Kp,
     //        bottom_angle_velocity_PID.Ki, bottom_angle_velocity_PID.Kd);
