@@ -8,6 +8,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 #include "key.h"
+#include "receiver.h"
 
 RunState_t runState;
 
@@ -27,7 +28,7 @@ void system_init()
     // init camera
     mt9v03x_init();
     // mt9v03x2_init();
-    // reciver_init();
+    // receiver_init();
     // init wireless uart
     // wireless_init();
 
@@ -253,6 +254,7 @@ void system_control()
 {
     if (g_control_bottom_flag != 0)
     {
+        g_control_target.frontVelocity = g_received_vel;
         bottom_control_timer(&g_control_time, &g_control_flag,
                              &g_control_target, &g_vel_motor,
                              &g_euler_angle_bias,

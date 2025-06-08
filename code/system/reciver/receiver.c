@@ -1,6 +1,6 @@
-#include "reciver.h"
+#include "receiver.h"
 
-void reciver_init()
+void receiver_init()
 {
     // TODO: uart init
     ble6a20_init();
@@ -18,9 +18,9 @@ void reciver_init()
 */
 uint8 receive_data_buffer[5];
 uint8 receive_data_count = 0;
-uint32 receive_vel = 0;
+int16 g_received_vel = 0;
 
-void reciver_callback()
+void receiver_callback()
 {
     uint8 receive_data;
     if (uart_query_byte(RECIVER_UART_INDEX, &receive_data))
@@ -45,8 +45,8 @@ void reciver_callback()
 
                 if (sum_check_data == receive_data_buffer[4])
                 {
-                    receive_vel = ((uint32)receive_data_buffer[2] << 8) |
-                                  (uint32)receive_data_buffer[3];
+                    g_received_vel = ((uint32)receive_data_buffer[2] << 8) |
+                                     (uint32)receive_data_buffer[3];
                 }
             }
             receive_data_count = 0;                                      // Reset count after processing

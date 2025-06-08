@@ -10,6 +10,12 @@
 #include "zf_common_headfile.h"
 #include "wireless.h"
 #include "sd_card.h" // 添加SD卡操作头文件
+#include "receiver.h"
+
+// 定义静态变量，从栈移到数据段，避免栈溢出
+static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
+#define WIRELESS_BUFFER_SIZE 256 // 定义无线UART缓冲区大小
+static uint8 s_wireless_uart_buffer[WIRELESS_BUFFER_SIZE];
 
 void test_bottom_motor()
 {
@@ -32,6 +38,7 @@ void test_bottom_motor()
         lcd_show_int(0, 5, g_vel_motor.bottom, 5);
         lcd_show_float(0, 6, g_vel_motor.bottomReal, 5, 5);
         lcd_show_float(0, 7, g_vel_motor.bottomFiltered, 5, 5);
+        pwm_set_duty(MOTOR_BOTTOM, 0);
         // encoder_clear_count(ENCODER_BOTTOM);
     }
     pwm_set_duty(MOTOR_BOTTOM, 0);
@@ -518,26 +525,26 @@ void test_image()
     uint16 start_x = (tft180_width_max - display_w) / 2;
     uint16 start_y = (tft180_height_max - display_h) / 2;
 
-    uint16_t edge_map[MT9V03X_W][MT9V03X_H];
-    Point center = {-1, -1}; // 默认返回无效坐标
+    Point center = {-1, -1};
     while (keymsg.key != KEY_L)
     {
         if (mt9v03x_finish_flag)
         {
             mt9v03x_finish_flag = 0;
 
-            binary_otsu_improved(mt9v03x_image, edge_map);
-            center = find_largest_white_region_center(edge_map);
-            draw_cross(edge_map, center, -1, RGB565_YELLOW);
-            tft180_show_gray_image(start_x, start_y, edge_map, MT9V03X_W,
+            binary_otsu_improved(mt9v03x_image, s_edge_map);
+            center = find_largest_white_region_center(s_edge_map);
+            // get_max_region_center(edge_map, MT9V03X_W, MT9V03X_H,
+            //                       &center.x, &center.y);
+            // two_pass_center(edge_map, MT9V03X_W, MT9V03X_H,
+            //                 &center.x, &center.y);
+            draw_cross(s_edge_map, center, -1, RGB565_YELLOW);
+            tft180_show_gray_image(start_x, start_y, s_edge_map, MT9V03X_W,
                                    MT9V03X_H, display_w, display_h, 0);
         }
     }
     lcd_clear();
 }
-
-#define WIRELESS_BUFFER_SIZE 256 // 定义无线UART缓冲区大小
-uint8 g_wireless_uart_buffer[WIRELESS_BUFFER_SIZE];
 
 void test_wireless_uart()
 {
@@ -555,11 +562,11 @@ void test_wireless_uart()
             lcd_show_string(0, 2, "Data sent!");
             system_delay_ms(500); // 等待发送完成
         }
-        if (wireless_read_buffer(g_wireless_uart_buffer, WIRELESS_BUFFER_SIZE))
+        if (wireless_read_buffer(s_wireless_uart_buffer, WIRELESS_BUFFER_SIZE))
         {
             // 显示接收到的数据
             lcd_show_string(0, 3, "Received data:");
-            lcd_show_string(0, 4, (const uint8 *)g_wireless_uart_buffer);
+            lcd_show_string(0, 4, (const uint8 *)s_wireless_uart_buffer);
         }
         else
         {
@@ -691,53 +698,15 @@ void test_sd_card()
     lcd_clear();
 }
 
-void test_ble6a20()
+void test_receiver()
 {
     lcd_clear();
-    lcd_show_string(0, 0, "BLE6A20 Test");
-    lcd_show_string(0, 1, "KEY_B: Toggle mode");
-    lcd_show_string(0, 2, "KEY_L: Exit test");
-
-    ble6a20_init(); // 初始化BLE6A20模块
-
-    uint8 mode = 0;                    // 0: 接收模式, 1: 发送模式
-    uint8 buffer[BLE6A20_BUFFER_SIZE]; // 接收缓冲区
-
-    // 初始显示当前模式
+    lcd_show_string(0, 0, "Receiver Test");
 
     while (keymsg.key != KEY_L)
     {
-        // 检测是否按下KEY_B切换模式
-        if (keymsg.key == KEY_B)
-        {
-            mode = !mode; // 切换模式
-            lcd_show_string(0, 3, "mode:");
-            lcd_show_int(6, 3, mode, 3);
-            system_delay_ms(200); // 防抖延时
-        }
-
-        // 根据当前模式执行相应操作
-        if (mode == 0) // 发送模式
-        {
-            lcd_show_string(0, 4, "Sending data...");
-            // 发送测试数据
-            ble6a20_send_string("Hello BLE6A20!\r\n");
-            lcd_show_string(0, 4, "Data sent!     ");
-            system_delay_ms(1000); // 发送间隔
-        }
-        else // 接收模式
-        {
-            // 清空缓冲区
-            memset(buffer, 0, BLE6A20_BUFFER_SIZE);
-
-            // 接收数据
-            uint32 len = ble6a20_read_buffer(buffer, BLE6A20_BUFFER_SIZE);
-            if (len > 0)
-            {
-                lcd_show_string(0, 5, "Received:      ");
-                printf("Received: %s", buffer); // 打印接收到的数据
-            }
-        }
+        lcd_show_int(0, 2, g_received_vel, 5);
     }
+
     lcd_clear();
 }

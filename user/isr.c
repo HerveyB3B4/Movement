@@ -244,7 +244,8 @@ IFX_INTERRUPT(uart2_tx_isr, UART2_INT_VECTAB_NUM, UART2_TX_INT_PRIO)
 IFX_INTERRUPT(uart2_rx_isr, UART2_INT_VECTAB_NUM, UART2_RX_INT_PRIO)
 {
     interrupt_global_enable(0); // 开启中断嵌套
-    wireless_module_uart_handler();
+    // wireless_module_uart_handler();
+    receiver_callback();
 }
 // 串口3默认连接到GPS定位模块
 IFX_INTERRUPT(uart3_tx_isr, UART3_INT_VECTAB_NUM, UART3_TX_INT_PRIO)
