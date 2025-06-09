@@ -68,6 +68,7 @@ struct Control_Target
     float Fbucking; // front balance bucking
     float turnAngle;
     float turnAngleVelocity;
+    float turnError;
 };
 
 struct Control_Flag
@@ -86,6 +87,7 @@ struct Control_Flag
     uint8_t turnAngleVelocity;
     uint8_t turnVelocity;
     uint8_t turnAngleDiffVelocity;
+    uint8_t turnError;
 
     uint8 frontAngleCount;
     uint8 frontAngleVelocityCount;
