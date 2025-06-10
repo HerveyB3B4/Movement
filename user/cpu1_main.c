@@ -39,6 +39,7 @@
 #include "menu.h"
 #include "system.h"
 #include "velocity.h"
+#include "receiver.h"
 #include "zf_common_headfile.h"
 
 #pragma section all "cpu1_dsram"
@@ -76,9 +77,10 @@ void core1_main(void)
             // lcd_show_int(0, 6, get_bottom_duty(), 5);
             // lcd_show_float(0, 7, bottom_angle_velocity_PID.Ki, 3, 3);
 
-            lcd_show_float(0, 0, currentSideAngle, 3, 3);
-            lcd_show_float(0, 1, currentSideAngle - g_euler_angle_bias.roll,
-                           3, 3);
+            lcd_show_int(0, 0, g_received_vel, 5);
+            // lcd_show_float(0, 0, currentSideAngle, 3, 3);
+            // lcd_show_float(0, 1, currentSideAngle - g_euler_angle_bias.roll,
+            //                3, 3);
             // if (runState == CAR_RUNNING)
             // {
             //     lcd_show_string(0, 0, "RUNNING");

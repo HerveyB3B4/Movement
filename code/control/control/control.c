@@ -157,7 +157,7 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
 
     float bottom_angle_velocity_pid[3] = {20, 0.20, 0};
     float bottom_angle_pid[3] = {3.5, 0.0, 1};
-    float bottom_velocity_pid[3] = {0.0007, 0.000000, 0.00};
+    float bottom_velocity_pid[3] = {0.0007, 0.0000035, 0.00};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
                       9999, 9999);
@@ -171,7 +171,7 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // printf("fv: kp: %f, ki: %f, kd: %f\n", bottom_velocity_PID.Kp,
     //        bottom_velocity_PID.Ki, bottom_velocity_PID.Kd);
 
-    float side_angle_velocity_pid[3] = {0.0, 1, 0};
+    float side_angle_velocity_pid[3] = {10.0, 1.3, 0};
     float side_angle_pid[3] = {3.1, 0, 0};
     float side_velocity_pid[3] = {0.0025, 0.0000125, 0.000};
 
