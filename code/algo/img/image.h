@@ -12,5 +12,8 @@
 // - size: 十字大小(臂长)
 // - color: 十字颜色(0x00为黑色，0xFF为白色)
 void draw_cross(uint8_t *img, Point center, uint8_t size, uint8_t color);
+void draw_middleline(uint8_t *img, uint8_t color);
+
+int16 get_img_target_error();
 
 #endif
