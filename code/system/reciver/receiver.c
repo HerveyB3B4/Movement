@@ -19,6 +19,7 @@ void receiver_init()
 uint8 receive_data_buffer[5];
 uint8 receive_data_count = 0;
 int16 g_received_vel = 0;
+int16 g_turn_error = 0;
 
 void receiver_callback()
 {
@@ -45,8 +46,22 @@ void receiver_callback()
 
                 if (sum_check_data == receive_data_buffer[4])
                 {
-                    g_received_vel = ((uint32)receive_data_buffer[2] << 8) |
-                                     (uint32)receive_data_buffer[3];
+                    switch (receive_data_buffer[1])
+                    {
+                    case 0x00:
+                        // 处理速度指令
+                        g_received_vel = ((uint32)receive_data_buffer[2] << 8) |
+                                         (uint32)receive_data_buffer[3];
+                        break;
+                    case 0x01:
+                        // 处理转向指令
+                        g_turn_error = ((int16)receive_data_buffer[2] << 8) |
+                                       (int16)receive_data_buffer[3];
+                        break;
+                    default:
+                        // 未知指令，忽略
+                        break;
+                    }
                 }
             }
             receive_data_count = 0;                                      // Reset count after processing

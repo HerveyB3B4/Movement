@@ -100,7 +100,7 @@ struct Control_Flag
     uint8 side_angle_vel_cnt;
     uint8 side_vel_cnt;
 
-    uint8 turnAngleCount;
+    uint8 turn_angle_cnt;
     uint8 turnAngleDiffVelocityCount;
 };
 
@@ -113,6 +113,7 @@ extern uint8 g_turn_start_flag;
 extern int32 g_control_shutdown_flag;
 extern uint32 g_control_bottom_flag;
 extern uint32 g_control_side_flag;
+extern uint32 g_control_turn_flag;
 
 extern uint32 g_control_output_sav_flag;
 extern uint32 g_control_output_sv_flag;

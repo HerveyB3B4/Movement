@@ -187,11 +187,12 @@ void turn_control_timer(struct Control_Time *control_time,
                         struct Velocity_Motor *vel_motor,
                         struct EulerAngle *euler_angle_bias)
 {
+    // TODO
     uint32 turnAngleTime = control_time->turn[0];
     uint32 turnVelocityTime = control_time->turn[1];
     uint32 turnCurvatureTime = turnAngleTime * 4;
     control_flag->turn++;
-    control_flag->turnAngleCount++;
+    control_flag->turn_angle_cnt++;
     control_flag->turnAngleDiffVelocityCount++;
     if (control_flag->turn >= turnCurvatureTime)
     {
@@ -202,10 +203,10 @@ void turn_control_timer(struct Control_Time *control_time,
     {
         control_flag->turn_angle = 0;
     }
-    if (control_flag->turnAngleCount >= turnAngleTime)
+    if (control_flag->turn_angle_cnt >= turnAngleTime)
     {
         control_flag->turn_angle = 1;
-        control_flag->turnAngleCount = 0;
+        control_flag->turn_angle_cnt = 0;
     }
     else
     {
@@ -270,6 +271,11 @@ void system_control()
                            &g_euler_angle_bias,
                            &g_control_motion_params);
     }
-
+    if (g_control_turn_flag != 0)
+    {
+        turn_control_timer(&g_control_time, &g_control_flag,
+                           &g_control_target, &g_vel_motor,
+                           &g_euler_angle_bias);
+    }
     control_shutdown(&g_control_target, &g_euler_angle_bias);
 }

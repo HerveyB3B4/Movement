@@ -12,4 +12,6 @@ void receiver_init();
 void receiver_callback();
 
 extern int16 g_received_vel; // 接收的速度数据
+extern int16 g_turn_error;   // 接收的转向误差数据
+
 #endif

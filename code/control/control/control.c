@@ -14,6 +14,7 @@ uint8 g_turn_start_flag = 0;
 int32 g_control_shutdown_flag = 0;
 uint32 g_control_bottom_flag = 0;
 uint32 g_control_side_flag = 0;
+uint32 g_control_turn_flag = 0;
 
 struct Control_Turn_Manual_Params g_control_turn_manual_params;
 struct Control_Target g_control_target;
