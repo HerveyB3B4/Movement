@@ -127,20 +127,20 @@ void control_manual_param_init()
 void control_reset(struct Control_Target *control_target)
 {
     // 重置控制目标值
-    control_target->frontAngle = 0;
-    control_target->frontVelocity = 0;
-    control_target->sideAngle = 0;
-    control_target->turnAngle = 0;
-    control_target->turnAngleVelocity = 0;
+    control_target->bottom_angle = 0;
+    control_target->bottom_vel = 0;
+    control_target->side_angle = 0;
+    control_target->turn_angle = 0;
+    control_target->turn_angle_vel = 0;
     control_target->bucking = 0;
 
     // 重置控制标志
-    g_control_flag.frontAngle = 0;
-    g_control_flag.frontVelocity = 0;
-    g_control_flag.sideAngle = 0;
-    g_control_flag.sideVelocity = 0;
-    g_control_flag.turnAngle = 0;
-    g_control_flag.turnVelocity = 0;
+    g_control_flag.bottom_angle = 0;
+    g_control_flag.bottom_vel = 0;
+    g_control_flag.side_angle = 0;
+    g_control_flag.side_vel = 0;
+    g_control_flag.turn_angle = 0;
+    g_control_flag.turn_vel = 0;
     // g_control_flag.bucking = 0;
 
     control_init(&g_control_motion_params);

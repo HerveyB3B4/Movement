@@ -51,7 +51,7 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
 
     if (g_turn_start_flag)
     {
-        float x = (float)control_target->turnAngleVelocity * 0.01f *
+        float x = (float)control_target->turn_angle_vel * 0.01f *
                   fabsf((float)velocity_motor->bottomFiltered * 0.01f);
         control_target->bucking = turn_param->buckling_turn_coefficient * x;
         restrictValueF(&control_target->bucking, 10.5f, -10.5f);

@@ -33,25 +33,25 @@ void control_side_balance(
     struct EulerAngle *euler_angle_bias,
     struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    if (control_flag->sideVelocity)
+    if (control_flag->side_vel)
     {
-        control_flag->sideVelocity = 0;
+        control_flag->side_vel = 0;
         control_side_velocity(vel_motor, control_target, control_turn_params, control_motion_params);
     }
 
-    if (control_flag->sideAngle)
+    if (control_flag->side_angle)
     {
-        control_flag->sideAngle = 0;
+        control_flag->side_angle = 0;
         control_side_angle(euler_angle_bias, control_target, control_motion_params);
     }
 
-    if (control_flag->sideAngleVelocity)
+    if (control_flag->side_angle_vel)
     {
-        control_flag->sideAngleVelocity = 0;
+        control_flag->side_angle_vel = 0;
         control_side_angle_velocity(control_target, control_motion_params);
     }
 
-    // s_side_balance_duty = control_target->sideAngle * 100;
+    // s_side_balance_duty = control_target->side_angle * 100;
     // turnControl();
     int32 left_motor_duty, right_motor_duty;
     left_motor_duty =
@@ -101,14 +101,14 @@ static void control_side_velocity(
     // momentumVelocityFilter =
     //     (float)(vel_motor->momentumFront - vel_motor->momentumBack);
 
-    control_target->sideAngle = control_motion_params->side_velocity_polarity * PID_calc_Position(&side_velocity_PID,
-                                                                                                  (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
-                                                                                                  0.0f); // 速度是正反馈，因此set和ref要反过来
+    control_target->side_angle = control_motion_params->side_velocity_polarity * PID_calc_Position(&side_velocity_PID,
+                                                                                                   (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
+                                                                                                   0.0f); // 速度是正反馈，因此set和ref要反过来
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sv_flag != 0)
     {
-        printf("%f\n", control_target->sideAngle);
+        printf("%f\n", control_target->side_angle);
     }
 }
 
@@ -121,14 +121,14 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
     momentumAngleFilter[0] = currentSideAngle;
     // noiseFilter(momentumAngleFilter[0],0.02f);
     // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
-    control_target->sideAngleVelocity = control_motion_params->side_angle_polarity * PID_calc_Position(
-                                                                                         &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
-                                                                                         control_target->sideAngle);
+    control_target->side_angle_vel = control_motion_params->side_angle_polarity * PID_calc_Position(
+                                                                                      &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
+                                                                                      control_target->side_angle);
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0)
     {
-        printf("%f\n", control_target->sideAngleVelocity);
+        printf("%f\n", control_target->side_angle_vel);
     }
 }
 
@@ -142,7 +142,7 @@ static void control_side_angle_velocity(struct Control_Target *control_target,
     // lowPassFilterF(&momentumGyroFilter[0], &momentumGyroFilter[1], 0.1f);
     s_side_balance_duty =
         control_motion_params->side_angle_velocity_polarity * (int32)(PID_calc_DELTA(&side_angle_velocity_PID, momentumGyroFilter[0],
-                                                                                     control_target->sideAngleVelocity));
+                                                                                     control_target->side_angle_vel));
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sav_flag != 0)

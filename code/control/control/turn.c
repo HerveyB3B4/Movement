@@ -24,9 +24,9 @@ void control_turn(struct Control_Target *control_target,
     //     control_flag->turn = 0;
     //     TurnCurvatureControl();
     // }
-    if (control_flag->turnVelocity)
+    if (control_flag->turn_vel)
     {
-        control_flag->turnVelocity = 0;
+        control_flag->turn_vel = 0;
         control_turn_velocity(control_target, vel_motor);
     }
     if (control_flag->turnError)
@@ -34,9 +34,9 @@ void control_turn(struct Control_Target *control_target,
         control_flag->turnError = 0;
         control_turn_error(control_target, error);
     }
-    if (control_flag->turnAngleVelocity)
+    if (control_flag->turn_angle_vel)
     {
-        control_flag->turnAngleVelocity = 0;
+        control_flag->turn_angle_vel = 0;
         control_turn_angle_velocity(control_target);
     }
     // if (control_flag->bucking) {
@@ -58,12 +58,12 @@ void control_turn(struct Control_Target *control_target,
 static void control_turn_angle_velocity(struct Control_Target *control_target)
 {
     static float preTurnAngleVelocity = 0;
-    restrictValueF(&control_target->turnAngleVelocity, 250, -250);
-    preTurnAngleVelocity = control_target->turnAngleVelocity;
+    restrictValueF(&control_target->turn_angle_vel, 250, -250);
+    preTurnAngleVelocity = control_target->turn_angle_vel;
     static int32 preMomentumDiff = 0;
     s_momentum_diff = (int32)PID_calc_Position_LowPassD(
         &turn_angle_velocity_PID, yawAngleVelocity,
-        control_target->turnAngleVelocity);
+        control_target->turn_angle_vel);
 
     s_momentum_diff = (int32)(0.8f * s_momentum_diff + 0.2f * preMomentumDiff);
     restrictValueI(&s_momentum_diff, 8000, -8000);
@@ -73,7 +73,7 @@ static void control_turn_angle_velocity(struct Control_Target *control_target)
 static void control_turn_error(struct Control_Target *control_target,
                                int error)
 {
-    control_target->turnAngleVelocity = PID_calc_Position(
+    control_target->turn_angle_vel = PID_calc_Position(
         &turn_error_PID, (float)error, control_target->turnError);
 }
 
@@ -83,14 +83,14 @@ static void control_turn_velocity(struct Control_Target *control_target,
 {
     // static float turnVelocityFilter = 0;
     // turnVelocityFilter = (float)vel_motor->bottomReal;
-    // control_target->turnAngleVelocity =
+    // control_target->turn_angle_vel =
     //     PID_calc_Position(&turn_velocity_PID, turnVelocityFilter,
-    //                       control_target->turnVelocity);
+    //                       control_target->turn_vel);
     control_target->turnError = PID_calc_Position(
         &turn_velocity_PID, (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
         0.0f);
     // if (g_control_output_tv_flag != 0)
     // {
-    //     printf("%f\n", control_target->turnAngleVelocity);
+    //     printf("%f\n", control_target->turn_angle_vel);
     // }
 }

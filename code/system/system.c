@@ -101,36 +101,36 @@ void bottom_control_timer(struct Control_Time *control_time,
     uint32 frontAngleVelocityTime = control_time->bottom[1];
     uint32 frontVelocityTime = control_time->bottom[2];
 
-    control_flag->frontAngleCount++;
-    control_flag->frontAngleVelocityCount++;
-    control_flag->frontVelocityCount++;
-    if (control_flag->frontAngleCount >= frontAngleTime)
+    control_flag->bottom_angle_cnt++;
+    control_flag->bottom_angle_vel_cnt++;
+    control_flag->bottom_vel_cnt++;
+    if (control_flag->bottom_angle_cnt >= frontAngleTime)
     { // 20ms
-        control_flag->frontAngle = 1;
-        control_flag->frontAngleCount = 0;
+        control_flag->bottom_angle = 1;
+        control_flag->bottom_angle_cnt = 0;
     }
     else
     {
-        control_flag->frontAngle = 0;
+        control_flag->bottom_angle = 0;
     }
-    if (control_flag->frontAngleVelocityCount >=
+    if (control_flag->bottom_angle_vel_cnt >=
         frontAngleVelocityTime)
     { // 10ms
-        control_flag->frontAngleVelocity = 1;
-        control_flag->frontAngleVelocityCount = 0;
+        control_flag->bottom_angle_vel = 1;
+        control_flag->bottom_angle_vel_cnt = 0;
     }
     else
     {
-        control_flag->frontAngleVelocity = 0;
+        control_flag->bottom_angle_vel = 0;
     }
-    if (control_flag->frontVelocityCount >= frontVelocityTime)
+    if (control_flag->bottom_vel_cnt >= frontVelocityTime)
     { // 2ms
-        control_flag->frontVelocity = 1;
-        control_flag->frontVelocityCount = 0;
+        control_flag->bottom_vel = 1;
+        control_flag->bottom_vel_cnt = 0;
     }
     else
     {
-        control_flag->frontVelocity = 0;
+        control_flag->bottom_vel = 0;
     }
     control_bottom_balance(control_target, control_flag, vel_motor,
                            euler_angle_bias, control_motion_params);
@@ -147,35 +147,35 @@ void side_control_timer(struct Control_Time *control_time,
     uint32 sideAngleTime = control_time->side[0];
     uint32 sideAngleVelocityTime = control_time->side[1];
     uint32 sideVelocityTime = control_time->side[2];
-    control_flag->sideVelocityCount++;
-    control_flag->sideAngleCount++;
-    control_flag->sideAngleVelocityCount++;
-    if (control_flag->sideVelocityCount >= sideVelocityTime)
+    control_flag->side_vel_cnt++;
+    control_flag->side_angle_cnt++;
+    control_flag->side_angle_vel_cnt++;
+    if (control_flag->side_vel_cnt >= sideVelocityTime)
     {
-        control_flag->sideVelocity = 1;
-        control_flag->sideVelocityCount = 0;
+        control_flag->side_vel = 1;
+        control_flag->side_vel_cnt = 0;
     }
     else
     {
-        control_flag->sideVelocity = 0;
+        control_flag->side_vel = 0;
     }
-    if (control_flag->sideAngleCount >= sideAngleTime)
+    if (control_flag->side_angle_cnt >= sideAngleTime)
     {
-        control_flag->sideAngle = 1;
-        control_flag->sideAngleCount = 0;
-    }
-    else
-    {
-        control_flag->sideAngle = 0;
-    }
-    if (control_flag->sideAngleVelocityCount >= sideAngleVelocityTime)
-    {
-        control_flag->sideAngleVelocity = 1;
-        control_flag->sideAngleVelocityCount = 0;
+        control_flag->side_angle = 1;
+        control_flag->side_angle_cnt = 0;
     }
     else
     {
-        control_flag->sideAngleVelocity = 0;
+        control_flag->side_angle = 0;
+    }
+    if (control_flag->side_angle_vel_cnt >= sideAngleVelocityTime)
+    {
+        control_flag->side_angle_vel = 1;
+        control_flag->side_angle_vel_cnt = 0;
+    }
+    else
+    {
+        control_flag->side_angle_vel = 0;
     }
     control_side_balance(control_target, control_flag, control_turn_params,
                          vel_motor, euler_angle_bias, control_motion_params);
@@ -195,21 +195,21 @@ void turn_control_timer(struct Control_Time *control_time,
     control_flag->turnAngleDiffVelocityCount++;
     if (control_flag->turn >= turnCurvatureTime)
     {
-        control_flag->turnAngle = 1;
+        control_flag->turn_angle = 1;
         control_flag->turn = 0;
     }
     else
     {
-        control_flag->turnAngle = 0;
+        control_flag->turn_angle = 0;
     }
     if (control_flag->turnAngleCount >= turnAngleTime)
     {
-        control_flag->turnAngle = 1;
+        control_flag->turn_angle = 1;
         control_flag->turnAngleCount = 0;
     }
     else
     {
-        control_flag->turnAngle = 0;
+        control_flag->turn_angle = 0;
     }
     if (control_flag->turnAngleDiffVelocityCount >= turnVelocityTime)
     {
@@ -254,7 +254,7 @@ void system_control()
 {
     if (g_control_bottom_flag != 0)
     {
-        g_control_target.frontVelocity = g_received_vel;
+        g_control_target.bottom_vel = g_received_vel;
         bottom_control_timer(&g_control_time, &g_control_flag,
                              &g_control_target, &g_vel_motor,
                              &g_euler_angle_bias,

@@ -28,19 +28,19 @@ void control_bottom_balance(struct Control_Target *control_target,
                             struct EulerAngle *euler_angle_bias,
                             struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    if (control_flag->frontVelocity)
+    if (control_flag->bottom_vel)
     {
-        control_flag->frontVelocity = 0;
+        control_flag->bottom_vel = 0;
         control_bottom_velocity(vel_motor, control_target, control_motion_params);
     }
-    if (control_flag->frontAngle)
+    if (control_flag->bottom_angle)
     {
-        control_flag->frontAngle = 0;
+        control_flag->bottom_angle = 0;
         control_bottom_angle(euler_angle_bias, control_target, control_motion_params);
     }
-    if (control_flag->frontAngleVelocity)
+    if (control_flag->bottom_angle_vel)
     {
-        control_flag->frontAngleVelocity = 0;
+        control_flag->bottom_angle_vel = 0;
         control_bottom_angle_velocity(control_target, control_motion_params);
     }
     // restrictValueI(&s_bottom_balance_duty,-3000,3000);
@@ -61,7 +61,7 @@ void control_bottom_balance(struct Control_Target *control_target,
     //             bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
     //     }
     // }
-    // s_bottom_balance_duty = control_target->frontAngleVelocity * 10;
+    // s_bottom_balance_duty = control_target->bottom_angle_vel * 10;
     if (s_bottom_balance_duty > 0)
     {
         s_bottom_balance_duty += bottom_motor_deadzone_forward;
@@ -83,25 +83,25 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
                                     struct Control_Motion_Manual_Parmas *control_motion_params)
 {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle = control_motion_params->bottom_velocity_polarity * PID_calc_Position(
-                                                                                       &bottom_velocity_PID, (float)vel_motor->bottomFiltered, control_target->frontVelocity);
+    control_target->bottom_angle = control_motion_params->bottom_velocity_polarity * PID_calc_Position(
+                                                                                         &bottom_velocity_PID, (float)vel_motor->bottomFiltered, control_target->bottom_vel);
 #endif
 #ifndef VELOCITY_KALMAN_FILTER
-    control_target->frontAngle =
+    control_target->bottom_angle =
         PID_calc_Position(&bottom_velocity_PID, (float)vel_motor->bottom,
-                          control_target->frontVelocity);
+                          control_target->bottom_vel);
 #endif
-    // control_target->frontAngle = g_euler_angle_bias->roll - 0.1f *
-    // PID_calc_Position_DynamicI(&bottom_velocity_PID,(float)vel_motor->bottom,control_target->frontVelocity,
+    // control_target->bottom_angle = g_euler_angle_bias->roll - 0.1f *
+    // PID_calc_Position_DynamicI(&bottom_velocity_PID,(float)vel_motor->bottom,control_target->bottom_vel,
     // 80, 1.5f);
     // TODO:tune the parameter
-    // restrictValueF(&control_target->frontAngle, 15.0f, -15.0f);
+    // restrictValueF(&control_target->bottom_angle, 15.0f, -15.0f);
     // {
-    //     control_target->frontAngle = g_euler_angle_bias->roll;
+    //     control_target->bottom_angle = g_euler_angle_bias->roll;
     // }
     if (g_control_output_fv_flag != 0)
     {
-        printf("%f\n", control_target->frontAngle);
+        printf("%f\n", control_target->bottom_angle);
     }
 }
 
@@ -115,14 +115,14 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
     // lowPassFilter(&angleControlFilter[0],&angleControlFilter[1],0.1f);
     // noiseFilter(angleControlFilter[0],0.002f);
 
-    // simpleFuzzyProcess(&frontBalanceSimpleFuzzy,angleControlFilter[0],control_target->frontAngle,&bottom_angle_PID);
-    control_target->frontAngleVelocity = control_motion_params->bottom_angle_polarity * (PID_calc_Position(
-                                                                                            &bottom_angle_PID, (angleControlFilter[0] - euler_angle_bias->pitch),
-                                                                                            control_target->frontAngle));
+    // simpleFuzzyProcess(&frontBalanceSimpleFuzzy,angleControlFilter[0],control_target->bottom_angle,&bottom_angle_PID);
+    control_target->bottom_angle_vel = control_motion_params->bottom_angle_polarity * (PID_calc_Position(
+                                                                                          &bottom_angle_PID, (angleControlFilter[0] - euler_angle_bias->pitch),
+                                                                                          control_target->bottom_angle));
 
     if (g_control_output_fa_flag != 0)
     {
-        printf("%f,%f\n", control_target->frontAngleVelocity, currentFrontAngle);
+        printf("%f,%f\n", control_target->bottom_angle_vel, currentFrontAngle);
     }
 }
 
@@ -137,7 +137,7 @@ static void control_bottom_angle_velocity(
 
     s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity * (PID_calc_Position(
                                                                                         &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
-                                                                                        control_target->frontAngleVelocity));
+                                                                                        control_target->bottom_angle_vel));
     if (g_control_output_fav_flag != 0)
     {
         printf("%d\n", s_bottom_balance_duty);

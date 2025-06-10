@@ -84,7 +84,7 @@ IFX_INTERRUPT(cc61_pit_ch0_isr,
 
     printf("exit_menu_flag: %d\n", g_exit_menu_flag);
 
-    g_control_target.frontVelocity = 0;
+    g_control_target.bottom_vel = 0;
     if (g_control_bottom_flag != 0)
     {
         bottom_control_timer(&g_control_time, &g_control_flag,

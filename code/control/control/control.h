@@ -59,46 +59,46 @@ struct Control_Target
     // 控制目标状态
 
     // front side
-    float frontAngle;
-    float frontAngleVelocity;
-    float frontVelocity;
+    float bottom_angle;
+    float bottom_angle_vel;
+    float bottom_vel;
     // side
-    //  float sideVelocity;
-    float sideAngle;
-    float sideAngleVelocity;
+    //  float side_vel;
+    float side_angle;
+    float side_angle_vel;
     // turn
     float bucking;  // balance bucking
     float Fbucking; // front balance bucking
-    float turnAngle;
-    float turnAngleVelocity;
+    float turn_angle;
+    float turn_angle_vel;
     float turnError;
 };
 
 struct Control_Flag
 {
     // 控制更新标志
-    uint8_t frontAngle;
-    uint8_t frontAngleVelocity;
-    uint8_t frontVelocity;
+    uint8_t bottom_angle;
+    uint8_t bottom_angle_vel;
+    uint8_t bottom_vel;
 
-    uint8_t sideAngle;
-    uint8_t sideAngleVelocity;
-    uint8_t sideVelocity;
+    uint8_t side_angle;
+    uint8_t side_angle_vel;
+    uint8_t side_vel;
 
     uint8_t turn;
-    uint8_t turnAngle;
-    uint8_t turnAngleVelocity;
-    uint8_t turnVelocity;
+    uint8_t turn_angle;
+    uint8_t turn_angle_vel;
+    uint8_t turn_vel;
     uint8_t turnAngleDiffVelocity;
     uint8_t turnError;
 
-    uint8 frontAngleCount;
-    uint8 frontAngleVelocityCount;
-    uint8 frontVelocityCount;
+    uint8 bottom_angle_cnt;
+    uint8 bottom_angle_vel_cnt;
+    uint8 bottom_vel_cnt;
 
-    uint8 sideAngleCount;
-    uint8 sideAngleVelocityCount;
-    uint8 sideVelocityCount;
+    uint8 side_angle_cnt;
+    uint8 side_angle_vel_cnt;
+    uint8 side_vel_cnt;
 
     uint8 turnAngleCount;
     uint8 turnAngleDiffVelocityCount;

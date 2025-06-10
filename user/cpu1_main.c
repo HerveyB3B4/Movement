@@ -70,9 +70,9 @@ void core1_main(void)
             //                3, 3);
             // lcd_show_float(0, 2, g_vel_motor.bottomFiltered, 3, 3);
             // lcd_show_string(0, 3, "FV:");
-            // lcd_show_float(8, 3, g_control_target.frontAngle, 3, 3);
+            // lcd_show_float(8, 3, g_control_target.bottom_angle, 3, 3);
             // lcd_show_string(0, 4, "FA:");
-            // lcd_show_float(8, 4, g_control_target.frontAngleVelocity, 3, 3);
+            // lcd_show_float(8, 4, g_control_target.bottom_angle_vel, 3, 3);
             // lcd_show_int(0, 6, get_bottom_duty(), 5);
             // lcd_show_float(0, 7, bottom_angle_velocity_PID.Ki, 3, 3);
 

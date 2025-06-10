@@ -70,7 +70,7 @@ int core0_main(void)
         // }
 
         // 此处编写需要循环执行的代码
-        // printf("%.2f, %.2f\n", g_control_target.sideAngleVelocity,
+        // printf("%.2f, %.2f\n", g_control_target.side_angle_vel,
         //        currentSideAngleVelocity);
 
         // printf(
