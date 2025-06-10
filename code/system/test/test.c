@@ -11,7 +11,7 @@
 #include "wireless.h"
 #include "sd_card.h" // 添加SD卡操作头文件
 #include "receiver.h"
-#include "twopass.h"
+#include "detection.h"
 
 // 定义静态变量，从栈移到数据段，避免栈溢出
 static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
@@ -535,7 +535,7 @@ void test_image()
 
             binary_otsu_improved(mt9v03x_image, s_edge_map);
             // center = find_largest_white_region_center(s_edge_map);
-            center = find_largest_connected_component(s_edge_map);
+            center = find_white_center(s_edge_map);
             // get_max_region_center(edge_map, MT9V03X_W, MT9V03X_H,
             //                       &center.x, &center.y);
             // two_pass_center(edge_map, MT9V03X_W, MT9V03X_H,
