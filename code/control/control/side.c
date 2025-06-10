@@ -1,0 +1,153 @@
+#include "side.h"
+#include "velocity.h"
+#include "Attitude.h"
+#include "control.h"
+
+uint32 side_front_deadzone = 172;
+uint32 side_back_deadzone = 169;
+
+uint32 g_control_output_sav_flag = 0;
+uint32 g_control_output_sv_flag = 0;
+uint32 g_control_output_sa_flag = 0;
+
+static int32 s_side_balance_duty = 0;
+
+// side
+static void control_side_velocity(
+    struct Velocity_Motor *vel_motor,
+    struct Control_Target *control_target,
+    struct Control_Turn_Manual_Params *control_turn_params,
+    struct Control_Motion_Manual_Parmas *control_motion_params);
+static void control_side_angle(struct EulerAngle *euler_angle_bias,
+                               struct Control_Target *control_target,
+                               struct Control_Motion_Manual_Parmas *control_motion_params);
+static void control_side_angle_velocity(struct Control_Target *control_target,
+                                        struct Control_Motion_Manual_Parmas *control_motion_params);
+
+int32 get_side_duty() { return s_side_balance_duty; }
+void control_side_balance(
+    struct Control_Target *control_target,
+    struct Control_Flag *control_flag,
+    struct Control_Turn_Manual_Params *control_turn_params,
+    struct Velocity_Motor *vel_motor,
+    struct EulerAngle *euler_angle_bias,
+    struct Control_Motion_Manual_Parmas *control_motion_params)
+{
+    if (control_flag->sideVelocity)
+    {
+        control_flag->sideVelocity = 0;
+        control_side_velocity(vel_motor, control_target, control_turn_params, control_motion_params);
+    }
+
+    if (control_flag->sideAngle)
+    {
+        control_flag->sideAngle = 0;
+        control_side_angle(euler_angle_bias, control_target, control_motion_params);
+    }
+
+    if (control_flag->sideAngleVelocity)
+    {
+        control_flag->sideAngleVelocity = 0;
+        control_side_angle_velocity(control_target, control_motion_params);
+    }
+
+    // s_side_balance_duty = control_target->sideAngle * 100;
+    // turnControl();
+    int32 left_motor_duty, right_motor_duty;
+    left_motor_duty =
+        -s_side_balance_duty -
+        (int32_t)(get_momentum_diff() *
+                  (float)(3.3f -
+                          logf(0.2f * abs(vel_motor->momentumFront) + 8)));
+    right_motor_duty =
+        s_side_balance_duty -
+        (int32_t)(get_momentum_diff() *
+                  (float)(3.3f -
+                          logf(0.2f * abs(vel_motor->momentumBack) + 8)));
+
+    // 添加死区补偿
+    if (left_motor_duty > 0)
+    {
+        left_motor_duty += side_front_deadzone;
+    }
+    else if (left_motor_duty < 0)
+    {
+        left_motor_duty -= side_front_deadzone;
+    }
+
+    if (right_motor_duty > 0)
+    {
+        right_motor_duty += side_back_deadzone;
+    }
+    else if (right_motor_duty < 0)
+    {
+        right_motor_duty -= side_back_deadzone;
+    }
+
+    // printf("%d,%d\n", left_motor_duty, right_motor_duty);
+    restrictValueI(&left_motor_duty, -8000, 8000);
+    restrictValueI(&right_motor_duty, -8000, 8000);
+    set_momentum_motor_pwm(left_motor_duty, right_motor_duty);
+    // set momentum motor pwm to keep side balance
+}
+
+static void control_side_velocity(
+    struct Velocity_Motor *vel_motor,
+    struct Control_Target *control_target,
+    struct Control_Turn_Manual_Params *control_turn_params,
+    struct Control_Motion_Manual_Parmas *control_motion_params)
+{
+    // static float momentumVelocityFilter = 0;
+    // momentumVelocityFilter =
+    //     (float)(vel_motor->momentumFront - vel_motor->momentumBack);
+
+    control_target->sideAngle = control_motion_params->side_velocity_polarity * PID_calc_Position(&side_velocity_PID,
+                                                                                                  (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
+                                                                                                  0.0f); // 速度是正反馈，因此set和ref要反过来
+
+    // 输出pid信息：error，输出，实际值，目标值
+    if (g_control_output_sv_flag != 0)
+    {
+        printf("%f\n", control_target->sideAngle);
+    }
+}
+
+static void control_side_angle(struct EulerAngle *euler_angle_bias,
+                               struct Control_Target *control_target,
+                               struct Control_Motion_Manual_Parmas *control_motion_params)
+{
+    static float momentumAngleFilter[2] = {0}; // 角度滤波
+    momentumAngleFilter[1] = momentumAngleFilter[0];
+    momentumAngleFilter[0] = currentSideAngle;
+    // noiseFilter(momentumAngleFilter[0],0.02f);
+    // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
+    control_target->sideAngleVelocity = control_motion_params->side_angle_polarity * PID_calc_Position(
+                                                                                         &side_angle_PID, (momentumAngleFilter[0] - euler_angle_bias->roll),
+                                                                                         control_target->sideAngle);
+
+    // 输出pid信息：error，输出，实际值，目标值
+    if (g_control_output_sa_flag != 0)
+    {
+        printf("%f\n", control_target->sideAngleVelocity);
+    }
+}
+
+static void control_side_angle_velocity(struct Control_Target *control_target,
+                                        struct Control_Motion_Manual_Parmas *control_motion_params)
+{
+    static float momentumGyroFilter[2] = {0}; // 角度速度滤波
+    momentumGyroFilter[1] = momentumGyroFilter[0];
+    momentumGyroFilter[0] = currentSideAngleVelocity;
+
+    // lowPassFilterF(&momentumGyroFilter[0], &momentumGyroFilter[1], 0.1f);
+    s_side_balance_duty =
+        control_motion_params->side_angle_velocity_polarity * (int32)(PID_calc_DELTA(&side_angle_velocity_PID, momentumGyroFilter[0],
+                                                                                     control_target->sideAngleVelocity));
+
+    // 输出pid信息：error，输出，实际值，目标值
+    if (g_control_output_sav_flag != 0)
+    {
+        printf("%f,%f\n", -currentSideAngleVelocity,
+               s_side_balance_duty / 100.0f);
+    }
+}

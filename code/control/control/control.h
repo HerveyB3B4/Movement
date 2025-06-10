@@ -131,25 +131,23 @@ extern uint32 control_time;
 
 void control_init(struct Control_Motion_Manual_Parmas *control_motion_params);
 void control_manual_param_init();
-void control_bottom_balance(struct Control_Target *control_target,
-                            struct Control_Flag *control_flag,
-                            struct Velocity_Motor *vel_motor,
-                            struct EulerAngle *euler_angle_bias,
-                            struct Control_Motion_Manual_Parmas *control_motion_params);
-void control_side_balance(
-    struct Control_Target *control_target,
-    struct Control_Flag *control_flag,
-    struct Control_Turn_Manual_Params *control_turn_params,
-    struct Velocity_Motor *vel_motor,
-    struct EulerAngle *euler_angle_bias,
-    struct Control_Motion_Manual_Parmas *control_motion_params);
 
-void control_turn_balance();
 void control_shutdown(struct Control_Target *control_target,
                       struct EulerAngle *euler_angle_bias);
 
-int32 get_bottom_duty();
-int32 get_side_duty();
 void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_params);
+
+extern pid_type_def turn_angle_PID;
+extern pid_type_def turn_angle_velocity_PID;
+extern pid_type_def turn_velocity_PID;
+extern pid_type_def turn_error_PID;
+
+extern pid_type_def bottom_angle_PID;
+extern pid_type_def bottom_angle_velocity_PID;
+extern pid_type_def bottom_velocity_PID;
+
+extern pid_type_def side_angle_velocity_PID;
+extern pid_type_def side_angle_PID;
+extern pid_type_def side_velocity_PID;
 
 #endif
