@@ -535,7 +535,7 @@ void test_image()
 
             binary_otsu_improved(mt9v03x_image, s_edge_map);
             // center = find_largest_white_region_center(s_edge_map);
-            center = find_white_center(s_edge_map);
+            center = find_white_center(s_edge_map, ALGORITHM_TWO_PASS);
             // get_max_region_center(edge_map, MT9V03X_W, MT9V03X_H,
             //                       &center.x, &center.y);
             // two_pass_center(edge_map, MT9V03X_W, MT9V03X_H,

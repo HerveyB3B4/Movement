@@ -12,7 +12,9 @@ static uint16 label_count = 0;
 
 // 临时标签数组
 static uint16 temp_labels[IMG_HEIGHT][IMG_WIDTH];
-
+static component_analysis_result find_largest_connected_component_with_algo(
+    uint8 *binary_image,
+    connected_component_algorithm_enum algorithm);
 // 种子填充用的区域信息
 typedef struct
 {
@@ -126,7 +128,7 @@ static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, flood_fil
     }
 }
 
-// 种子填充算法实现
+// flood fill
 static component_analysis_result find_components_flood_fill(uint8 *binary_image)
 {
     component_analysis_result result = {0};
@@ -198,7 +200,7 @@ static component_analysis_result find_components_flood_fill(uint8 *binary_image)
     return result;
 }
 
-// 两遍扫描算法实现
+// two-pass
 static component_analysis_result find_components_two_pass(uint8 *binary_image)
 {
     component_analysis_result result = {0};
@@ -336,8 +338,13 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
     return result;
 }
 
-// 主要接口函数
-component_analysis_result find_largest_connected_component_with_algo(
+Point find_white_center(uint8 *binary_image, connected_component_algorithm_enum algorithm)
+{
+    component_analysis_result result = find_largest_connected_component_with_algo(binary_image, algorithm);
+    return result.largest_component.center;
+}
+
+static component_analysis_result find_largest_connected_component_with_algo(
     uint8 *binary_image,
     connected_component_algorithm_enum algorithm)
 {
@@ -355,10 +362,4 @@ component_analysis_result find_largest_connected_component_with_algo(
     default:
         return find_components_two_pass(binary_image);
     }
-}
-
-Point find_white_center(uint8 *binary_image)
-{
-    component_analysis_result result = find_largest_connected_component_with_algo(binary_image, ALGORITHM_FLOOD_FILL);
-    return result.largest_component.center;
 }

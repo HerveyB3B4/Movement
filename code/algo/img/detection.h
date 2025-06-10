@@ -33,12 +33,7 @@ typedef struct
     uint32 total_white_pixels;                  // 总白色像素数
 } component_analysis_result;
 
-// 主要接口函数
-component_analysis_result find_largest_connected_component_with_algo(
-    uint8 *binary_image,
-    connected_component_algorithm_enum algorithm);
-
-Point find_white_center(uint8 *binary_image); // 默认使用种子填充
+Point find_white_center(uint8 *binary_image, connected_component_algorithm_enum algorithm);
 
 // 工具函数
 uint16 find_root(uint16 x);
