@@ -20,6 +20,7 @@ struct Control_Motion_Manual_Parmas
 {
     // 这是底轮速度
     int32 bottom_velocity;
+
     // PID
     uint32 bottom_velocity_parameter[3];
     uint32 bottom_angle_velocity_parameter[3];
@@ -31,6 +32,8 @@ struct Control_Motion_Manual_Parmas
 
     uint32 turn_angle_parameter[3];
     uint32 turn_velocity_parameter[3];
+    uint32 turn_error_parameter[3];
+    uint32 turn_angle_velocity_parameter[3];
 
     // PID极性参数
     int32 bottom_velocity_polarity;
@@ -129,13 +132,12 @@ extern pid_type_def bottom_angle_velocity_PID;
 
 extern uint32 control_time;
 
+void control_shutdown(struct Control_Target *control_target,
+                      struct EulerAngle *euler_angle_bias);
 void control_init(struct Control_Motion_Manual_Parmas *control_motion_params);
 void control_manual_param_init();
 
-void control_shutdown(struct Control_Target *control_target,
-                      struct EulerAngle *euler_angle_bias);
-
-void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_params);
+void control_reset(struct Control_Target *control_target);
 
 extern pid_type_def turn_angle_PID;
 extern pid_type_def turn_angle_velocity_PID;

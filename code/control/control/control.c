@@ -6,7 +6,9 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
+uint32 control_params_from = 1; // 0: menu, 1: preset
 uint32 control_time = 0;
+
 // global
 uint8 g_turn_start_flag = 0;
 int32 g_control_shutdown_flag = 0;
@@ -20,20 +22,16 @@ struct Control_Time g_control_time;
 struct Control_Motion_Manual_Parmas g_control_motion_params;
 
 // static
-
 static void control_param_init(pid_type_def *pid,
                                const uint32 para[3],
-                               float coefficient,
+                               float kp_coefficient,
+                               float ki_coefficient,
+                               float kd_coefficient,
                                float maxOut,
                                float maxIOut);
-void control_param_split_init(pid_type_def *pid,
-                              const uint32 para[3],
-                              float kp_coefficient,
-                              float ki_coefficient,
-                              float kd_coefficient,
-                              float maxOut,
-                              float maxIOut);
-// 添加函数原型声明
+static void control_init_preset(struct Control_Motion_Manual_Parmas *control_motion_params);
+static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motion_params);
+
 void control_reset(struct Control_Target *control_target);
 
 // PID
@@ -69,16 +67,8 @@ void control_shutdown(struct Control_Target *control_target,
     }
 }
 
-void control_init(struct Control_Motion_Manual_Parmas *control_motion_params)
+void control_polarity_init(struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    control_pid_preset(control_motion_params);
-    /*
-    pid polarity:
-    av -> a -> v
-
-    bottom: 0 0 1
-    side: 0 1 1
-    */
     control_motion_params->bottom_angle_velocity_polarity = -1;
     control_motion_params->bottom_angle_polarity = -1;
     control_motion_params->bottom_velocity_polarity = 1;
@@ -86,45 +76,26 @@ void control_init(struct Control_Motion_Manual_Parmas *control_motion_params)
     control_motion_params->side_angle_velocity_polarity = 1;
     control_motion_params->side_angle_polarity = -1;
     control_motion_params->side_velocity_polarity = -1;
-    // control_param_init(&bottom_angle_velocity_PID,
-    //                    control_motion_params->bottom_angle_velocity_parameter,
-    //                    100, MOTOR_PWM_MAX, 9999, control_motion_params->bottom_angle_velocity_polarity);
-    // // control_param_init(&bottom_angle_PID,
-    // //                    control_motion_params->bottom_angle_parameter, 10,
-    // //                    100, 10);
-    // control_param_split_init(&bottom_angle_PID,
-    //                          control_motion_params->bottom_angle_parameter,
-    //                          10, 1000, 10, 100, 10, control_motion_params->bottom_angle_polarity);
-    // control_param_init(&bottom_velocity_PID,
-    //                    control_motion_params->bottom_velocity_parameter,
-    //                    100000, 50, 2.5f, control_motion_params->bottom_velocity_polarity);
 
-    // // momentum wheel pid
-    // control_param_init(&side_angle_velocity_PID,
-    //                    control_motion_params->side_angle_velocity_parameter,
-    //                    100, MOMENTUM_MOTOR_PWM_MAX, 8000, control_motion_params->side_angle_velocity_polarity);
-    // // control_param_init(&side_angle_PID,
-    // //                    control_motion_params->side_angle_parameter, 10, 9999,
-    // //                    2.5);
-    // control_param_split_init(&side_angle_PID,
-    //                          control_motion_params->side_angle_parameter, 10,
-    //                          10, 100, 9999, 2.5f, control_motion_params->side_angle_polarity);
-    // control_param_init(&side_velocity_PID,
-    //                    control_motion_params->side_velocity_parameter, 10000,
-    //                    10, 10, control_motion_params->side_velocity_polarity);
-    // // turn pid
-    // // control_param_init(&turn_angle_velocity_PID,
-    // //                    control_motion_params->turn_angle_velocity_parameter, 1,
-    // //                    9999, 500);
-    // control_param_init(&turn_angle_PID,
-    //                    control_motion_params->turn_angle_parameter, 100, 9999,
-    //                    500);
-    // control_param_init(&turn_velocity_PID,
-    //                    control_motion_params->turn_velocity_parameter, 1000,
-    //                    9999, 500);
+    // TODO turn
 }
 
-/// @brief init the control parameter in the menu
+void control_init(struct Control_Motion_Manual_Parmas *control_motion_params)
+{
+    control_polarity_init(control_motion_params);
+
+    if (control_params_from == 0)
+    {
+        // 从菜单中获取参数
+        control_init_menu(control_motion_params);
+    }
+    else if (control_params_from == 1)
+    {
+        // 从预设中获取参数
+        control_init_preset(control_motion_params);
+    }
+}
+
 void control_manual_param_init()
 {
     bottom_angle_velocity_PID.Kp = 0;
@@ -153,35 +124,29 @@ void control_manual_param_init()
     turn_angle_velocity_PID.Kd = 0;
 }
 
-static void control_param_init(pid_type_def *pid,
-                               const uint32 para[3],
-                               float coefficient,
-                               float maxOut,
-                               float maxIOut)
+void control_reset(struct Control_Target *control_target)
 {
-    float temp_pid[3];
-    temp_pid[0] = (float)para[0] / coefficient;
-    temp_pid[1] = (float)para[1] / coefficient;
-    temp_pid[2] = (float)para[2] / coefficient;
-    PID_init_Position(pid, temp_pid, maxOut, maxIOut);
+    // 重置控制目标值
+    control_target->frontAngle = 0;
+    control_target->frontVelocity = 0;
+    control_target->sideAngle = 0;
+    control_target->turnAngle = 0;
+    control_target->turnAngleVelocity = 0;
+    control_target->bucking = 0;
+
+    // 重置控制标志
+    g_control_flag.frontAngle = 0;
+    g_control_flag.frontVelocity = 0;
+    g_control_flag.sideAngle = 0;
+    g_control_flag.sideVelocity = 0;
+    g_control_flag.turnAngle = 0;
+    g_control_flag.turnVelocity = 0;
+    // g_control_flag.bucking = 0;
+
+    control_init(&g_control_motion_params);
 }
 
-static void control_param_split_init(pid_type_def *pid,
-                                     const uint32 para[3],
-                                     float kp_coefficient,
-                                     float ki_coefficient,
-                                     float kd_coefficient,
-                                     float maxOut,
-                                     float maxIOut)
-{
-    float temp_pid[3];
-    temp_pid[0] = (float)para[0] / kp_coefficient;
-    temp_pid[1] = (float)para[1] / ki_coefficient;
-    temp_pid[2] = (float)para[2] / kd_coefficient;
-    PID_init_Position(pid, temp_pid, maxOut, maxIOut);
-}
-
-void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_params)
+static void control_init_preset(struct Control_Motion_Manual_Parmas *control_motion_params)
 {
     // bottom wheel
 
@@ -212,26 +177,72 @@ void control_pid_preset(struct Control_Motion_Manual_Parmas *control_motion_para
     PID_init_Position(&side_angle_velocity_PID, side_angle_velocity_pid, MOMENTUM_MOTOR_PWM_MAX, 8000);
     PID_init_Position(&side_angle_PID, side_angle_pid, 9999, 2.5f);
     PID_init_Position(&side_velocity_PID, side_velocity_pid, 9999, 10);
+
+    float turn_angle_velocity_pid[3] = {0.0, 0.0, 0.0};
+    float turn_angle_pid[3] = {0.0, 0.0, 0.0};
+    float turn_velocity_pid[3] = {0.0, 0.0, 0.0};
+    float turn_error_pid[3] = {0.0, 0.0, 0.0};
+    PID_init_Position(&turn_angle_velocity_PID, turn_angle_velocity_pid, 9999, 500);
+    PID_init_Position(&turn_angle_PID, turn_angle_pid, 9999, 500);
+    PID_init_Position(&turn_velocity_PID, turn_velocity_pid, 9999, 500);
+    PID_init_Position(&turn_error_PID, turn_error_pid, 9999, 500);
 }
 
-void control_reset(struct Control_Target *control_target)
+static void control_param_init(pid_type_def *pid,
+                               const uint32 para[3],
+                               float kp_coefficient,
+                               float ki_coefficient,
+                               float kd_coefficient,
+                               float maxOut,
+                               float maxIOut)
 {
-    // 重置控制目标值
-    control_target->frontAngle = 0;
-    control_target->frontVelocity = 0;
-    control_target->sideAngle = 0;
-    control_target->turnAngle = 0;
-    control_target->turnAngleVelocity = 0;
-    control_target->bucking = 0;
+    float temp_pid[3];
+    temp_pid[0] = (float)para[0] / kp_coefficient;
+    temp_pid[1] = (float)para[1] / ki_coefficient;
+    temp_pid[2] = (float)para[2] / kd_coefficient;
+    PID_init_Position(pid, temp_pid, maxOut, maxIOut);
+}
 
-    // 重置控制标志
-    g_control_flag.frontAngle = 0;
-    g_control_flag.frontVelocity = 0;
-    g_control_flag.sideAngle = 0;
-    g_control_flag.sideVelocity = 0;
-    g_control_flag.turnAngle = 0;
-    g_control_flag.turnVelocity = 0;
-    // g_control_flag.bucking = 0;
+static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motion_params)
+{
+    control_param_init(&bottom_angle_velocity_PID,
+                       control_motion_params->bottom_angle_velocity_parameter,
+                       100, 100, 100, MOTOR_PWM_MAX, 9999);
+    // control_param_init(&bottom_angle_PID,
+    //                    control_motion_params->bottom_angle_parameter, 10,
+    //                    100, 10);
+    control_param_init(&bottom_angle_PID,
+                       control_motion_params->bottom_angle_parameter,
+                       10, 1000, 10, 100, 10);
+    control_param_init(&bottom_velocity_PID,
+                       control_motion_params->bottom_velocity_parameter,
+                       100000, 100000, 100000, 50, 2.5f);
 
-    control_init(&g_control_motion_params);
+    // momentum wheel pid
+    control_param_init(&side_angle_velocity_PID,
+                       control_motion_params->side_angle_velocity_parameter,
+                       100, 100, 100, MOMENTUM_MOTOR_PWM_MAX, 8000);
+    // control_param_init(&side_angle_PID,
+    //                    control_motion_params->side_angle_parameter, 10, 9999,
+    //                    2.5);
+    control_param_init(&side_angle_PID,
+                       control_motion_params->side_angle_parameter, 10,
+                       10, 100, 9999, 2.5f);
+    control_param_init(&side_velocity_PID,
+                       control_motion_params->side_velocity_parameter, 10000,
+                       10000, 10000, 10, 10);
+
+    // turn pid
+    control_param_init(&turn_angle_velocity_PID,
+                       control_motion_params->turn_angle_velocity_parameter, 1, 1, 1,
+                       9999, 500);
+    control_param_init(&turn_angle_PID,
+                       control_motion_params->turn_angle_parameter, 100, 100, 100, 9999,
+                       500);
+    control_param_init(&turn_velocity_PID,
+                       control_motion_params->turn_velocity_parameter, 1000, 1000, 1000,
+                       9999, 500);
+    control_param_init(&turn_error_PID,
+                       control_motion_params->turn_error_parameter, 1000, 1000, 1000,
+                       9999, 500);
 }
