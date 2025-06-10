@@ -6,10 +6,9 @@ static int16 img_target_error = 0;
 static Point img_target_center = {-1, -1};
 static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
 
-int16 get_img_target_error(Point *center)
+int16 get_img_target_error()
 {
     return img_target_error;
-    // return center->y - IMG_HEIGHT / 2;
 }
 
 void draw_cross(uint8_t *img, Point center, uint8_t size, uint8_t color)
@@ -91,7 +90,7 @@ void img_handler()
     if (mt9v03x_finish_flag)
     {
         mt9v03x_finish_flag = 0;
-        binary_otsu_improved(mt9v03x_image, s_edge_map);
+        binary_otsu(mt9v03x_image, s_edge_map);
         img_target_center = find_white_center(s_edge_map, ALGORITHM_TWO_PASS);
         img_target_error = img_target_center.x - IMG_WIDTH / 2;
         draw_cross(s_edge_map, img_target_center, -1, RGB565_YELLOW);
