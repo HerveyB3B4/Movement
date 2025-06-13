@@ -1,4 +1,6 @@
 #include "receiver.h"
+#include "control.h"
+#include "pid.h"
 
 void receiver_init()
 {
@@ -20,6 +22,55 @@ uint8 receive_data_buffer[5];
 uint8 receive_data_count = 0;
 int16 g_received_vel = 0;
 int16 g_turn_error = 0;
+
+typedef union
+{
+    float value;
+    uint32 bytes;
+} float_converter;
+
+float converter_bytes_to_float(uint8 *bytes)
+{
+    float_converter converter;
+    converter.bytes = (uint32)bytes[3] << 24 |
+                      (uint32)bytes[2] << 16 |
+                      (uint32)bytes[1] << 8 |
+                      (uint32)bytes[0];
+    return converter.value;
+}
+
+void process_pid_command(uint8 *data)
+{
+    uint8 checksum = 0;
+    for (int j = 0; j < 14; j++)
+    {
+        checksum += data[j];
+    }
+    if (checksum == data[14])
+    {
+        float p = converter_bytes_to_float(&data[2]);
+        float i = converter_bytes_to_float(&data[6]);
+        float d = converter_bytes_to_float(&data[10]);
+        float pid[3] = {p, i, d};
+        switch (data[1])
+        {
+        case 0x05: // 角速度环
+            PID_init_Position(&bottom_angle_velocity_PID, pid, 9999, 9999);
+            break;
+
+        case 0x06: // 角度环
+            PID_init_Position(&bottom_angle_PID, pid, 9999, 9999);
+            break;
+
+        case 0x07: // 速度环
+            PID_init_Position(&bottom_velocity_PID, pid, 9999, 10);
+            break;
+
+        default:
+            break;
+        }
+    }
+}
 
 void receiver_callback()
 {
@@ -62,6 +113,12 @@ void receiver_callback()
                         // 处理转向指令
                         g_turn_error = ((int)receive_data_buffer[2] << 8) |
                                        (int)receive_data_buffer[3];
+                        break;
+                    case 0x05:
+                    case 0x06:
+                    case 0x07:
+                        // 处理底轮PID参数指令
+                        process_pid_command(&receive_data_buffer);
                         break;
                     default:
                         // 未知指令，忽略
