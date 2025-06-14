@@ -3,9 +3,8 @@
 
 #include "pid.h"
 #include "zf_common_headfile.h"
-#define pidCoefficient 100
 #define CONTROL_LAW_CONSTRAINT 0.28f // simple trace
-#define CONTROL_UPDATE_T 4
+#define CONTROL_UPDATE_T 1
 
 struct Control_Turn_Manual_Params
 {
@@ -43,13 +42,15 @@ struct Control_Motion_Manual_Parmas
     int32 side_angle_polarity;
     int32 side_velocity_polarity;
     int32 turn_angle_polarity;
+    int32 turn_angle_velocity_polarity;
+    int32 turn_error_polarity;
     int32 turn_velocity_polarity;
 };
 
 struct Control_Time
 {
     // 串级pid各个环的时间，时间由长到短，由外到内
-    uint32 turn[2];
+    uint32 turn[4];
     uint32 bottom[3];
     uint32 side[3];
 };
@@ -71,7 +72,7 @@ struct Control_Target
     float Fbucking; // front balance bucking
     float turn_angle;
     float turn_angle_vel;
-    float turnError;
+    float turn_err;
 };
 
 struct Control_Flag
@@ -90,7 +91,7 @@ struct Control_Flag
     uint8_t turn_angle_vel;
     uint8_t turn_vel;
     uint8_t turnAngleDiffVelocity;
-    uint8_t turnError;
+    uint8_t turn_err;
 
     uint8 bottom_angle_cnt;
     uint8 bottom_angle_vel_cnt;
@@ -101,7 +102,9 @@ struct Control_Flag
     uint8 side_vel_cnt;
 
     uint8 turn_angle_cnt;
-    uint8 turnAngleDiffVelocityCount;
+    uint8 turn_angle_vel_cnt;
+    uint8 turn_vel_cnt;
+    uint8 turn_err_cnt;
 };
 
 struct EulerAngle;

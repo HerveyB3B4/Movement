@@ -78,7 +78,10 @@ void control_polarity_init(struct Control_Motion_Manual_Parmas *control_motion_p
     control_motion_params->side_angle_polarity = -1;
     control_motion_params->side_velocity_polarity = -1;
 
-    // TODO turn
+    control_motion_params->turn_angle_polarity = 1;
+    control_motion_params->turn_angle_velocity_polarity = 1;
+    control_motion_params->turn_error_polarity = 1;
+    control_motion_params->turn_velocity_polarity = 1;
 }
 
 void control_init(struct Control_Motion_Manual_Parmas *control_motion_params)
@@ -142,6 +145,7 @@ void control_reset(struct Control_Target *control_target)
     g_control_flag.side_vel = 0;
     g_control_flag.turn_angle = 0;
     g_control_flag.turn_vel = 0;
+    g_control_flag.turn_err = 0;
     // g_control_flag.bucking = 0;
 
     control_init(&g_control_motion_params);

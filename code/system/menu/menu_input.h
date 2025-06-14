@@ -12,17 +12,20 @@ struct Menu_Manual_Param
     int32 mechanicalRollAngle;
 
     int32 bottom_velocity;
+
     // PID
-    uint32 bottom_velocity_parameter[3];
     uint32 bottom_angle_velocity_parameter[3];
     uint32 bottom_angle_parameter[3];
+    uint32 bottom_velocity_parameter[3];
 
     uint32 side_angle_velocity_parameter[3];
     uint32 side_angle_parameter[3];
     uint32 side_velocity_parameter[3];
 
-    uint32 turn_angle_parameter[3];
+    uint32 turn_angle_velocity_parameter[3];
+    uint32 turn_error_parameter[3];
     uint32 turn_velocity_parameter[3];
+    uint32 turn_angle_parameter[3];
 
     // PID极性控制参数，0表示正极性，1表示负极性
     uint32 bottom_velocity_polarity;
@@ -35,7 +38,7 @@ struct Menu_Manual_Param
     uint32 turn_velocity_polarity;
 
     // 串级pid各个环的时间，时间由长到短，由外到内
-    uint32 TurnControlTimeParameter[2];
+    uint32 TurnControlTimeParameter[4];
     uint32 FrontControlTimeParameter[3];
     uint32 SideControlTimeParameter[3];
 
