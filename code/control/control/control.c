@@ -6,7 +6,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
-uint32 control_params_from = 1; // 0: menu, 1: preset
+uint32 control_params_from = 0; // 0: menu, 1: preset
 uint32 control_time = 0;
 
 // global
@@ -155,9 +155,13 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // float bottom_angle_pid[3] = {4, 0.0, 1};
     // float bottom_velocity_pid[3] = {0.001, 0.000000, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {20, 0.20, 0};
-    float bottom_angle_pid[3] = {3.5, 0.0, 1};
-    float bottom_velocity_pid[3] = {0.0007, 0.0000035, 0.00};
+    // float bottom_angle_velocity_pid[3] = {20, 0.20, 0};
+    // float bottom_angle_pid[3] = {3.5, 0.0, 1};
+    // float bottom_velocity_pid[3] = {0.0007, 0.0000035, 0.00};
+
+    float bottom_angle_velocity_pid[3] = {25, 0.15, 8};
+    float bottom_angle_pid[3] = {6, 0.0, 2};
+    float bottom_velocity_pid[3] = {0.00065, 0.0000035, 0.00};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
                       9999, 9999);
@@ -208,30 +212,30 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
 {
     control_param_init(&bottom_angle_velocity_PID,
                        control_motion_params->bottom_angle_velocity_parameter,
-                       100, 100, 100, MOTOR_PWM_MAX, 9999);
+                       1, 100, 1, MOTOR_PWM_MAX, 9999);
     // control_param_init(&bottom_angle_PID,
     //                    control_motion_params->bottom_angle_parameter, 10,
     //                    100, 10);
     control_param_init(&bottom_angle_PID,
                        control_motion_params->bottom_angle_parameter,
-                       10, 1000, 10, 100, 10);
+                       10, 1, 10, 9999, 10);
     control_param_init(&bottom_velocity_PID,
                        control_motion_params->bottom_velocity_parameter,
-                       100000, 100000, 100000, 50, 2.5f);
+                       100000, 10000000, 100000, 9999, 2.5f);
 
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
                        control_motion_params->side_angle_velocity_parameter,
-                       100, 100, 100, MOMENTUM_MOTOR_PWM_MAX, 8000);
+                       1, 10, 10, MOMENTUM_MOTOR_PWM_MAX, 8000);
     // control_param_init(&side_angle_PID,
     //                    control_motion_params->side_angle_parameter, 10, 9999,
     //                    2.5);
     control_param_init(&side_angle_PID,
                        control_motion_params->side_angle_parameter, 10,
-                       10, 100, 9999, 2.5f);
+                       10, 1, 9999, 2.5f);
     control_param_init(&side_velocity_PID,
                        control_motion_params->side_velocity_parameter, 10000,
-                       10000, 10000, 10, 10);
+                       10000000, 10000, 9999, 10);
 
     // turn pid
     control_param_init(&turn_angle_velocity_PID,
