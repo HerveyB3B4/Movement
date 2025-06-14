@@ -23,12 +23,12 @@ void menu_get_params(
     // pid
     for (uint8 i = 0; i < 3; i++)
     {
-        control_motion_params->bottom_velocity_parameter[i] =
-            g_menu_manual_param.bottom_velocity_parameter[i];
         control_motion_params->bottom_angle_velocity_parameter[i] =
             g_menu_manual_param.bottom_angle_velocity_parameter[i];
         control_motion_params->bottom_angle_parameter[i] =
             g_menu_manual_param.bottom_angle_parameter[i];
+        control_motion_params->bottom_velocity_parameter[i] =
+            g_menu_manual_param.bottom_velocity_parameter[i];
 
         control_motion_params->side_angle_velocity_parameter[i] =
             g_menu_manual_param.side_angle_velocity_parameter[i];
@@ -37,10 +37,14 @@ void menu_get_params(
         control_motion_params->side_velocity_parameter[i] =
             g_menu_manual_param.side_velocity_parameter[i];
 
-        control_motion_params->turn_angle_parameter[i] =
-            g_menu_manual_param.turn_angle_parameter[i];
+        control_motion_params->turn_angle_velocity_parameter[i] =
+            g_menu_manual_param.turn_angle_velocity_parameter[i];
+        control_motion_params->turn_error_parameter[i] =
+            g_menu_manual_param.turn_error_parameter[i];
         control_motion_params->turn_velocity_parameter[i] =
             g_menu_manual_param.turn_velocity_parameter[i];
+        control_motion_params->turn_angle_parameter[i] =
+            g_menu_manual_param.turn_angle_parameter[i];
     }
 
     // 传递PID极性参数
@@ -136,12 +140,16 @@ void menu_get_params(
     control_turn_params->buckling_front_coefficientT =
         g_menu_manual_param.bucklingFrontCoefficientT;
 
-    control_time->turn[0] = g_menu_manual_param.TurnControlTimeParameter[0];
-    control_time->turn[1] = g_menu_manual_param.TurnControlTimeParameter[1];
-    control_time->bottom[0] = g_menu_manual_param.FrontControlTimeParameter[0];
-    control_time->bottom[1] = g_menu_manual_param.FrontControlTimeParameter[1];
-    control_time->bottom[2] = g_menu_manual_param.FrontControlTimeParameter[2];
-    control_time->side[0] = g_menu_manual_param.SideControlTimeParameter[0];
-    control_time->side[1] = g_menu_manual_param.SideControlTimeParameter[1];
-    control_time->side[2] = g_menu_manual_param.SideControlTimeParameter[2];
+    control_time->turn[0] = g_menu_manual_param.TurnControlTimeParameter[0]; // TAV
+    control_time->turn[1] = g_menu_manual_param.TurnControlTimeParameter[1]; // TE
+    control_time->turn[2] = g_menu_manual_param.TurnControlTimeParameter[2]; // TV
+    control_time->turn[3] = g_menu_manual_param.TurnControlTimeParameter[3]; // TA
+
+    control_time->bottom[0] = g_menu_manual_param.FrontControlTimeParameter[0]; // FAV
+    control_time->bottom[1] = g_menu_manual_param.FrontControlTimeParameter[1]; // FA
+    control_time->bottom[2] = g_menu_manual_param.FrontControlTimeParameter[2]; // FV
+
+    control_time->side[0] = g_menu_manual_param.SideControlTimeParameter[0]; // SAV
+    control_time->side[1] = g_menu_manual_param.SideControlTimeParameter[1]; // SA
+    control_time->side[2] = g_menu_manual_param.SideControlTimeParameter[2]; // SV
 }

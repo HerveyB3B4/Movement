@@ -29,9 +29,9 @@ void control_turn(struct Control_Target *control_target,
         control_flag->turn_vel = 0;
         control_turn_velocity(control_target, vel_motor);
     }
-    if (control_flag->turnError)
+    if (control_flag->turn_err)
     {
-        control_flag->turnError = 0;
+        control_flag->turn_err = 0;
         control_turn_error(control_target, error);
     }
     if (control_flag->turn_angle_vel)
@@ -74,7 +74,7 @@ static void control_turn_error(struct Control_Target *control_target,
                                int error)
 {
     control_target->turn_angle_vel = PID_calc_Position(
-        &turn_error_PID, (float)error, control_target->turnError);
+        &turn_error_PID, (float)error, control_target->turn_err);
 }
 
 // 不知道需不需要加个速度环
@@ -86,7 +86,7 @@ static void control_turn_velocity(struct Control_Target *control_target,
     // control_target->turn_angle_vel =
     //     PID_calc_Position(&turn_velocity_PID, turnVelocityFilter,
     //                       control_target->turn_vel);
-    control_target->turnError = PID_calc_Position(
+    control_target->turn_err = PID_calc_Position(
         &turn_velocity_PID, (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
         0.0f);
     // if (g_control_output_tv_flag != 0)

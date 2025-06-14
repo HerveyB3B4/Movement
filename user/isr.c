@@ -82,35 +82,7 @@ IFX_INTERRUPT(cc61_pit_ch0_isr,
     interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU61_CH0);
 
-    printf("exit_menu_flag: %d\n", g_exit_menu_flag);
-
-    g_control_target.bottom_vel = 0;
-    if (g_control_bottom_flag != 0)
-    {
-        bottom_control_timer(&g_control_time, &g_control_flag,
-                             &g_control_target, &g_vel_motor,
-                             &g_euler_angle_bias,
-                             &g_control_turn_manual_params);
-    }
-
-    // turnControlTimer();
-    if (g_control_side_flag != 0)
-    {
-        side_control_timer(&g_control_time, &g_control_flag,
-                           &g_control_target,
-                           &g_control_turn_manual_params, &g_vel_motor,
-                           &g_euler_angle_bias,
-                           &g_control_turn_manual_params);
-    }
-    control_shutdown(&g_control_target, &g_euler_angle_bias);
-
-    // if (count >= 1500) {
-    //     count = 0;
-    //     runState = CAR_RUNNING;
-    // }
-    // lcd_show_float(0, 0, runState, 3, 5);
-    // lcd_show_int(0, 1, get_side_duty(), 5);
-    // lcd_show_int(0, 2, get_bottom_duty(), 5);
+    system_control();
 }
 
 IFX_INTERRUPT(cc61_pit_ch1_isr,

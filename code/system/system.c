@@ -75,11 +75,11 @@ void system_attitude_timer(
     struct Velocity_Motor *vel_motor,
     struct EulerAngle *euler_angle)
 {
-    static uint8 imuCnt = 0;
-    imuCnt++;
-    if (imuCnt >= 2)
+    static uint8 imu_cnt = 0;
+    imu_cnt++;
+    if (imu_cnt >= 2)
     {
-        imuCnt = 0;
+        imu_cnt = 0;
         g_attitude_cal_flag = 1;
         attitude_cal_amend(control_turn_params, control_target, vel_motor,
                            euler_angle);
@@ -97,14 +97,14 @@ void bottom_control_timer(struct Control_Time *control_time,
                           struct EulerAngle *euler_angle_bias,
                           struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    uint32 frontAngleTime = control_time->bottom[0];
-    uint32 frontAngleVelocityTime = control_time->bottom[1];
-    uint32 frontVelocityTime = control_time->bottom[2];
+    uint32 bottom_angle_vel_time = control_time->bottom[0];
+    uint32 bottom_angle_time = control_time->bottom[1];
+    uint32 bottom_vel_time = control_time->bottom[2];
 
     control_flag->bottom_angle_cnt++;
     control_flag->bottom_angle_vel_cnt++;
     control_flag->bottom_vel_cnt++;
-    if (control_flag->bottom_angle_cnt >= frontAngleTime)
+    if (control_flag->bottom_angle_cnt >= bottom_angle_time)
     { // 20ms
         control_flag->bottom_angle = 1;
         control_flag->bottom_angle_cnt = 0;
@@ -114,7 +114,7 @@ void bottom_control_timer(struct Control_Time *control_time,
         control_flag->bottom_angle = 0;
     }
     if (control_flag->bottom_angle_vel_cnt >=
-        frontAngleVelocityTime)
+        bottom_angle_vel_time)
     { // 10ms
         control_flag->bottom_angle_vel = 1;
         control_flag->bottom_angle_vel_cnt = 0;
@@ -123,7 +123,7 @@ void bottom_control_timer(struct Control_Time *control_time,
     {
         control_flag->bottom_angle_vel = 0;
     }
-    if (control_flag->bottom_vel_cnt >= frontVelocityTime)
+    if (control_flag->bottom_vel_cnt >= bottom_vel_time)
     { // 2ms
         control_flag->bottom_vel = 1;
         control_flag->bottom_vel_cnt = 0;
@@ -144,13 +144,15 @@ void side_control_timer(struct Control_Time *control_time,
                         struct EulerAngle *euler_angle_bias,
                         struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    uint32 sideAngleTime = control_time->side[0];
-    uint32 sideAngleVelocityTime = control_time->side[1];
-    uint32 sideVelocityTime = control_time->side[2];
+    uint32 side_angle_time = control_time->side[0];
+    uint32 side_angle_vel_time = control_time->side[1];
+    uint32 side_vel_time = control_time->side[2];
+
     control_flag->side_vel_cnt++;
     control_flag->side_angle_cnt++;
     control_flag->side_angle_vel_cnt++;
-    if (control_flag->side_vel_cnt >= sideVelocityTime)
+
+    if (control_flag->side_vel_cnt >= side_vel_time)
     {
         control_flag->side_vel = 1;
         control_flag->side_vel_cnt = 0;
@@ -159,7 +161,7 @@ void side_control_timer(struct Control_Time *control_time,
     {
         control_flag->side_vel = 0;
     }
-    if (control_flag->side_angle_cnt >= sideAngleTime)
+    if (control_flag->side_angle_cnt >= side_angle_time)
     {
         control_flag->side_angle = 1;
         control_flag->side_angle_cnt = 0;
@@ -168,7 +170,7 @@ void side_control_timer(struct Control_Time *control_time,
     {
         control_flag->side_angle = 0;
     }
-    if (control_flag->side_angle_vel_cnt >= sideAngleVelocityTime)
+    if (control_flag->side_angle_vel_cnt >= side_angle_vel_time)
     {
         control_flag->side_angle_vel = 1;
         control_flag->side_angle_vel_cnt = 0;
@@ -184,26 +186,20 @@ void side_control_timer(struct Control_Time *control_time,
 void turn_control_timer(struct Control_Time *control_time,
                         struct Control_Flag *control_flag,
                         struct Control_Target *control_target,
+                        struct Control_Turn_Manual_Params *control_turn_params,
                         struct Velocity_Motor *vel_motor,
-                        struct EulerAngle *euler_angle_bias)
+                        int error)
 {
-    // TODO
-    uint32 turnAngleTime = control_time->turn[0];
-    uint32 turnVelocityTime = control_time->turn[1];
-    uint32 turnCurvatureTime = turnAngleTime * 4;
-    control_flag->turn++;
+    uint32 turn_angle_vel_time = control_time->turn[0];
+    uint32 turn_err_time = control_time->turn[1];
+    uint32 turn_vel_time = control_time->turn[2];
+    uint32 turn_angle_time = control_time->turn[3];
+
     control_flag->turn_angle_cnt++;
-    control_flag->turnAngleDiffVelocityCount++;
-    if (control_flag->turn >= turnCurvatureTime)
-    {
-        control_flag->turn_angle = 1;
-        control_flag->turn = 0;
-    }
-    else
-    {
-        control_flag->turn_angle = 0;
-    }
-    if (control_flag->turn_angle_cnt >= turnAngleTime)
+    control_flag->turn_angle_vel_cnt++;
+    control_flag->turn_vel_cnt++;
+    control_flag->turn_err_cnt++;
+    if (control_flag->turn_angle_cnt >= turn_angle_time)
     {
         control_flag->turn_angle = 1;
         control_flag->turn_angle_cnt = 0;
@@ -212,16 +208,38 @@ void turn_control_timer(struct Control_Time *control_time,
     {
         control_flag->turn_angle = 0;
     }
-    if (control_flag->turnAngleDiffVelocityCount >= turnVelocityTime)
+    if (control_flag->turn_angle_vel_cnt >= turn_angle_vel_time)
     {
-        control_flag->turnAngleDiffVelocity = 1;
-        control_flag->turnAngleDiffVelocityCount = 0;
+        control_flag->turn_angle_vel = 1;
+        control_flag->turn_angle_vel_cnt = 0;
     }
     else
     {
-        control_flag->turnAngleDiffVelocity = 0;
+        control_flag->turn_angle_vel = 0;
     }
-    // control_turn_balance();
+    if (control_flag->turn_vel_cnt >= turn_vel_time)
+    {
+        control_flag->turn_vel = 1;
+        control_flag->turn_vel_cnt = 0;
+    }
+    else
+    {
+        control_flag->turn_vel = 0;
+    }
+    if (control_flag->turn_err_cnt >= turn_err_time)
+    {
+        control_flag->turn_err = 1;
+        control_flag->turn_err_cnt = 0;
+    }
+    else
+    {
+        control_flag->turn_err = 0;
+    }
+
+    // 控制转向
+    control_turn(control_target, control_flag, control_turn_params, vel_motor,
+                 //  euler_angle_bias,
+                 error);
 }
 
 void system_set_runstate(RunState_t state)
@@ -242,10 +260,7 @@ void system_set_runstate(RunState_t state)
     case CAR_RUNNING:
         runState = CAR_RUNNING;
 
-        // 在切换到运行状态时重置控制目标和标志
-        control_reset(&g_control_target);
-
-        // pit_enable(CCU61_CH0);  // 使能控制中断
+        pit_enable(CCU61_CH0);  // 使能控制中断
         pit_disable(CCU60_CH1); // 失能按键中断
         break;
     }
@@ -256,26 +271,33 @@ void system_control()
     if (g_control_bottom_flag != 0)
     {
         g_control_target.bottom_vel = g_received_vel;
-        bottom_control_timer(&g_control_time, &g_control_flag,
-                             &g_control_target, &g_vel_motor,
+        bottom_control_timer(&g_control_time,
+                             &g_control_flag,
+                             &g_control_target,
+                             &g_vel_motor,
                              &g_euler_angle_bias,
                              &g_control_motion_params);
     }
 
-    // turnControlTimer();
     if (g_control_side_flag != 0)
     {
-        side_control_timer(&g_control_time, &g_control_flag,
+        side_control_timer(&g_control_time,
+                           &g_control_flag,
                            &g_control_target,
-                           &g_control_turn_manual_params, &g_vel_motor,
+                           &g_control_turn_manual_params,
+                           &g_vel_motor,
                            &g_euler_angle_bias,
                            &g_control_motion_params);
     }
+
     if (g_control_turn_flag != 0)
     {
-        turn_control_timer(&g_control_time, &g_control_flag,
-                           &g_control_target, &g_vel_motor,
-                           &g_euler_angle_bias);
+        turn_control_timer(&g_control_time,
+                           &g_control_flag,
+                           &g_control_target,
+                           &g_control_turn_manual_params,
+                           &g_vel_motor,
+                           get_img_target_error());
     }
     control_shutdown(&g_control_target, &g_euler_angle_bias);
 }
