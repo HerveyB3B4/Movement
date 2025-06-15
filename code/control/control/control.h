@@ -3,8 +3,6 @@
 
 #include "pid.h"
 #include "zf_common_headfile.h"
-#define CONTROL_LAW_CONSTRAINT 0.28f // simple trace
-#define CONTROL_UPDATE_T 1
 
 struct Control_Turn_Manual_Params
 {

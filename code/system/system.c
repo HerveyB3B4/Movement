@@ -34,14 +34,14 @@ void system_init()
 
     // init key
     key_init_rewrite(KEY_NUM);
-    pit_ms_init(CCU60_CH1, KEY_UPDATE_T);
+    pit_ms_init(CCU60_CH1, PIT_KEY_T);
     pit_enable(CCU60_CH1); // 使能按键中断
     // menu_param
     menu_manual_param_init();
 
     // velocity
     velocity_init(&g_vel_motor);
-    pit_ms_init(CCU60_CH0, VELOCITY_UPDATE_T);
+    pit_ms_init(CCU60_CH0, PIT_VELOCITY_T);
     pit_enable(CCU60_CH0); // 使能速度中断
 
     control_manual_param_init();
@@ -55,7 +55,7 @@ void system_init()
     attitude_init();
     // pit_ms_init(CCU61_CH0, ATTITUDE_UPDATE_T);
     // pit_enable(CCU61_CH0); // 使能姿态中断
-    pit_ms_init(CCU61_CH1, CONTROL_UPDATE_T);
+    pit_ms_init(CCU61_CH1, PIT_CONTROL_T);
     pit_enable(CCU61_CH1); // 使能控制中断
 
     // menu

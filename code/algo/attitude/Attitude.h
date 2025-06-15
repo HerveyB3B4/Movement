@@ -20,8 +20,6 @@
 #define yawAngleVelocity g_imu_data.gyro.z
 #define zAngleAcceleration g_imu_data.acc.z
 
-#define ATTITUDE_UPDATE_T 2 // 更新频率
-
 struct EulerAngle
 {
     float roll;

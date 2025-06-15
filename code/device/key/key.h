@@ -9,8 +9,6 @@
 #define KEY_MSG_FIFO_SIZE 20
 #define KEY_NUM 5 // 定义按键数量，替代 KEY_MAX
 
-#define KEY_UPDATE_T 5 // 更新频率
-
 typedef enum
 {
     KEY_U,
