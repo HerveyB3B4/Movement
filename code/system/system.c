@@ -53,8 +53,10 @@ void system_init()
     imu_init();
     // init attitude
     attitude_init();
-    pit_ms_init(CCU61_CH1, ATTITUDE_UPDATE_T);
-    pit_enable(CCU61_CH1); // 使能姿态中断
+    // pit_ms_init(CCU61_CH0, ATTITUDE_UPDATE_T);
+    // pit_enable(CCU61_CH0); // 使能姿态中断
+    pit_ms_init(CCU61_CH1, CONTROL_UPDATE_T);
+    pit_enable(CCU61_CH1); // 使能控制中断
 
     // menu
     MainMenu_Set();
@@ -66,7 +68,6 @@ void system_init()
     // control init
     control_init(&g_control_motion_params);
     // start to balance
-    pit_ms_init(CCU61_CH0, CONTROL_UPDATE_T);
 }
 
 void system_attitude_timer(
@@ -105,7 +106,7 @@ void bottom_control_timer(struct Control_Time *control_time,
     control_flag->bottom_angle_vel_cnt++;
     control_flag->bottom_vel_cnt++;
     if (control_flag->bottom_angle_cnt >= bottom_angle_time)
-    { // 20ms
+    { // 50ms
         control_flag->bottom_angle = 1;
         control_flag->bottom_angle_cnt = 0;
     }
@@ -250,8 +251,8 @@ void system_set_runstate(RunState_t state)
     case CAR_STOP:
         runState = CAR_STOP;
 
-        pit_disable(CCU61_CH0); // 失能控制中断
-        pit_enable(CCU60_CH1);  // 使能按键中断
+        // pit_disable(CCU61_CH1); // 失能控制中断
+        pit_enable(CCU60_CH1); // 使能按键中断
 
         stop_bottom_motor();
         stop_momentum_motor();
@@ -260,7 +261,7 @@ void system_set_runstate(RunState_t state)
     case CAR_RUNNING:
         runState = CAR_RUNNING;
 
-        pit_enable(CCU61_CH0);  // 使能控制中断
+        // pit_enable(CCU61_CH1);  // 使能控制中断
         pit_disable(CCU60_CH1); // 失能按键中断
         break;
     }
@@ -299,5 +300,5 @@ void system_control()
                            &g_vel_motor,
                            get_img_target_error());
     }
-    control_shutdown(&g_control_target, &g_euler_angle_bias);
+    control_shutdown(&g_control_target, &g_euler_angle_bias, &g_vel_motor);
 }

@@ -51,6 +51,12 @@ void control_side_balance(
         control_side_angle_velocity(control_target, control_motion_params);
     }
 
+    static int side_duty_filter[2] = {0}; // 角度滤波
+    side_duty_filter[1] = side_duty_filter[0];
+    side_duty_filter[0] = s_side_balance_duty;
+    // noiseFilter(momentumAngleFilter[0], 0.02f);
+    lowPassFilterI(&side_duty_filter[0], &side_duty_filter[1], 0.2f);
+
     // s_side_balance_duty = control_target->side_angle * 100;
     // turnControl();
     int32 left_motor_duty, right_motor_duty;
@@ -97,13 +103,21 @@ static void control_side_velocity(
     struct Control_Turn_Manual_Params *control_turn_params,
     struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    // static float momentumVelocityFilter = 0;
-    // momentumVelocityFilter =
-    //     (float)(vel_motor->momentumFront - vel_motor->momentumBack);
+    static float side_vel_filter[2] = {0}; // 角度滤波
+    side_vel_filter[1] = side_vel_filter[0];
+    side_vel_filter[0] = (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f;
+    // noiseFilter(momentumAngleFilter[0], 0.02f);
+    lowPassFilterF(&side_vel_filter[0], &side_vel_filter[1], 0.1f);
 
-    control_target->side_angle = control_motion_params->side_velocity_polarity * PID_calc_Position(&side_velocity_PID,
-                                                                                                   (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
-                                                                                                   0.0f); // 速度是正反馈，因此set和ref要反过来
+    control_target->side_angle = control_motion_params->side_velocity_polarity *
+                                 PID_calc_Position(&side_velocity_PID,
+                                                   side_vel_filter[0],
+                                                   0.0f); // 速度是正反馈，因此set和ref要反过来
+
+    static float side_tar_angle_filter[2] = {0};
+    side_tar_angle_filter[1] = side_tar_angle_filter[0];
+    side_tar_angle_filter[0] = control_target->side_angle;
+    lowPassFilterF(&side_tar_angle_filter[0], &side_tar_angle_filter[1], 0.2f);
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sv_flag != 0)
@@ -135,14 +149,15 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
 static void control_side_angle_velocity(struct Control_Target *control_target,
                                         struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    static float momentumGyroFilter[2] = {0}; // 角度速度滤波
-    momentumGyroFilter[1] = momentumGyroFilter[0];
-    momentumGyroFilter[0] = currentSideAngleVelocity;
+    static float side_angle_vel_filter[2] = {0}; // 角度速度滤波
+    side_angle_vel_filter[1] = side_angle_vel_filter[0];
+    side_angle_vel_filter[0] = currentSideAngleVelocity;
+    lowPassFilterF(&side_angle_vel_filter[0], &side_angle_vel_filter[1], 0.5f);
 
-    // lowPassFilterF(&momentumGyroFilter[0], &momentumGyroFilter[1], 0.1f);
     s_side_balance_duty =
-        control_motion_params->side_angle_velocity_polarity * (int32)(PID_calc_DELTA(&side_angle_velocity_PID, momentumGyroFilter[0],
-                                                                                     control_target->side_angle_vel));
+        control_motion_params->side_angle_velocity_polarity *
+        (int32)(PID_calc_DELTA(&side_angle_velocity_PID, side_angle_vel_filter[0],
+                               control_target->side_angle_vel));
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sav_flag != 0)

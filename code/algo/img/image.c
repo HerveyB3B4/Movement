@@ -74,19 +74,6 @@ void draw_middleline(uint8_t *img, uint8_t color)
 
 void img_handler()
 {
-    float scale_w = (float)tft180_width_max / MT9V03X_W;
-    float scale_h = (float)tft180_height_max / MT9V03X_H;
-    // 选择较小的缩放比例，保持宽高比
-    float scale = scale_w < scale_h ? scale_w : scale_h;
-
-    // 计算实际显示大小
-    uint16 display_w = (uint16)(MT9V03X_W * scale);
-    uint16 display_h = (uint16)(MT9V03X_H * scale);
-
-    // 计算居中显示的起始坐标
-    uint16 start_x = (tft180_width_max - display_w) / 2;
-    uint16 start_y = (tft180_height_max - display_h) / 2;
-
     if (mt9v03x_finish_flag)
     {
         mt9v03x_finish_flag = 0;
@@ -95,7 +82,6 @@ void img_handler()
         img_target_error = img_target_center.x - IMG_WIDTH / 2;
         draw_cross(s_edge_map, img_target_center, -1, RGB565_YELLOW);
         draw_middleline(s_edge_map, RGB565_YELLOW);
-        tft180_show_gray_image(start_x, start_y, s_edge_map, MT9V03X_W,
-                               MT9V03X_H, display_w, display_h, 0);
+        lcd_show_image_mid(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
     }
 }

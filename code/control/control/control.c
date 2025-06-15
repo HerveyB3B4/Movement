@@ -53,7 +53,8 @@ pid_type_def turn_velocity_PID;
 pid_type_def turn_error_PID;
 
 void control_shutdown(struct Control_Target *control_target,
-                      struct EulerAngle *euler_angle_bias)
+                      struct EulerAngle *euler_angle_bias,
+                      struct Velocity_Motor *vel_motor)
 {
     if (g_control_shutdown_flag != 0)
     {
@@ -62,6 +63,10 @@ void control_shutdown(struct Control_Target *control_target,
             system_set_runstate(CAR_STOP);
         }
         if (fabsf(currentFrontAngle - euler_angle_bias->pitch) > 35)
+        {
+            system_set_runstate(CAR_STOP);
+        }
+        if (abs(get_side_duty()) >= 8000)
         {
             system_set_runstate(CAR_STOP);
         }

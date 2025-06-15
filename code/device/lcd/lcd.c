@@ -99,3 +99,24 @@ void lcd_show_char_color(uint16 x,
     lcd_show_char(x, y, dat);
     tft180_set_color(DEFAULT_PEN_COLOR, DEFAULT_BACKGROUND_COLOR);
 }
+
+// 居中展示图像
+void lcd_show_image_mid(const uint8 *img,
+                        uint16 width,
+                        uint16 height,
+                        uint8 threshold)
+{
+    float scale_w = (float)tft180_width_max / width;
+    float scale_h = (float)tft180_height_max / height;
+
+    float scale = scale_w < scale_h ? scale_w : scale_h;
+
+    uint16 display_w = (uint16)(width * scale);
+    uint16 display_h = (uint16)(height * scale);
+
+    uint16 start_x = (tft180_width_max - display_w) / 2;
+    uint16 start_y = (tft180_height_max - display_h) / 2;
+
+    tft180_show_gray_image(start_x, start_y, img, width, height,
+                           display_w, display_h, threshold);
+}

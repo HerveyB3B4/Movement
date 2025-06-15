@@ -81,8 +81,6 @@ IFX_INTERRUPT(cc61_pit_ch0_isr,
 {
     interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU61_CH0);
-
-    system_control();
 }
 
 IFX_INTERRUPT(cc61_pit_ch1_isr,
@@ -94,6 +92,11 @@ IFX_INTERRUPT(cc61_pit_ch1_isr,
 
     system_attitude_timer(&g_control_turn_manual_params, &g_control_target,
                           &g_vel_motor, &g_euler_angle);
+    if (runState == CAR_RUNNING)
+    {
+        // 控制
+        system_control();
+    }
 }
 // **************************** PIT中断函数 ****************************
 

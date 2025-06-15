@@ -59,77 +59,77 @@
 // 定义CCU6_0 PIT通道0中断服务类型，即中断是由谁响应处理
 // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
 // 不可设置为其他值
-#define CCU6_0_CH0_INT_SERVICE IfxSrc_Tos_cpu2  // velocity
+#define CCU6_0_CH0_INT_SERVICE IfxSrc_Tos_cpu2 // velocity
 // 定义CCU6_0 PIT通道0中断优先级 优先级范围1-255 越大优先级越高
 // 与平时使用的单片机不一样
 #define CCU6_0_CH0_ISR_PRIORITY 50
 
-#define CCU6_0_CH1_INT_SERVICE IfxSrc_Tos_cpu0  // key
+#define CCU6_0_CH1_INT_SERVICE IfxSrc_Tos_cpu0 // key
 #define CCU6_0_CH1_ISR_PRIORITY 51
 
-#define CCU6_1_CH0_INT_SERVICE IfxSrc_Tos_cpu0  // control
+#define CCU6_1_CH0_INT_SERVICE IfxSrc_Tos_cpu0 // control
 #define CCU6_1_CH0_ISR_PRIORITY 52
 
-#define CCU6_1_CH1_INT_SERVICE IfxSrc_Tos_cpu2  // attitude
+#define CCU6_1_CH1_INT_SERVICE IfxSrc_Tos_cpu0 // attitude
 #define CCU6_1_CH1_ISR_PRIORITY 53
 
 //================================================GPIO中断参数相关定义===============================================
 // 通道0与通道4是公用一个中断函数 在中断内部通过标志位判断是谁触发的中断
 #define EXTI_CH0_CH4_INT_SERVICE \
-    IfxSrc_Tos_dma  // 定义ERU通道0和通道4中断服务类型，即中断是由谁响应处理
-                    // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
-                    // 不可设置为其他值
+    IfxSrc_Tos_dma // 定义ERU通道0和通道4中断服务类型，即中断是由谁响应处理
+                   // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
+                   // 不可设置为其他值
 #define EXTI_CH0_CH4_INT_PRIO \
-    7  // 定义ERU通道0和通道4中断优先级 优先级范围1-255 越大优先级越高
-       // 与平时使用的单片机不一样
+    7 // 定义ERU通道0和通道4中断优先级 优先级范围1-255 越大优先级越高
+      // 与平时使用的单片机不一样
 
 // 通道1与通道5是公用一个中断函数 在中断内部通过标志位 判断是谁触发的中断
 #define EXTI_CH1_CH5_INT_SERVICE \
-    IfxSrc_Tos_cpu0               // 定义ERU通道1和通道5中断服务类型，同上
-#define EXTI_CH1_CH5_INT_PRIO 60  // 定义ERU通道1和通道5中断优先级 同上
+    IfxSrc_Tos_cpu0              // 定义ERU通道1和通道5中断服务类型，同上
+#define EXTI_CH1_CH5_INT_PRIO 60 // 定义ERU通道1和通道5中断优先级 同上
 
 // 通道2与通道6是公用一个中断函数 在中断内部通过标志位 判断是谁触发的中断
 #define EXTI_CH2_CH6_INT_SERVICE \
-    IfxSrc_Tos_cpu0  // 定义ERU通道2和通道6中断服务类型，同上
+    IfxSrc_Tos_cpu0 // 定义ERU通道2和通道6中断服务类型，同上
 #define EXTI_CH2_CH6_INT_PRIO \
-    61  // 定义ERU通道2和通道6中断优先级 可设置范围为0-127(DMA响应)
+    61 // 定义ERU通道2和通道6中断优先级 可设置范围为0-127(DMA响应)
 
 // 通道3与通道7是公用一个中断函数 在中断内部通过标志位 判断是谁触发的中断
 #define EXTI_CH3_CH7_INT_SERVICE \
-    IfxSrc_Tos_dma               // 定义ERU通道3和通道7中断服务类型，同上
-#define EXTI_CH3_CH7_INT_PRIO 6  // 定义ERU通道3和通道7中断优先级 同上
+    IfxSrc_Tos_dma              // 定义ERU通道3和通道7中断服务类型，同上
+#define EXTI_CH3_CH7_INT_PRIO 6 // 定义ERU通道3和通道7中断优先级 同上
 
 //===================================================DMA中断参数相关定义===============================================
 #define DMA_INT_SERVICE \
-    IfxSrc_Tos_cpu2  // ERU触发DMA中断服务类型，即中断是由谁响应处理
-                     // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
-                     // 不可设置为其他值
+    IfxSrc_Tos_cpu2 // ERU触发DMA中断服务类型，即中断是由谁响应处理
+                    // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
+                    // 不可设置为其他值
 #define DMA_INT_PRIO \
-    70  // ERU触发DMA中断优先级 优先级范围1-255 越大优先级越高
-        // 与平时使用的单片机不一样
+    70 // ERU触发DMA中断优先级 优先级范围1-255 越大优先级越高
+       // 与平时使用的单片机不一样
 
 #define DMA_INT_SERVICE_2 \
-    IfxSrc_Tos_cpu2  // ERU触发DMA中断服务类型，即中断是由谁响应处理
-                     // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
-                     // 不可设置为其他值
+    IfxSrc_Tos_cpu2 // ERU触发DMA中断服务类型，即中断是由谁响应处理
+                    // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
+                    // 不可设置为其他值
 #define DMA_INT_PRIO_2 \
-    71  // ERU触发DMA中断优先级 优先级范围1-255 越大优先级越高
-        // 与平时使用的单片机不一样
+    71 // ERU触发DMA中断优先级 优先级范围1-255 越大优先级越高
+       // 与平时使用的单片机不一样
 
 //===================================================串口中断参数相关定义===============================================
 #define UART0_INT_SERVICE \
-    IfxSrc_Tos_cpu0  // 定义串口0中断服务类型，即中断是由谁响应处理
-                     // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
-                     // 不可设置为其他值
+    IfxSrc_Tos_cpu0 // 定义串口0中断服务类型，即中断是由谁响应处理
+                    // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
+                    // 不可设置为其他值
 #define UART0_TX_INT_PRIO \
-    11  // 定义串口0发送中断优先级 优先级范围1-255 越大优先级越高
-        // 与平时使用的单片机不一样
+    11 // 定义串口0发送中断优先级 优先级范围1-255 越大优先级越高
+       // 与平时使用的单片机不一样
 #define UART0_RX_INT_PRIO \
-    10  // 定义串口0接收中断优先级 优先级范围1-255 越大优先级越高
-        // 与平时使用的单片机不一样
+    10 // 定义串口0接收中断优先级 优先级范围1-255 越大优先级越高
+       // 与平时使用的单片机不一样
 #define UART0_ER_INT_PRIO \
-    12  // 定义串口0错误中断优先级 优先级范围1-255 越大优先级越高
-        // 与平时使用的单片机不一样
+    12 // 定义串口0错误中断优先级 优先级范围1-255 越大优先级越高
+       // 与平时使用的单片机不一样
 
 #define UART1_INT_SERVICE IfxSrc_Tos_cpu0
 #define UART1_TX_INT_PRIO 17

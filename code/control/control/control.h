@@ -137,7 +137,8 @@ extern pid_type_def bottom_angle_velocity_PID;
 extern uint32 control_time;
 
 void control_shutdown(struct Control_Target *control_target,
-                      struct EulerAngle *euler_angle_bias);
+                      struct EulerAngle *euler_angle_bias,
+                      struct Velocity_Motor *vel_motor);
 void control_init(struct Control_Motion_Manual_Parmas *control_motion_params);
 void control_manual_param_init();
 
