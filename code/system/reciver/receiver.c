@@ -4,32 +4,15 @@
 
 void receiver_init()
 {
-    // TODO: uart init
     ble6a20_init();
 }
 
-/*
-五位通信协议：
-    0xA5, 0x00, 0xXX, 0xXX, 0xXX
-
-    0xA5: 起始字节
-    0x00: 指令字节
-    0xXX: 高字节速度
-    0xXX: 低字节速度
-    0xXX: 校验和（前四个字节的和）
-*/
-uint8 receive_data_buffer[5];
+uint8 receive_data_buffer[20];
 uint8 receive_data_count = 0;
 int16 g_received_vel = 0;
 int16 g_turn_error = 0;
 
-typedef union
-{
-    float value;
-    uint32 bytes;
-} float_converter;
-
-float converter_bytes_to_float(uint8 *bytes)
+static float converter_bytes_to_float(uint8 *bytes)
 {
     float_converter converter;
     converter.bytes = (uint32)bytes[3] << 24 |
@@ -39,7 +22,7 @@ float converter_bytes_to_float(uint8 *bytes)
     return converter.value;
 }
 
-void process_pid_command(uint8 *data)
+static void process_pid_command(uint8 *data)
 {
     uint8 checksum = 0;
     for (int j = 0; j < 14; j++)
@@ -54,6 +37,7 @@ void process_pid_command(uint8 *data)
         float pid[3] = {p, i, d};
         switch (data[1])
         {
+        // bottom
         case 0x05: // 角速度环
             PID_init_Position(&bottom_angle_velocity_PID, pid, 9999, 9999);
             break;
@@ -66,12 +50,62 @@ void process_pid_command(uint8 *data)
             PID_init_Position(&bottom_velocity_PID, pid, 9999, 10);
             break;
 
+        // side
+        case 0x08: // 角速度环
+            PID_init_Position(&side_angle_velocity_PID, pid, 9999, 9999);
+            break;
+        case 0x09: // 角度环
+            PID_init_Position(&side_angle_PID, pid, 9999, 9999);
+            break;
+        case 0x0A: // 速度环
+            PID_init_Position(&side_velocity_PID, pid, 9999, 10);
+            break;
+
+        // turn
+        case 0x0B: // 角速度环
+            PID_init_Position(&turn_angle_velocity_PID, pid, 9999, 9999);
+            break;
+        case 0x0C: // 误差环
+            PID_init_Position(&turn_error_PID, pid, 9999, 9999);
+            break;
+        case 0x0D: // 速度环
+            PID_init_Position(&turn_velocity_PID, pid, 9999, 10);
+            break;
         default:
             break;
         }
     }
 }
 
+/*
+五位通信协议：
+    0xA5, 0x00, 0xXX, 0xXX, 0xXX
+
+    0xA5: 起始字节
+    0x00: 指令字节
+    0xXX: 高字节速度
+    0xXX: 低字节速度
+    0xXX: 校验和（前四个字节的和）
+
+PID参数数据包格式（15字节）：
+    0xA5, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX
+
+    0xA5: 起始字节（固定）
+    0xXX: 指令字节，用于区分不同的PID控制器：
+          0x05 - 底轮角速度环PID
+          0x06 - 底轮角度环PID
+          0x07 - 底轮速度环PID
+          0x08 - 侧轮角速度环PID
+          0x09 - 侧轮角度环PID
+          0x0A - 侧轮速度环PID
+          0x0B - 转向角速度环PID
+          0x0C - 转向误差环PID
+          0x0D - 转向速度环PID
+    0xXX, 0xXX, 0xXX, 0xXX: P参数（4字节浮点数，小端序）
+    0xXX, 0xXX, 0xXX, 0xXX: I参数（4字节浮点数，小端序）
+    0xXX, 0xXX, 0xXX, 0xXX: D参数（4字节浮点数，小端序）
+    0xXX: 校验和（前14个字节的累加和）
+*/
 void receiver_callback()
 {
     uint8 receive_data;

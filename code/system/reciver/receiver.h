@@ -8,6 +8,12 @@
 #define RECIVER_UART_RX (UART2_TX_P14_2)
 #define RECIVER_UART_BAUDRATE 115200
 
+typedef union
+{
+    float value;
+    uint32 bytes;
+} float_converter;
+
 void receiver_init();
 void receiver_callback();
 
