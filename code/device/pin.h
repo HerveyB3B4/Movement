@@ -21,6 +21,11 @@
 #define ENCODER_PIN0_BOTTOM TIM4_ENCODER_CH1_P02_8
 #define ENCODER_PIN1_BOTTOM TIM4_ENCODER_CH2_P00_9
 
+// motor
+#define MOTOR_BOTTOM_PIN ATOM2_CH1_P33_5
+#define MOTOR_BOTTOM_DIR P33_4
+#define MOTOR_BOTTOM_ENABLE P33_6
+
 // wireless uart
 #define WL_UART_INDEX (UART_2)          // 无线串口对应使用的串口号
 #define WL_UART_BUAD_RATE (230400)      // 无线串口对应使用的串口波特率
