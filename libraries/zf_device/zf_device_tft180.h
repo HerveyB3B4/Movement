@@ -53,42 +53,43 @@
 #define _zf_device_tft180_h_
 
 #include "zf_common_typedef.h"
+#include "pin.h"
 
 //=================================================定义 TFT180
 // 基本配置================================================
 #define TFT180_USE_SOFT_SPI \
-    (0)                  // 默认使用硬件 SPI 方式驱动 建议使用硬件 SPI 方式驱动
-#if TFT180_USE_SOFT_SPI  // 这两段 颜色正常的才是正确的 颜色灰的就是没有用的
+    (0)                 // 默认使用硬件 SPI 方式驱动 建议使用硬件 SPI 方式驱动
+#if TFT180_USE_SOFT_SPI // 这两段 颜色正常的才是正确的 颜色灰的就是没有用的
 //====================================================软件 SPI
 // 驱动====================================================
 #define TFT180_SOFT_SPI_DELAY \
-    (0)  // 软件 SPI 的时钟延时周期 数值越小 SPI 通信速率越快
-#define TFT180_SCL_PIN (P15_3)  // 软件 SPI SCK 引脚
-#define TFT180_SDA_PIN (P15_5)  // 软件 SPI MOSI 引脚
+    (0)                        // 软件 SPI 的时钟延时周期 数值越小 SPI 通信速率越快
+#define TFT180_SCL_PIN (P15_3) // 软件 SPI SCK 引脚
+#define TFT180_SDA_PIN (P15_5) // 软件 SPI MOSI 引脚
 //====================================================软件 SPI
 // 驱动====================================================
 #else
 //====================================================硬件 SPI
 // 驱动====================================================
-#define TFT180_SPI_SPEED (60 * 1000 * 1000)   // 硬件 SPI 速率
-#define TFT180_SPI (SPI_0)                    // 硬件 SPI 号
-#define TFT180_SCL_PIN (SPI0_SCLK_P20_11)     // 硬件 SPI SCK 引脚
-#define TFT180_SDA_PIN (SPI0_MOSI_P20_14)     // 硬件 SPI MOSI 引脚
-#define TFT180_SDA_PIN_IN (SPI0_MISO_P20_12)  // 硬件 SPI MISO 引脚
+#define TFT180_SPI_SPEED (60 * 1000 * 1000) // 硬件 SPI 速率
+#define TFT180_SPI LCD_SPI                  // 硬件 SPI 号
+#define TFT180_SCL_PIN LCD_SCL_PIN          // 硬件 SPI SCK 引脚
+#define TFT180_SDA_PIN LCD_SDA_PIN          // 硬件 SPI MOSI 引脚
+#define TFT180_SDA_PIN_IN LCD_SDA_PIN_IN    // 硬件 SPI MISO 引脚
 // TFT没有MISO引脚，但是这里任然需要定义，在spi的初始化时需要使用
 //====================================================硬件 SPI
 // 驱动====================================================
 #endif
 
-#define TFT180_RES_PIN (P22_1)  // 液晶复位引脚定义
-#define TFT180_DC_PIN (P22_2)   // 液晶命令位引脚定义
-#define TFT180_CS_PIN (P20_13)  // CS 片选引脚
-#define TFT180_BL_PIN (P22_3)   // 液晶背光引脚定义
+#define TFT180_RES_PIN LCD_RES_PIN // 液晶复位引脚定义
+#define TFT180_DC_PIN LCD_DC_PIN   // 液晶命令位引脚定义
+#define TFT180_CS_PIN LCD_CS_PIN   // CS 片选引脚
+#define TFT180_BL_PIN LCD_BL_PIN   // 液晶背光引脚定义
 
-#define TFT180_DEFAULT_DISPLAY_DIR (TFT180_PORTAIT)     // 默认的显示方向
-#define TFT180_DEFAULT_PENCOLOR (RGB565_RED)            // 默认的画笔颜色
-#define TFT180_DEFAULT_BGCOLOR (RGB565_WHITE)           // 默认的背景颜色
-#define TFT180_DEFAULT_DISPLAY_FONT (TFT180_8X16_FONT)  // 默认的字体模式
+#define TFT180_DEFAULT_DISPLAY_DIR (TFT180_PORTAIT)    // 默认的显示方向
+#define TFT180_DEFAULT_PENCOLOR (RGB565_RED)           // 默认的画笔颜色
+#define TFT180_DEFAULT_BGCOLOR (RGB565_WHITE)          // 默认的背景颜色
+#define TFT180_DEFAULT_DISPLAY_FONT (TFT180_8X16_FONT) // 默认的字体模式
 
 #define TFT180_DC(x) \
     ((x) ? (gpio_high(TFT180_DC_PIN)) : (gpio_low(TFT180_DC_PIN)))
@@ -103,17 +104,19 @@
 
 //=================================================定义 TFT180
 // 参数结构体===============================================
-typedef enum {
-    TFT180_PORTAIT = 0,        // 竖屏模式
-    TFT180_PORTAIT_180 = 1,    // 竖屏模式  旋转180
-    TFT180_CROSSWISE = 2,      // 横屏模式
-    TFT180_CROSSWISE_180 = 3,  // 横屏模式  旋转180
+typedef enum
+{
+    TFT180_PORTAIT = 0,       // 竖屏模式
+    TFT180_PORTAIT_180 = 1,   // 竖屏模式  旋转180
+    TFT180_CROSSWISE = 2,     // 横屏模式
+    TFT180_CROSSWISE_180 = 3, // 横屏模式  旋转180
 } tft180_dir_enum;
 
-typedef enum {
-    TFT180_6X8_FONT = 0,    // 6x8      字体
-    TFT180_8X16_FONT = 1,   // 8x16     字体
-    TFT180_16X16_FONT = 2,  // 16x16    字体 目前不支持
+typedef enum
+{
+    TFT180_6X8_FONT = 0,   // 6x8      字体
+    TFT180_8X16_FONT = 1,  // 8x16     字体
+    TFT180_16X16_FONT = 2, // 16x16    字体 目前不支持
 } tft180_font_size_enum;
 
 extern uint16 tft180_width_max;
@@ -123,34 +126,34 @@ extern uint16 tft180_height_max;
 
 //=================================================声明 TFT180
 // 基础函数================================================
-void tft180_clear(void);                           // TFT180 清屏函数
-void tft180_full(const uint16 color);              // TFT180 屏幕填充函数
-void tft180_set_dir(tft180_dir_enum dir);          // TFT180 设置显示方向
-void tft180_set_font(tft180_font_size_enum font);  // TFT180 设置显示字体
+void tft180_clear(void);                          // TFT180 清屏函数
+void tft180_full(const uint16 color);             // TFT180 屏幕填充函数
+void tft180_set_dir(tft180_dir_enum dir);         // TFT180 设置显示方向
+void tft180_set_font(tft180_font_size_enum font); // TFT180 设置显示字体
 void tft180_set_color(const uint16 pen,
-                      const uint16 bgcolor);  // TFT180 设置显示颜色
+                      const uint16 bgcolor); // TFT180 设置显示颜色
 void tft180_draw_point(uint16 x,
                        uint16 y,
-                       const uint16 color);  // TFT180 画点函数
+                       const uint16 color); // TFT180 画点函数
 void tft180_draw_line(uint16 x_start,
                       uint16 y_start,
                       uint16 x_end,
                       uint16 y_end,
-                      const uint16 color);  // TFT180 画线函数
+                      const uint16 color); // TFT180 画线函数
 
-void tft180_show_char(uint16 x, uint16 y, const char dat);  // TFT180 显示字符
+void tft180_show_char(uint16 x, uint16 y, const char dat); // TFT180 显示字符
 void tft180_show_string(uint16 x,
                         uint16 y,
-                        const char dat[]);  // TFT180 显示字符串
+                        const char dat[]); // TFT180 显示字符串
 void tft180_show_int(uint16 x,
                      uint16 y,
                      const int32 dat,
-                     uint8 num);  // TFT180 显示32位有符号 (去除整数部分无效的0)
+                     uint8 num); // TFT180 显示32位有符号 (去除整数部分无效的0)
 void tft180_show_uint(
     uint16 x,
     uint16 y,
     const uint32 dat,
-    uint8 num);  // TFT180 显示32位无符号 (去除整数部分无效的0)
+    uint8 num); // TFT180 显示32位无符号 (去除整数部分无效的0)
 void tft180_show_float(uint16 x,
                        uint16 y,
                        const double dat,
@@ -160,43 +163,43 @@ void tft180_show_float(uint16 x,
 void tft180_show_binary_image(
     uint16 x,
     uint16 y,
-    const uint8* image,
+    const uint8 *image,
     uint16 width,
     uint16 height,
     uint16 dis_width,
-    uint16 dis_height);  // TFT180 显示二值图像 数据每八个点组成一个字节数据
+    uint16 dis_height); // TFT180 显示二值图像 数据每八个点组成一个字节数据
 void tft180_show_gray_image(
     uint16 x,
     uint16 y,
-    const uint8* image,
+    const uint8 *image,
     uint16 width,
     uint16 height,
     uint16 dis_width,
     uint16 dis_height,
-    uint8 threshold);  // TFT180 显示 8bit 灰度图像 带二值化阈值
+    uint8 threshold); // TFT180 显示 8bit 灰度图像 带二值化阈值
 void tft180_show_rgb565_image(uint16 x,
                               uint16 y,
-                              const uint16* image,
+                              const uint16 *image,
                               uint16 width,
                               uint16 height,
                               uint16 dis_width,
                               uint16 dis_height,
-                              uint8 color_mode);  // TFT180 显示 RGB565 彩色图像
+                              uint8 color_mode); // TFT180 显示 RGB565 彩色图像
 
 void tft180_show_wave(uint16 x,
                       uint16 y,
-                      const uint16* wave,
+                      const uint16 *wave,
                       uint16 width,
                       uint16 value_max,
                       uint16 dis_width,
-                      uint16 dis_value_max);  // TFT180 显示波形
+                      uint16 dis_value_max); // TFT180 显示波形
 void tft180_show_chinese(uint16 x,
                          uint16 y,
                          uint8 size,
-                         const uint8* chinese_buffer,
+                         const uint8 *chinese_buffer,
                          uint8 number,
-                         const uint16 color);  // TFT180 汉字显示
-                                               // 1.8寸TFT屏幕初始化
+                         const uint16 color); // TFT180 汉字显示
+                                              // 1.8寸TFT屏幕初始化
 void tft180_init(void);
 //=================================================声明 TFT180
 // 基础函数================================================
