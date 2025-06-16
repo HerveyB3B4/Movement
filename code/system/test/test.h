@@ -12,7 +12,7 @@ void test_bottom_deadzone();
 void test_bottom_pwm();
 void test_double_camera();
 void test_image();
-void test_wireless_uart();
+void test_send_img();
 void test_key();
 void test_sd_card();
 void test_receiver();

@@ -504,46 +504,6 @@ void test_double_camera()
     lcd_clear();
 }
 
-// void test_image()
-// {
-//     lcd_clear();
-
-//     // 计算最佳缩放比例
-//     float scale_w = (float)tft180_width_max / MT9V03X_W;
-//     float scale_h = (float)tft180_height_max / MT9V03X_H;
-//     // 选择较小的缩放比例，保持宽高比
-//     float scale = scale_w < scale_h ? scale_w : scale_h;
-
-//     // 计算实际显示大小
-//     uint16 display_w = (uint16)(MT9V03X_W * scale);
-//     uint16 display_h = (uint16)(MT9V03X_H * scale);
-
-//     // 计算居中显示的起始坐标
-//     uint16 start_x = (tft180_width_max - display_w) / 2;
-//     uint16 start_y = (tft180_height_max - display_h) / 2;
-
-//     Point center = {-1, -1};
-//     while (keymsg.key != KEY_L)
-//     {
-//         if (mt9v03x_finish_flag)
-//         {
-//             mt9v03x_finish_flag = 0;
-
-//             binary_otsu_improved(mt9v03x_image, s_edge_map);
-//             // center = find_largest_white_region_center(s_edge_map);
-//             center = find_white_center(s_edge_map, ALGORITHM_TWO_PASS);
-//             // get_max_region_center(edge_map, MT9V03X_W, MT9V03X_H,
-//             //                       &center.x, &center.y);
-//             // two_pass_center(edge_map, MT9V03X_W, MT9V03X_H,
-//             //                 &center.x, &center.y);
-//             draw_cross(s_edge_map, center, -1, RGB565_YELLOW);
-//             tft180_show_gray_image(start_x, start_y, s_edge_map, MT9V03X_W,
-//                                    MT9V03X_H, display_w, display_h, 0);
-//         }
-//     }
-//     lcd_clear();
-// }
-
 void test_image()
 {
     lcd_clear();
@@ -554,34 +514,19 @@ void test_image()
     }
 }
 
-void test_wireless_uart()
+void test_send_img()
 {
     lcd_clear();
+    wireless_assistant_init();
     while (keymsg.key != KEY_L)
     {
-        // 发送消息示例
-        lcd_show_string(0, 0, "Press KEY_B to send");
-        if (keymsg.key == KEY_B)
+        if (mt9v03x_finish_flag)
         {
-            lcd_show_string(0, 1, "Sending data...");
-            // 发送测试数据
-            uint8 test_data[] = "TEST DATA\r\n";
-            wireless_send_buffer(test_data, sizeof(test_data));
-            lcd_show_string(0, 2, "Data sent!");
-            system_delay_ms(500); // 等待发送完成
-        }
-        if (wireless_read_buffer(s_wireless_uart_buffer, WIRELESS_BUFFER_SIZE))
-        {
-            // 显示接收到的数据
-            lcd_show_string(0, 3, "Received data:");
-            lcd_show_string(0, 4, (const uint8 *)s_wireless_uart_buffer);
-        }
-        else
-        {
-            lcd_show_string(0, 3, "No data received");
+            mt9v03x_finish_flag = 0;
+
+            wireless_assistant_send_image(mt9v03x_image);
         }
     }
-    lcd_clear();
 }
 
 void test_key()
