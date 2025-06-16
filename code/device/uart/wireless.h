@@ -5,6 +5,7 @@
 
 #define WIRELESS_DEVICE SEEKFREE_ASSISTANT_BLE6A20
 #define WIRELESS_SEND_IMG_TYPE SEEKFREE_ASSISTANT_MT9V03X
+
 void wireless_assistant_init();
 void wireless_assistant_send_image(uint8 *img);
 

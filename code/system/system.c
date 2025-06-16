@@ -14,60 +14,44 @@ RunState_t runState;
 
 void system_init()
 {
-    // uart_init(UART_2, 115200, UART2_TX_P10_5, UART2_RX_P10_6);
-    // init motor
+    // ===================== DEVICE ======================== //
     motor_init();
-    // 串口初始化放到这里不知道会不会好点
     small_driver_uart_init();
-    // init encoder
     encoder_init();
-    // init lcd
     lcd_init();
-    // uart_init(UART_1, 115200, UART1_RX_P20_9, UART1_TX_P20_10);
-    // uart_write_string(UART_1, "test");
-    // init camera
     mt9v03x_init();
+    imu_init();
     // mt9v03x2_init();
     // receiver_init();
-    // init wireless uart
     // wireless_init();
-
-    // init key
     key_init_rewrite(KEY_NUM);
-    pit_ms_init(CCU60_CH1, PIT_KEY_T);
-    pit_enable(CCU60_CH1); // 使能按键中断
-    // menu_param
+
+    // ===================== PARAMS ======================== //
+    attitude_init();
     menu_manual_param_init();
-
-    // velocity
     velocity_init(&g_vel_motor);
-    pit_ms_init(CCU60_CH0, PIT_VELOCITY_T);
-    pit_enable(CCU60_CH0); // 使能速度中断
-
     control_manual_param_init();
 
-    // read eeprom
-    Read_EEPROM();
-
-    // init imu
-    imu_init();
-    // init attitude
-    attitude_init();
-    // pit_ms_init(CCU61_CH0, ATTITUDE_UPDATE_T);
-    // pit_enable(CCU61_CH0); // 使能姿态中断
+    // ===================== PIT ======================== //
+    // key
+    pit_ms_init(CCU60_CH1, PIT_KEY_T);
+    pit_enable(CCU60_CH1);
+    // vel
+    pit_ms_init(CCU60_CH0, PIT_VELOCITY_T);
+    pit_enable(CCU60_CH0);
+    // control
     pit_ms_init(CCU61_CH1, PIT_CONTROL_T);
-    pit_enable(CCU61_CH1); // 使能控制中断
+    pit_enable(CCU61_CH1);
 
+    // ===================== MENU ======================== //
+    Read_EEPROM();
     // menu
     MainMenu_Set();
-
-    // menu_params
     menu_get_params(&g_euler_angle_bias, &g_control_time,
                     &g_control_turn_manual_params, &g_control_motion_params);
 
     // control init
     control_init(&g_control_motion_params);
-    // start to balance
 }
 
 void system_attitude_timer(

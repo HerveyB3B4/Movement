@@ -5,36 +5,37 @@
 
 static void pass_momentum_encoder(int32 frontValue,
                                   int32 backValue,
-                                  struct Velocity_Motor* vel_motor) {
-    // 我们获取到的速度是角速度，需转化为线速度。
-    // vel_motor->momentumFront = frontValue * 0.04;
-    // vel_motor->momentumBack = backValue * 0.04;
+                                  struct Velocity_Motor *vel_motor)
+{
     vel_motor->momentumFront = frontValue;
     vel_motor->momentumBack = backValue;
     vel_motor->velocityDiff =
         vel_motor->momentumFront + vel_motor->momentumBack;
-
-    // printf("%d,%d,%d\n", vel_motor->momentumFront, vel_motor->momentumBack,
-    //    vel_motor->velocityDiff);
 }
 
-static void pass_bottom_encoder(int32 value, struct Velocity_Motor* vel_motor) {
+static void pass_bottom_encoder(int32 value, struct Velocity_Motor *vel_motor)
+{
     // filter the noise
-    if (abs(value) < 5) {
+    if (abs(value) < 5)
+    {
         value = 0;
-    } else {
+    }
+    else
+    {
         value > 0 ? (value -= 5) : (value += 5);
     }
     vel_motor->bottom = value;
     vel_motor->bottomSum += value;
 }
 
-void encoder_init() {
+void encoder_init()
+{
     // bottom encoder
     encoder_dir_init(ENCODER_BOTTOM, ENCODER_PIN0_BOTTOM, ENCODER_PIN1_BOTTOM);
 }
 
-void get_momentum_encoder(struct Velocity_Motor* vel_motor) {
+void get_momentum_encoder(struct Velocity_Motor *vel_motor)
+{
     // static int32 frontEncoder[3] = {0, 0, 0};
     // static int32 backEncoder[3] = {0, 0, 0};
     // frontEncoder[2] = frontEncoder[1];
@@ -62,7 +63,8 @@ void get_momentum_encoder(struct Velocity_Motor* vel_motor) {
     // passMomentumEncoder(frontEncoder[0],backEncoder[0]);
 }
 
-void get_bottom_encoder(struct Velocity_Motor* vel_motor) {
+void get_bottom_encoder(struct Velocity_Motor *vel_motor)
+{
     // static int32 bottomEncoder[3] = {0,0,0};
     // bottomEncoder[2] = bottomEncoder[1];
     // bottomEncoder[1] = bottomEncoder[0];
