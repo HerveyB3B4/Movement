@@ -54,6 +54,10 @@ void lcd_show_char_color(uint16 x,
                          uint16 pen_color,
                          uint16 background_color);
 
+void lcd_show_image(const uint8 *img,
+                    uint16 width,
+                    uint16 height,
+                    uint8 threshold);
 void lcd_show_image_mid(const uint8 *img,
                         uint16 width,
                         uint16 height,

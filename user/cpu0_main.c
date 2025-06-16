@@ -48,42 +48,15 @@
 // **************************** 代码区域 ****************************
 int core0_main(void)
 {
-    clock_init(); // 获取时钟频率<务必保留>
-    debug_init(); // 初始化默认调试串口
-    // 此处编写用户代码 例如外设初始化代码等
     system_init();
 
-    // 此处编写用户代码 例如外设初始化代码等
     cpu_wait_event_ready(); // 等待所有核心初始化完毕
 
     g_exit_menu_flag = 1;
     system_set_runstate(CAR_RUNNING);
     while (TRUE)
     {
-        // if (runState == CAR_STOP && keymsg.key == KEY_B)
-        // {
-        //     system_set_runstate(CAR_RUNNING);
-        // }
-        // else if (runState == CAR_RUNNING && keymsg.key == KEY_B)
-        // {
-        //     system_set_runstate(CAR_STOP); // 急停
-        // }
-
-        // 此处编写需要循环执行的代码
-        // printf("%.2f, %.2f\n", g_control_target.side_angle_vel,
-        //        currentSideAngleVelocity);
-
-        // printf(
-        //     "Pitch: %.2f, Roll: %.2f, acc_x: %.2f, acc_y: %.2f, gyro_x: "
-        //     "%.2f, gyro_y: %.2f, gyro_z: %.2f, vel_flywheel: %.2f, "
-        //     "vel_motor: %.2f, bottom_pwm: %d, fly_pwm: %d\n",
-        //     g_euler_angle.pitch, g_euler_angle.roll, g_imu_data.acc.x,
-        //     g_imu_data.acc.y, g_imu_data.gyro.x, g_imu_data.gyro.y,
-        //     g_imu_data.gyro.z, motor_value.receive_left_speed_data,
-        //     g_vel_motor.bottom, get_bottom_duty(), get_side_duty());
-        // system_delay_ms(50);
-        // system_control();
-        // 此处编写需要循环执行的代码
+        img_handler(g_show_run_param_flag);
     }
 }
 

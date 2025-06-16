@@ -15,6 +15,8 @@ RunState_t runState;
 void system_init()
 {
     // ===================== DEVICE ======================== //
+    clock_init(); // 获取时钟频率<务必保留>
+    debug_init(); // 初始化默认调试串口
     motor_init();
     small_driver_uart_init();
     encoder_init();

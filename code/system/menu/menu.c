@@ -427,7 +427,7 @@ MENU_TABLE MainMenu_Table[] = {
      {.INT32 = (int32 *)&g_control_turn_flag},
      Param_Int,
      {.ItemFunc = Menu_Null}},
-    {(uint8 *)"menu",
+    {(uint8 *)"LCD",
      {.INT32 = (int32 *)&g_show_run_param_flag},
      Param_Uint,
      {.ItemFunc = Menu_Null}},

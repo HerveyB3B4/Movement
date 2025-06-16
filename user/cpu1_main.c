@@ -77,14 +77,6 @@ void core1_main(void)
             // lcd_show_int(0, 6, get_bottom_duty(), 5);
             // lcd_show_float(0, 7, bottom_angle_velocity_PID.Ki, 3, 3);
 
-            lcd_show_int(0, 0, g_received_vel, 5);
-            lcd_show_string(0, 1, "BAV:");
-            lcd_show_float(8, 1, bottom_angle_velocity_PID.Kp, 3, 3);
-            lcd_show_string(0, 2, "BA:");
-            lcd_show_float(8, 2, bottom_angle_PID.Kp, 3, 3);
-            lcd_show_string(0, 3, "BV:");
-            lcd_show_float(8, 3, bottom_velocity_PID.Kp, 3, 3);
-            
             // lcd_show_float(0, 0, currentSideAngle, 3, 3);
             // lcd_show_float(0, 1, currentSideAngle - g_euler_angle_bias.roll,
             //                3, 3);

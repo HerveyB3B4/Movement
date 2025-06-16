@@ -51,6 +51,7 @@ void turn_control_timer(struct Control_Time *control_time,
                         int error);
 
 void system_set_runstate(RunState_t state);
+
 extern RunState_t runState;
 
 #endif

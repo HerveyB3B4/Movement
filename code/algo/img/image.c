@@ -6,6 +6,16 @@ static int16 img_target_error = 0;
 static Point img_target_center = {-1, -1};
 static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
 
+static uint32_t frame_count = 0;
+static uint32_t last_time_ms = 0;
+static float current_fps = 0.0f;
+
+// 获取当前帧率
+float get_img_fps()
+{
+    return current_fps;
+}
+
 int16 get_img_target_error()
 {
     return img_target_error;
@@ -72,16 +82,34 @@ void draw_middleline(uint8_t *img, uint8_t color)
     }
 }
 
-void img_handler()
+void img_handler(uint8 lcd_flag)
 {
     if (mt9v03x_finish_flag)
     {
         mt9v03x_finish_flag = 0;
+        frame_count++;
         binary_otsu(mt9v03x_image, s_edge_map);
         img_target_center = find_white_center(s_edge_map, ALGORITHM_TWO_PASS);
         img_target_error = img_target_center.x - IMG_WIDTH / 2;
-        draw_cross(s_edge_map, img_target_center, -1, RGB565_YELLOW);
-        draw_middleline(s_edge_map, RGB565_YELLOW);
-        lcd_show_image_mid(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
+
+        if (frame_count % 10 == 0)
+        {
+            uint32_t current_time = system_getval_ms();
+            if (last_time_ms != 0)
+            {
+                uint32_t time_diff = current_time - last_time_ms;
+                current_fps = 10000.0f / time_diff;
+            }
+            last_time_ms = current_time;
+        }
+
+        if (lcd_flag != 0)
+        {
+            draw_cross(s_edge_map, img_target_center, -1, RGB565_YELLOW);
+            draw_middleline(s_edge_map, RGB565_YELLOW);
+            lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
+            lcd_show_int(0, 7, get_img_target_error(), 5);
+            lcd_show_float(5, 7, get_img_fps(), 3, 3);
+        }
     }
 }
