@@ -126,11 +126,9 @@
 // basic
 #include "common.h"
 #include "define.h"
-#include "list.h"
 #include "my_filter.h"
 
 // device
-#include "camera.h"
 #include "encoder.h"
 #include "imu.h"
 #include "key.h"
