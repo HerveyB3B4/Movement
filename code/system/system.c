@@ -174,8 +174,7 @@ void turn_control_timer(struct Control_Time *control_time,
                         struct Control_Flag *control_flag,
                         struct Control_Target *control_target,
                         struct Control_Turn_Manual_Params *control_turn_params,
-                        struct Velocity_Motor *vel_motor,
-                        int error)
+                        struct Velocity_Motor *vel_motor)
 {
     uint32 turn_angle_vel_time = control_time->turn[0];
     uint32 turn_err_time = control_time->turn[1];
@@ -224,9 +223,7 @@ void turn_control_timer(struct Control_Time *control_time,
     }
 
     // 控制转向
-    control_turn(control_target, control_flag, control_turn_params, vel_motor,
-                 //  euler_angle_bias,
-                 error);
+    control_turn(control_target, control_flag, control_turn_params, vel_motor);
 }
 
 void system_set_runstate(RunState_t state)
@@ -257,7 +254,6 @@ void system_control()
 {
     if (g_control_bottom_flag != 0)
     {
-        g_control_target.bottom_vel = g_received_vel;
         bottom_control_timer(&g_control_time,
                              &g_control_flag,
                              &g_control_target,
@@ -283,8 +279,7 @@ void system_control()
                            &g_control_flag,
                            &g_control_target,
                            &g_control_turn_manual_params,
-                           &g_vel_motor,
-                           get_img_target_error());
+                           &g_vel_motor);
     }
     control_shutdown(&g_control_target, &g_euler_angle_bias, &g_vel_motor);
 }

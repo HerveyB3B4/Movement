@@ -93,6 +93,7 @@ IFX_INTERRUPT(cc61_pit_ch1_isr,
     if (runState == CAR_RUNNING)
     {
         // 控制
+        // guide_receiver();
         system_control();
     }
 }

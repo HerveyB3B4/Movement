@@ -4,9 +4,17 @@
 #include "zf_common_headfile.h"
 
 // 连通域检测相关参数宏定义（可根据需要调整）
-#define MIN_AREA_THRESHOLD 5 // 最小连通域面积阈值
-#define MAX_REGIONS 512      // 最大连通域数量
-#define STACK_SIZE 1024      // 种子填充栈大小
+#define MIN_AREA_THRESHOLD 50   // 最小连通域面积阈值
+#define MAX_AREA_THRESHOLD 5000 // 最大连通域面积阈值（避免过大噪声）
+// #define MIN_WIDTH_THRESHOLD 5    // 最小宽度阈值
+// #define MIN_HEIGHT_THRESHOLD 5   // 最小高度阈值
+// #define MAX_WIDTH_THRESHOLD 200  // 最大宽度阈值
+// #define MAX_HEIGHT_THRESHOLD 200 // 最大高度阈值
+// #define MIN_ASPECT_RATIO 0.2f    // 最小宽高比（防止过细长条）
+// #define MAX_ASPECT_RATIO 5.0f    // 最大宽高比
+// #define MIN_COMPACTNESS 0.1f     // 最小紧凑度（面积/外接矩形面积）
+#define MAX_REGIONS 128 // 最大连通域数量
+#define STACK_SIZE 1024 // 种子填充栈大小
 
 // 连通域检测算法类型
 typedef enum
@@ -38,5 +46,37 @@ Point find_white_center(uint8 *binary_image, connected_component_algorithm_enum 
 // 工具函数
 uint16 find_root(uint16 x);
 void union_sets(uint16 x, uint16 y);
+
+// 检查连通域是否为有效目标
+static inline bool is_valid_target(const connected_component_info *component)
+{
+    if (!component || component->area == 0)
+        return false;
+
+    // 计算宽高
+    // uint16 width = component->max_x - component->min_x + 1;
+    // uint16 height = component->max_y - component->min_y + 1;
+
+    // 面积限制
+    if (component->area < MIN_AREA_THRESHOLD || component->area > MAX_AREA_THRESHOLD)
+        return false;
+
+    // // 尺寸限制
+    // if (width < MIN_WIDTH_THRESHOLD || width > MAX_WIDTH_THRESHOLD ||
+    //     height < MIN_HEIGHT_THRESHOLD || height > MAX_HEIGHT_THRESHOLD)
+    //     return false;
+
+    // // 宽高比限制
+    // float aspect_ratio = (float)width / height;
+    // if (aspect_ratio < MIN_ASPECT_RATIO || aspect_ratio > MAX_ASPECT_RATIO)
+    //     return false;
+
+    // // 紧凑度限制（防止过于分散的连通域）
+    // float compactness = (float)component->area / (width * height);
+    // if (compactness < MIN_COMPACTNESS)
+    //     return false;
+
+    return true;
+}
 
 #endif

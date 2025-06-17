@@ -161,7 +161,15 @@ static component_analysis_result find_components_flood_fill(uint8 *binary_image)
 
                 flood_fill(temp_img, x, y, region_count + 1, &regions[region_count]);
 
-                if (regions[region_count].area >= MIN_AREA_THRESHOLD)
+                // 创建临时连通域信息进行有效性检查
+                connected_component_info temp_component = {
+                    .area = regions[region_count].area,
+                    .min_x = regions[region_count].min_x,
+                    .max_x = regions[region_count].max_x,
+                    .min_y = regions[region_count].min_y,
+                    .max_y = regions[region_count].max_y};
+
+                if (is_valid_target(&temp_component))
                 {
                     region_count++;
                 }
@@ -290,13 +298,24 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
     for (uint16 i = 1; i < label_count; i++)
     {
         uint16 root = find_root(i);
-        if (area[root] >= MIN_AREA_THRESHOLD)
+        if (area[root] > 0)
         {
-            valid_components++;
-            if (area[root] > max_area)
+            // 创建临时连通域信息进行有效性检查
+            connected_component_info temp_component = {
+                .area = area[root],
+                .min_x = component_min_x[root],
+                .max_x = component_max_x[root],
+                .min_y = component_min_y[root],
+                .max_y = component_max_y[root]};
+
+            if (is_valid_target(&temp_component))
             {
-                max_area = area[root];
-                max_label = root;
+                valid_components++;
+                if (area[root] > max_area)
+                {
+                    max_area = area[root];
+                    max_label = root;
+                }
             }
         }
     }
@@ -341,6 +360,14 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
 Point find_white_center(uint8 *binary_image, connected_component_algorithm_enum algorithm)
 {
     component_analysis_result result = find_largest_connected_component_with_algo(binary_image, algorithm);
+
+    // 如果没有找到有效的连通域，返回(-1, -1)表示无效
+    if (!result.largest_component.is_valid)
+    {
+        Point invalid_point = {-1, -1};
+        return invalid_point;
+    }
+
     return result.largest_component.center;
 }
 

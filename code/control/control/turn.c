@@ -8,8 +8,7 @@ static void control_turn_velocity(struct Control_Target *control_target,
                                   struct Velocity_Motor *vel_motor);
 static void control_turn_angle_velocity(struct Control_Target *control_target);
 // static void control_turn_angle(struct Control_Target *control_target);
-static void control_turn_error(struct Control_Target *control_target,
-                               int error);
+static void control_turn_error(struct Control_Target *control_target);
 
 int32 get_momentum_diff() { return s_momentum_diff; }
 
@@ -17,8 +16,7 @@ void control_turn(struct Control_Target *control_target,
                   struct Control_Flag *control_flag,
                   struct Control_Turn_Manual_Params *control_turn_params,
                   //   struct EulerAngle *euler_angle_bias,
-                  struct Velocity_Motor *vel_motor,
-                  int error)
+                  struct Velocity_Motor *vel_motor)
 {
     // if (control_flag->turn) {
     //     control_flag->turn = 0;
@@ -32,7 +30,7 @@ void control_turn(struct Control_Target *control_target,
     if (control_flag->turn_err)
     {
         control_flag->turn_err = 0;
-        control_turn_error(control_target, error);
+        control_turn_error(control_target);
     }
     if (control_flag->turn_angle_vel)
     {
@@ -70,11 +68,10 @@ static void control_turn_angle_velocity(struct Control_Target *control_target)
     preMomentumDiff = s_momentum_diff;
 }
 
-static void control_turn_error(struct Control_Target *control_target,
-                               int error)
+static void control_turn_error(struct Control_Target *control_target)
 {
     control_target->turn_angle_vel = PID_calc_Position(
-        &turn_error_PID, (float)error, control_target->turn_err);
+        &turn_error_PID, control_target->turn_err, 0);
 }
 
 // 不知道需不需要加个速度环

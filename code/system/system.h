@@ -47,8 +47,7 @@ void turn_control_timer(struct Control_Time *control_time,
                         struct Control_Flag *control_flag,
                         struct Control_Target *control_target,
                         struct Control_Turn_Manual_Params *control_turn_params,
-                        struct Velocity_Motor *vel_motor,
-                        int error);
+                        struct Velocity_Motor *vel_motor);
 
 void system_set_runstate(RunState_t state);
 

@@ -18,12 +18,27 @@ float get_img_fps()
 
 int16 get_img_target_error()
 {
+    // 只有当找到有效目标时才计算偏差，否则保持原有偏差值
+    if (img_target_center.x >= 0 && img_target_center.y >= 0)
+    {
+        img_target_error = img_target_center.x - IMG_WIDTH / 2;
+    }
+
     return img_target_error;
+}
+
+int16 get_img_target_distance()
+{
+    if (img_target_center.y < 0 || img_target_center.y >= IMG_HEIGHT)
+    {
+        return 0;
+    }
+    return img_target_center.y;
 }
 
 void draw_cross(uint8_t *img, Point center, uint8_t size, uint8_t color)
 {
-    // 检查中心点是否有效
+    // 检查中心点是否有效（包括-1,-1的无效标记）
     if (center.x < 0 || center.x >= IMG_WIDTH || center.y < 0 ||
         center.y >= IMG_HEIGHT)
     {
@@ -90,7 +105,6 @@ void img_handler(uint8 lcd_flag)
         frame_count++;
         binary_otsu(mt9v03x_image, s_edge_map);
         img_target_center = find_white_center(s_edge_map, ALGORITHM_TWO_PASS);
-        img_target_error = img_target_center.x - IMG_WIDTH / 2;
 
         if (frame_count % 10 == 0)
         {
