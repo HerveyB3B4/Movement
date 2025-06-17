@@ -36,10 +36,10 @@ void guide_receiver(struct Control_Target *control_target)
 
 void guide_to_target(struct Control_Target *control_target)
 {
-    if (get_img_target_distance() != 0)
-    {
-        control_target->bottom_vel = GUIDE_CONTANT_VEL;
-    }
+    // if (get_img_target_distance() != 0 && guide_target_vel != 0)
+    // {
+    //     control_target->bottom_vel = -(float)guide_target_vel;
+    // }
 
     control_target->turn_err = get_img_target_error();
 }

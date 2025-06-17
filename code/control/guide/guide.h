@@ -4,7 +4,7 @@
 #include "zf_common_headfile.h"
 #include "control.h"
 
-#define GUIDE_CONTANT_VEL 2000
+#define GUIDE_CONTANT_VEL -2000
 
 int16 get_guide_target_vel(void);
 int16 get_guide_target_turn(void);

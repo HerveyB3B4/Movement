@@ -4,7 +4,7 @@
 #include "zf_common_headfile.h"
 
 // 连通域检测相关参数宏定义（可根据需要调整）
-#define MIN_AREA_THRESHOLD 50   // 最小连通域面积阈值
+#define MIN_AREA_THRESHOLD 40   // 最小连通域面积阈值
 #define MAX_AREA_THRESHOLD 5000 // 最大连通域面积阈值（避免过大噪声）
 // #define MIN_WIDTH_THRESHOLD 5    // 最小宽度阈值
 // #define MIN_HEIGHT_THRESHOLD 5   // 最小高度阈值

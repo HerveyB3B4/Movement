@@ -174,6 +174,7 @@ void turn_control_timer(struct Control_Time *control_time,
                         struct Control_Flag *control_flag,
                         struct Control_Target *control_target,
                         struct Control_Turn_Manual_Params *control_turn_params,
+                        struct Control_Motion_Manual_Parmas *control_motion_params,
                         struct Velocity_Motor *vel_motor)
 {
     uint32 turn_angle_vel_time = control_time->turn[0];
@@ -185,15 +186,8 @@ void turn_control_timer(struct Control_Time *control_time,
     control_flag->turn_angle_vel_cnt++;
     control_flag->turn_vel_cnt++;
     control_flag->turn_err_cnt++;
-    if (control_flag->turn_angle_cnt >= turn_angle_time)
-    {
-        control_flag->turn_angle = 1;
-        control_flag->turn_angle_cnt = 0;
-    }
-    else
-    {
-        control_flag->turn_angle = 0;
-    }
+
+    // TAV
     if (control_flag->turn_angle_vel_cnt >= turn_angle_vel_time)
     {
         control_flag->turn_angle_vel = 1;
@@ -203,15 +197,8 @@ void turn_control_timer(struct Control_Time *control_time,
     {
         control_flag->turn_angle_vel = 0;
     }
-    if (control_flag->turn_vel_cnt >= turn_vel_time)
-    {
-        control_flag->turn_vel = 1;
-        control_flag->turn_vel_cnt = 0;
-    }
-    else
-    {
-        control_flag->turn_vel = 0;
-    }
+
+    // TE
     if (control_flag->turn_err_cnt >= turn_err_time)
     {
         control_flag->turn_err = 1;
@@ -222,8 +209,28 @@ void turn_control_timer(struct Control_Time *control_time,
         control_flag->turn_err = 0;
     }
 
+    // if (control_flag->turn_vel_cnt >= turn_vel_time)
+    // {
+    //     control_flag->turn_vel = 1;
+    //     control_flag->turn_vel_cnt = 0;
+    // }
+    // else
+    // {
+    //     control_flag->turn_vel = 0;
+    // }
+
+    // if (control_flag->turn_angle_cnt >= turn_angle_time)
+    // {
+    //     control_flag->turn_angle = 1;
+    //     control_flag->turn_angle_cnt = 0;
+    // }
+    // else
+    // {
+    //     control_flag->turn_angle = 0;
+    // }
+
     // 控制转向
-    control_turn(control_target, control_flag, control_turn_params, vel_motor);
+    control_turn(control_target, control_flag, control_turn_params, control_motion_params, vel_motor);
 }
 
 void system_set_runstate(RunState_t state)
@@ -234,8 +241,8 @@ void system_set_runstate(RunState_t state)
     case CAR_STOP:
         runState = CAR_STOP;
 
-        // pit_disable(CCU61_CH1); // 失能控制中断
-        pit_enable(CCU60_CH1); // 使能按键中断
+        pit_disable(CCU61_CH1); // 失能控制中断
+        pit_enable(CCU60_CH1);  // 使能按键中断
 
         stop_bottom_motor();
         stop_momentum_motor();
@@ -279,6 +286,7 @@ void system_control()
                            &g_control_flag,
                            &g_control_target,
                            &g_control_turn_manual_params,
+                           &g_control_motion_params,
                            &g_vel_motor);
     }
     control_shutdown(&g_control_target, &g_euler_angle_bias, &g_vel_motor);
