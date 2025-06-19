@@ -9,7 +9,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 #include "wireless.h"
-#include "sd_card.h" // 添加SD卡操作头文件
+#include "sd_card.h"
 #include "receiver.h"
 #include "detection.h"
 
@@ -647,6 +647,54 @@ void test_receiver()
     while (keymsg.key != KEY_L)
     {
         lcd_show_int(0, 2, g_received_vel, 5);
+    }
+
+    lcd_clear();
+}
+
+void test_img_shoot()
+{
+    lcd_clear();
+
+    lcd_show_string(0, 0, "Image Capture Test");
+    system_delay_ms(1000);
+
+    lcd_clear();
+
+    sd_result_t sd_result = sd_init();
+    if (sd_result != SD_OK)
+    {
+        lcd_show_string(0, 0, "SD Init Failed!");
+        system_delay_ms(500);
+    }
+    else
+    {
+        lcd_show_string(0, 0, "SD Init Success!");
+        sd_clear_data(); // 清除之前的数据
+        system_delay_ms(500);
+    }
+
+    lcd_clear();
+
+    static uint8 cnt = 0;
+    while (keymsg.key != KEY_L)
+    {
+        if (mt9v03x_finish_flag != 0)
+        {
+            lcd_show_image(mt9v03x_image, MT9V03X_W, MT9V03X_H, 0);
+            mt9v03x_finish_flag = 0;
+
+            if (keymsg.key == KEY_B)
+            {
+                memcpy(s_edge_map, mt9v03x_image, MT9V03X_W * MT9V03X_H); // 暂且拿这个存
+                sd_result = sd_write_data((uint8 *)s_edge_map, MT9V03X_IMAGE_SIZE, SD_WRITE_APPEND);
+                if (sd_result == SD_OK)
+                {
+                    lcd_show_string(0, 7, "saved");
+                    lcd_show_uint(8, 7, cnt++, 3);
+                }
+            }
+        }
     }
 
     lcd_clear();

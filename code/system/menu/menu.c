@@ -381,6 +381,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_receiver}},
+    {(uint8 *)"Img_Shoot",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_img_shoot}},
 };
 
 MENU_TABLE Setting_MenuTable[] = {
