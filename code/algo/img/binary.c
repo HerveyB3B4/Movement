@@ -288,3 +288,15 @@ void binary_otsu_2d(uint8 *input, uint8 *output)
         }
     }
 }
+
+// 固定阈值二值化
+void binary_threshold(uint8 *input, uint8 *output, uint8 threshold)
+{
+    uint32 total_pixels = IMG_WIDTH * IMG_HEIGHT;
+
+    // 直接应用固定阈值进行二值化
+    for (uint32 i = 0; i < total_pixels; i++)
+    {
+        output[i] = (input[i] > threshold) ? RGB565_WHITE : RGB565_BLACK;
+    }
+}

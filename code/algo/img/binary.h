@@ -6,5 +6,6 @@
 void binary_otsu(uint8 *input, uint8 *output);
 void binary_otsu_improved(uint8 *input, uint8 *output);
 void binary_otsu_2d(uint8 *input, uint8 *output);
+void binary_threshold(uint8 *input, uint8 *output, uint8 threshold);
 
 #endif
