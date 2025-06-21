@@ -18,6 +18,6 @@ void draw_Vline(uint8 *img, uint8 x, uint8 color);
 void draw_Hline(uint8 *img, uint8 y, uint8 color);
 
 int16 get_img_target_error();
-int16 get_img_target_distance(); // 其实现在就是y轴
+float get_img_target_distance();
 
 #endif

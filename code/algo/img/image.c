@@ -1,5 +1,6 @@
 #include "image.h"
 #include "detection.h"
+#include "Attitude.h"
 
 static int16 img_target_error = 0;
 
@@ -37,13 +38,16 @@ int16 get_img_target_error()
     return img_target_error;
 }
 
-int16 get_img_target_distance()
+float get_img_target_distance()
 {
-    if (img_target_center.y < 0 || img_target_center.y >= IMG_HEIGHT)
+    int x = img_target_center.y;
+    float distance = -0.001370f * x * x * x + 0.365667f * x * x + (-33.329445f) * x + 1075.385789f;
+    if (distance < 0)
     {
         return 0;
     }
-    return img_target_center.y;
+
+    return distance;
 }
 
 void draw_cross(uint8 *img, Point center, uint8 size, uint8 color)
@@ -158,9 +162,10 @@ void img_handler(uint8 lcd_flag)
         {
             draw_cross(s_edge_map, img_target_center, -1, RGB565_YELLOW);
             draw_Vmiddleline(s_edge_map, RGB565_YELLOW);
+            draw_Hline(s_edge_map, get_image_horizon(), RGB565_WHITE);
             lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
-            lcd_show_int(0, 7, get_img_target_error(), 4);    // x
-            lcd_show_int(8, 7, get_img_target_distance(), 4); // y
+            lcd_show_int(0, 7, get_img_target_error(), 4);
+            lcd_show_float(8, 7, YAW, 3, 3);
         }
     }
 }
