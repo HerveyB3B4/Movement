@@ -46,7 +46,7 @@ int16 get_img_target_distance()
     return img_target_center.y;
 }
 
-void draw_cross(uint8_t *img, Point center, uint8_t size, uint8_t color)
+void draw_cross(uint8 *img, Point center, uint8 size, uint8 color)
 {
     // 检查中心点是否有效（包括-1,-1的无效标记）
     if (center.x < 0 || center.x >= IMG_WIDTH || center.y < 0 ||
@@ -55,7 +55,7 @@ void draw_cross(uint8_t *img, Point center, uint8_t size, uint8_t color)
         return;
     }
 
-    if (size == (uint8_t)-1)
+    if (size == (uint8)-1)
     {
         // 当 size 为 -1 时,填充整行和整列
         // 填充水平线
@@ -98,12 +98,39 @@ void draw_cross(uint8_t *img, Point center, uint8_t size, uint8_t color)
     }
 }
 
-void draw_middleline(uint8_t *img, uint8_t color)
+void draw_Vmiddleline(uint8 *img, uint8 color)
 {
     // 画垂直中线
     for (int16_t y = 0; y < IMG_HEIGHT; y++)
     {
         img[y * IMG_WIDTH + (IMG_WIDTH / 2)] = color;
+    }
+}
+
+void draw_Hmiddleline(uint8 *img, uint8 color)
+{
+    // 画水平中线
+    for (int16 x = 0; x < IMG_WIDTH; x++)
+    {
+        img[(IMG_HEIGHT / 2) * IMG_WIDTH + x] = color;
+    }
+}
+
+void draw_Vline(uint8 *img, uint8 x, uint8 color)
+{
+    // 在指定位置画垂直线
+    for (int16 y = 0; y < IMG_HEIGHT; y++)
+    {
+        img[y * IMG_WIDTH + x] = color;
+    }
+}
+
+void draw_Hline(uint8 *img, uint8 y, uint8 color)
+{
+    // 在指定位置画水平线
+    for (int16 x = 0; x < IMG_WIDTH; x++)
+    {
+        img[y * IMG_WIDTH + x] = color;
     }
 }
 
@@ -130,7 +157,7 @@ void img_handler(uint8 lcd_flag)
         if (lcd_flag != 0)
         {
             draw_cross(s_edge_map, img_target_center, -1, RGB565_YELLOW);
-            draw_middleline(s_edge_map, RGB565_YELLOW);
+            draw_Vmiddleline(s_edge_map, RGB565_YELLOW);
             lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
             lcd_show_int(0, 7, get_bottom_duty(), 4);
             // lcd_show_float(3, 7, get_img_fps(), 3, 0);

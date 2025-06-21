@@ -117,13 +117,13 @@ void test_attitude()
     while (keymsg.key != KEY_L)
     {
         lcd_show_string(0, 0, "Pitch:");
-        lcd_show_float(0, 1, currentFrontAngle, 3, 3);
-        lcd_show_float(8, 1, currentFrontAngle - g_menu_manual_param.mechanicalPitchAngle * 0.1f, 3, 3);
+        lcd_show_float(0, 1, PITCH, 3, 3);
+        lcd_show_float(8, 1, PITCH - g_menu_manual_param.mechanicalPitchAngle * 0.1f, 3, 3);
         lcd_show_string(0, 2, "Row:");
-        lcd_show_float(0, 3, currentSideAngle, 3, 3);
-        lcd_show_float(8, 3, currentSideAngle - g_menu_manual_param.mechanicalRollAngle * 0.1f, 3, 3);
+        lcd_show_float(0, 3, ROLL, 3, 3);
+        lcd_show_float(8, 3, ROLL - g_menu_manual_param.mechanicalRollAngle * 0.1f, 3, 3);
         lcd_show_string(0, 4, "Yaw:");
-        lcd_show_float(0, 5, yawAngle, 3, 3);
+        lcd_show_float(0, 5, YAW, 3, 3);
     }
     lcd_clear();
 }
@@ -698,4 +698,47 @@ void test_img_shoot()
     }
 
     lcd_clear();
+}
+
+void test_line()
+{
+    lcd_clear();
+    int pos = 0;
+    uint8_t last_key = KEY_NONE; // 记录上一次按键，用于消抖
+    while (keymsg.key != KEY_L)  // 主循环，L键退出
+    {
+        if ((keymsg.key == KEY_U || keymsg.key == KEY_D) && keymsg.key != last_key)
+        {
+            // 如果是新的按键，更新位置
+            if (keymsg.key == KEY_D) // 向上移动线
+            {
+                pos += 1;
+                if (pos >= MT9V03X_H)
+                    pos = 0; // 限制在图像高度范围内
+            }
+            else if (keymsg.key == KEY_U) // 向下移动线
+            {
+                pos -= 1;
+                if (pos < 0)
+                    pos = MT9V03X_H - 1; // 限制在图像高度范围内
+            }
+
+            // 更新last_key，并进入等待按键释放状态
+            last_key = keymsg.key;
+        }
+        else if (keymsg.key == KEY_NONE && last_key != KEY_NONE)
+        {
+            // 当按键释放时，重置last_key以允许下一次按键触发
+            last_key = KEY_NONE;
+        }
+
+        if (mt9v03x_finish_flag)
+        {
+            mt9v03x_finish_flag = 0;
+            draw_Hline(mt9v03x_image, pos, RGB565_WHITE); // 绘制水平线
+            lcd_show_image(mt9v03x_image, MT9V03X_W, MT9V03X_H, 0);
+            lcd_show_int(0, 7, pos, 3);
+            lcd_show_float(5, 7, PITCH, 3, 3);
+        }
+    }
 }

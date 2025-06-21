@@ -67,8 +67,8 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
     euler_angle->pitch = getPitch();
     euler_angle->yaw =
         getYaw() - 180 +
-        yawAngleCorrection; //-180 because the direction of the sensor is
-                            // opposite to the direction of the motor
+        YAWCorrection; //-180 because the direction of the sensor is
+                       // opposite to the direction of the motor
 #endif
 #ifdef USE_EKF
     attitude_cal_ekf();
@@ -80,7 +80,7 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
 #endif
     // g_euler_angle->yaw += 180; // transfer to the same direction
     euler_angle->yaw = 360.0f - euler_angle->yaw; // opposite direction
-    // g_euler_angle->yaw += yawAngleCorrection;
+    // g_euler_angle->yaw += YAWCorrection;
     euler_angle->yaw > 360 ? (euler_angle->yaw -= 360)
                            : euler_angle->yaw; // 0~360
     // update module state

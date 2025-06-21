@@ -6,19 +6,19 @@
 #define USE_EKF
 
 // front direction
-#define currentFrontAngle g_euler_angle.pitch
-#define currentFrontAngleVelocity (g_imu_data.gyro.y / (0.0174533f))
-// #define currentFrontAngleVelocity g_imu_data.gyro.y
-#define currentFrontAcceleration g_imu_data.acc.x
+#define PITCH g_euler_angle.pitch
+#define PITCH_VEL (g_imu_data.gyro.y / (0.0174533f))
+// #define PITCH_VEL g_imu_data.gyro.y
+#define PITCH_ACC g_imu_data.acc.x
 // side direction
-#define currentSideAngle g_euler_angle.roll
-#define currentSideAngleVelocity (g_imu_data.gyro.x / (0.0174533f))
-// #define currentSideAngleVelocity g_imu_data.gyro.x
-#define currentSideAcceleration g_imu_data.acc.y
+#define ROLL g_euler_angle.roll
+#define ROLL_VEL (g_imu_data.gyro.x / (0.0174533f))
+// #define ROLL_VEL g_imu_data.gyro.x
+#define ROLL_ACC g_imu_data.acc.y
 // yaw direction
-#define yawAngle g_euler_angle.yaw
-#define yawAngleVelocity g_imu_data.gyro.z
-#define zAngleAcceleration g_imu_data.acc.z
+#define YAW g_euler_angle.yaw
+#define YAW_VEL g_imu_data.gyro.z
+#define YAW_ACC g_imu_data.acc.z
 
 struct EulerAngle
 {

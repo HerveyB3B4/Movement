@@ -58,11 +58,11 @@ void control_shutdown(struct Control_Target *control_target,
 {
     if (g_control_shutdown_flag != 0)
     {
-        if (fabsf(currentSideAngle - euler_angle_bias->roll) > 28)
+        if (fabsf(ROLL - euler_angle_bias->roll) > 28)
         {
             system_set_runstate(CAR_STOP);
         }
-        if (fabsf(currentFrontAngle - euler_angle_bias->pitch) > 35)
+        if (fabsf(PITCH - euler_angle_bias->pitch) > 35)
         {
             system_set_runstate(CAR_STOP);
         }

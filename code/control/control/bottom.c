@@ -111,7 +111,7 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
 {
     static float angleControlFilter[2] = {0};
     angleControlFilter[1] = angleControlFilter[0];
-    angleControlFilter[0] = currentFrontAngle;
+    angleControlFilter[0] = PITCH;
     // lowPassFilter(&angleControlFilter[0],&angleControlFilter[1],0.1f);
     // noiseFilter(angleControlFilter[0],0.002f);
 
@@ -122,7 +122,7 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
 
     if (g_control_output_fa_flag != 0)
     {
-        printf("%f,%f\n", control_target->bottom_angle_vel, currentFrontAngle);
+        printf("%f,%f\n", control_target->bottom_angle_vel, PITCH);
     }
 }
 
@@ -133,7 +133,7 @@ static void control_bottom_angle_velocity(
     // imu963raPushingSensorData();
     static float angleVelocityControlFilter[2] = {0};
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
-    angleVelocityControlFilter[0] = currentFrontAngleVelocity;
+    angleVelocityControlFilter[0] = PITCH_VEL;
 
     s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity * (PID_calc_Position(
                                                                                         &bottom_angle_velocity_PID, angleVelocityControlFilter[0],

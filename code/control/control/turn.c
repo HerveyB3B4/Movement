@@ -66,7 +66,7 @@ static void control_turn_angle_velocity(struct Control_Target *control_target,
     static int32 preMomentumDiff = 0;
     s_momentum_diff = control_motion_params->turn_angle_velocity_polarity *
                       (int32)PID_calc_Position_LowPassD(
-                          &turn_angle_velocity_PID, yawAngleVelocity,
+                          &turn_angle_velocity_PID, YAW_VEL,
                           control_target->turn_angle_vel);
 
     s_momentum_diff = (int32)(0.8f * s_momentum_diff + 0.2f * preMomentumDiff);

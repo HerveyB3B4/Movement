@@ -11,8 +11,11 @@
 // - center: 十字中心点
 // - size: 十字大小(臂长)
 // - color: 十字颜色(0x00为黑色，0xFF为白色)
-void draw_cross(uint8_t *img, Point center, uint8_t size, uint8_t color);
-void draw_middleline(uint8_t *img, uint8_t color);
+void draw_cross(uint8 *img, Point center, uint8 size, uint8 color);
+void draw_Vmiddleline(uint8 *img, uint8 color);
+void draw_Hmiddleline(uint8 *img, uint8 color);
+void draw_Vline(uint8 *img, uint8 x, uint8 color);
+void draw_Hline(uint8 *img, uint8 y, uint8 color);
 
 int16 get_img_target_error();
 int16 get_img_target_distance(); // 其实现在就是y轴
