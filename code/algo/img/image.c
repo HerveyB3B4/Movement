@@ -159,9 +159,8 @@ void img_handler(uint8 lcd_flag)
             draw_cross(s_edge_map, img_target_center, -1, RGB565_YELLOW);
             draw_Vmiddleline(s_edge_map, RGB565_YELLOW);
             lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
-            lcd_show_int(0, 7, get_bottom_duty(), 4);
-            // lcd_show_float(3, 7, get_img_fps(), 3, 0);
-            lcd_show_int(8, 7, get_momentum_diff(), 4);
+            lcd_show_int(0, 7, get_img_target_error(), 4);    // x
+            lcd_show_int(8, 7, get_img_target_distance(), 4); // y
         }
     }
 }
