@@ -3,6 +3,7 @@
 #include "control.h"
 #include "velocity.h"
 #include "zf_common_headfile.h"
+#include "Madgwick.h"
 
 struct EulerAngle g_euler_angle;
 struct EulerAngle g_euler_angle_bias;
@@ -32,6 +33,25 @@ void attitude_cal_ekf()
     // LowPassFilter(&Accelerometer[2], IMUdata.acc.z);
 
     IMU_QuaternionEKF_Update(&g_imu_data);
+}
+
+void attitude_init_Madgwick()
+{
+    uint8 flag = 0;
+    while (!flag)
+    {
+        imu_get_data(&g_imu_data);
+        imu_remove_offset(&g_imu_data);
+        flag = MadgwickAHRS_calibrate(&g_imu_data);
+    }
+}
+
+void attitude_cal_Madgwick()
+{
+    imu_get_data(&g_imu_data);
+    imu_remove_offset(&g_imu_data);
+
+    MadgwickAHRS_update(&g_imu_data);
 }
 
 void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,

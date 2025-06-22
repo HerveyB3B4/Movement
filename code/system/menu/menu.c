@@ -392,6 +392,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_line}},
+    {(uint8 *)"Madgwick",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_Madgwick}},
 };
 
 MENU_TABLE Setting_MenuTable[] = {

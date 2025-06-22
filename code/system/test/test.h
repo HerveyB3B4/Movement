@@ -18,5 +18,6 @@ void test_sd_card();
 void test_receiver();
 void test_img_shoot();
 void test_line();
+void test_Madgwick();
 
 #endif
