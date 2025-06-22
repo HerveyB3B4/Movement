@@ -73,10 +73,9 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
 #ifdef USE_EKF
     attitude_cal_ekf();
     euler_angle->roll =
-        QEKF_INS.Roll + control_target->bucking; // + convergenceGain;
-    euler_angle->pitch = QEKF_INS.Pitch + control_target->Fbucking;
-    // 使用独立陀螺仪积分的Yaw角度代替EKF估计的Yaw角度
-    euler_angle->yaw = Get_Yaw();
+        ekf_get_roll() + control_target->bucking; // + convergenceGain;
+    euler_angle->pitch = ekf_get_pitch() + control_target->Fbucking;
+    euler_angle->yaw = ekf_get_yaw();
 #endif
     // g_euler_angle->yaw += 180; // transfer to the same direction
     euler_angle->yaw = 360.0f - euler_angle->yaw; // opposite direction

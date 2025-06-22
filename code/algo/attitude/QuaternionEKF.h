@@ -82,9 +82,7 @@ void IMU_QuaternionEKF_Init(float process_noise1,
 void IMU_QuaternionEKF_Update(IMU_DATA *data);
 void IMU_QuaternionEKF_Reset(void);
 
-float Get_Pitch(void); // get pitch
-float Get_Roll(void);  // get roll
-float Get_Yaw(void);   // get yaw
-// 新增函数: 获取独立陀螺仪积分的Yaw角
-float Get_Gyro_Yaw(void);
+float ekf_get_pitch(void); // get pitch
+float ekf_get_roll(void);  // get roll
+float ekf_get_yaw(void);   // get yaw
 #endif

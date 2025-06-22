@@ -61,11 +61,6 @@ void IMU_QuaternionEKF_Init(float process_noise1,
                             float dt,
                             float lpf)
 {
-    // 初始化独立Yaw角积分系统
-    g_gyro_yaw_integral = 0.0f;
-    g_yaw_gyro_bias = 0.0f;
-    g_yaw_init_flag = 0;
-
     QEKF_INS.Initialized = 1;
     QEKF_INS.Q1 = process_noise1;
     QEKF_INS.Q2 = process_noise2;
@@ -159,35 +154,6 @@ void IMU_QuaternionEKF_Update(IMU_DATA *imu_data)
     QEKF_INS.Gyro[0] = imu_data->gyro.x - QEKF_INS.GyroBias[0];
     QEKF_INS.Gyro[1] = imu_data->gyro.y - QEKF_INS.GyroBias[1];
     QEKF_INS.Gyro[2] = imu_data->gyro.z - QEKF_INS.GyroBias[2];
-
-    // 更高级的Yaw角跟踪算法
-    // 1. 当车辆处于静止状态时，估计陀螺仪Z轴零漂
-    if (QEKF_INS.StableFlag && !g_yaw_init_flag)
-    {
-        // 如果车辆稳定且未初始化，则初始化零漂估计
-        g_yaw_gyro_bias = imu_data->gyro.z;
-        g_yaw_init_flag = 1;
-    }
-    else if (QEKF_INS.StableFlag)
-    {
-        // 如果车辆稳定，则更新零漂估计（慢速更新）
-        g_yaw_gyro_bias = g_yaw_gyro_bias * 0.999f + imu_data->gyro.z * 0.001f;
-    }
-
-    // 2. 应用零漂补偿进行积分，并使用比例系数修正45度->360度的问题
-    gyro_z_corrected = imu_data->gyro.z - g_yaw_gyro_bias;
-    // 应用8倍校正系数修正角速度积分，解决旋转360度只显示45度的问题
-    g_gyro_yaw_integral += gyro_z_corrected * QEKF_INS.dt * 57.29578f * g_yaw_scale_factor; // 转换为度并应用比例系数
-
-    // 3. 处理角度范围
-    while (g_gyro_yaw_integral >= 360.0f)
-    {
-        g_gyro_yaw_integral -= 360.0f;
-    }
-    while (g_gyro_yaw_integral < 0.0f)
-    {
-        g_gyro_yaw_integral += 360.0f;
-    }
 
     // set F
     halfgxdt = 0.5f * QEKF_INS.Gyro[0] * QEKF_INS.dt;
@@ -600,25 +566,19 @@ static void IMU_QuaternionEKF_Observe(KalmanFilter_t *kf)
     memcpy(IMU_QuaternionEKF_H, kf->H_data, sizeof(IMU_QuaternionEKF_H));
 }
 
-float Get_Pitch()
+float ekf_get_pitch()
 {
     return QEKF_INS.Pitch;
 }
 
-float Get_Roll()
+float ekf_get_roll()
 {
     return QEKF_INS.Roll;
 }
 
-float Get_Yaw()
+float ekf_get_yaw()
 {
     return QEKF_INS.Yaw;
-}
-
-// 新增函数实现: 获取独立陀螺仪积分的Yaw角
-float Get_Gyro_Yaw(void)
-{
-    return g_gyro_yaw_integral;
 }
 
 /**
