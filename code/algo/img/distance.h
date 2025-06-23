@@ -8,5 +8,7 @@
 #define CAMERA_ANGLE 70.0f
 
 int16 get_image_horizon();
+float distance_reckon(int16 x, int16 y, float c);
+float distance_reckon_horizontal(int16 x, int16 y, int16 c);
 
 #endif

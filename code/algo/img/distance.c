@@ -2,22 +2,29 @@
 #include "Attitude.h"
 #include "image.h"
 
-static float distance_w(int x);
-static int16 distance_h(int16 y);
+static float distance_model(int16 x, int16 y);
 
-float distance_reckon(int16 x, int16 y)
+float distance_reckon(int16 x, int16 y, float c)
 {
-    return (sqrtf((float)(x * x + y * y))) - 0;
+    if (x >= (IMG_WIDTH / 2) || y < 0 || y >= IMG_HEIGHT)
+    {
+        return 0;
+    }
+
+    float distance = distance_model(x, y);
+    if (distance < 0)
+    {
+        return 0;
+    }
+    return distance + c;
 }
 
-static int16 distance_h(int16 y)
+float distance_reckon_horizontal(int16 x, int16 y, int16 c)
 {
-    return y;
-}
-
-static float distance_w(int x)
-{
-    return x;
+    if (y <= 0)
+        return 0;
+    float distance = 1.7890 * x + 0.5660 * y + (-0.0010) * x * x + (-0.0012) * y * y + (-0.0126) * x * y + (-35.4742);
+    return distance + c;
 }
 
 int16 get_image_horizon()
@@ -33,4 +40,12 @@ int16 get_image_horizon()
     }
 
     return (int16)horizon;
+}
+
+static float distance_model(int16 x, int16 y)
+{
+
+    float ans = 0.0977 * x + (-7.8046) * y + 0.0043 * x * x + 0.0371 * y * y + (-0.0010) * x * y + 431.4145;
+
+    return ans;
 }

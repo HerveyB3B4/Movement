@@ -12,6 +12,7 @@
 #include "sd_card.h"
 #include "receiver.h"
 #include "detection.h"
+#include "distance.h"
 
 // 定义静态变量，从栈移到数据段，避免栈溢出
 static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
@@ -498,7 +499,8 @@ void test_image()
 
     while (keymsg.key != KEY_L)
     {
-        img_handler();
+        img_handler(1);
+        // img_handler_alltarget();
     }
 }
 

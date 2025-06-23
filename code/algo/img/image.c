@@ -1,6 +1,7 @@
 #include "image.h"
 #include "detection.h"
 #include "Attitude.h"
+#include "distance.h"
 
 static int16 img_target_error = 0;
 
@@ -36,18 +37,6 @@ int16 get_img_target_error()
     }
 
     return img_target_error;
-}
-
-float get_img_target_distance()
-{
-    int x = img_target_center.y;
-    float distance = -0.001370f * x * x * x + 0.365667f * x * x + (-33.329445f) * x + 1075.385789f;
-    if (distance < 0)
-    {
-        return 0;
-    }
-
-    return distance;
 }
 
 void draw_cross(uint8 *img, Point center, uint8 size, uint8 color)
@@ -164,8 +153,53 @@ void img_handler(uint8 lcd_flag)
             draw_Vmiddleline(s_edge_map, RGB565_YELLOW);
             draw_Hline(s_edge_map, get_image_horizon(), RGB565_WHITE);
             lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
-            lcd_show_int(0, 7, get_img_target_error(), 4);
-            lcd_show_float(8, 7, YAW, 3, 3);
+            // lcd_show_int(0, 7, get_img_target_error(), 3);
+            // lcd_show_int(6, 7, img_target_center.y, 3);
+            lcd_show_float(0, 7, distance_reckon(get_img_target_error(), img_target_center.y, 0), 3, 2);
+            lcd_show_float(8, 7, distance_reckon_horizontal(get_img_target_error(), img_target_center.y, 0), 3, 2);
         }
+    }
+}
+
+void img_handler_alltarget()
+{
+    if (mt9v03x_finish_flag)
+    {
+        mt9v03x_finish_flag = 0;
+        int16 horizon = get_image_horizon();
+        binary_otsu(mt9v03x_image, s_edge_map);
+
+        Point target_buff[128];
+        find_all_white_centers(s_edge_map, target_buff, 10, ALGORITHM_TWO_PASS);
+
+        Point valid_points[2];
+        int valid_count = 0;
+        int16 x_diff = 0;
+
+        for (int i = 0; i < 10 && valid_count < 2; i++)
+        {
+            if (target_buff[i].x >= 0 && target_buff[i].y >= 0 && target_buff[i].y >= horizon)
+            {
+                valid_points[valid_count] = target_buff[i];
+                valid_count++;
+                draw_cross(s_edge_map, target_buff[i], -1, RGB565_YELLOW);
+            }
+        }
+
+        // 计算前两个点的x坐标差值
+        if (valid_count >= 2)
+        {
+            x_diff = valid_points[1].x > valid_points[0].x ? valid_points[1].x - valid_points[0].x : valid_points[0].x - valid_points[1].x;
+        }
+        else
+        {
+            x_diff = 0;
+        }
+
+        draw_Vmiddleline(s_edge_map, RGB565_YELLOW);
+        draw_Hline(s_edge_map, horizon, RGB565_WHITE);
+        lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
+        lcd_show_int(0, 7, x_diff, 4);
+        lcd_show_int(8, 7, valid_points[0].y, 3);
     }
 }

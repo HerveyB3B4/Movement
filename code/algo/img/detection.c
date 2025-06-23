@@ -10,17 +10,30 @@ static uint16 component_min_y[MAX_REGIONS];
 static uint16 component_max_y[MAX_REGIONS];
 static uint16 label_count = 0;
 
+// 全局存储所有连通域信息
+static connected_component_info all_components[MAX_REGIONS];
+static uint8 total_found_components = 0;
+
 // 临时标签数组
 static uint16 temp_labels[IMG_HEIGHT][IMG_WIDTH];
 static component_analysis_result find_largest_connected_component_with_algo(
     uint8 *binary_image,
     connected_component_algorithm_enum algorithm);
+
 // 种子填充用的区域信息
 typedef struct
 {
     int16 min_x, min_y, max_x, max_y;
     uint32 area;
 } flood_fill_region;
+
+// 静态辅助函数声明
+static component_analysis_result find_components_flood_fill(uint8 *binary_image);
+static component_analysis_result find_components_two_pass(uint8 *binary_image);
+static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, flood_fill_region *region);
+static uint8 find_all_centers_flood_fill(uint8 *binary_image, Point *points_array, uint8 max_points);
+static uint8 find_all_centers_two_pass(uint8 *binary_image, Point *points_array, uint8 max_points);
+static void init_union_find();
 
 // 初始化并查集
 static void init_union_find()
@@ -128,19 +141,22 @@ static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, flood_fil
     }
 }
 
-// flood fill
+// 重构后的flood fill算法 - 一次性收集所有连通域
 static component_analysis_result find_components_flood_fill(uint8 *binary_image)
 {
     component_analysis_result result = {0};
     result.largest_component.is_valid = false;
+    total_found_components = 0;
 
     static flood_fill_region regions[MAX_REGIONS];
     static uint8 temp_img[IMG_WIDTH * IMG_HEIGHT];
     uint8 region_count = 0;
+    uint32 max_area = 0;
+    uint8 max_idx = 0;
 
     memcpy(temp_img, binary_image, IMG_WIDTH * IMG_HEIGHT);
 
-    // 扫描并标记连通域
+    // 一次扫描收集所有连通域
     for (uint16 y = 0; y < IMG_HEIGHT; y++)
     {
         for (uint16 x = 0; x < IMG_WIDTH; x++)
@@ -161,7 +177,7 @@ static component_analysis_result find_components_flood_fill(uint8 *binary_image)
 
                 flood_fill(temp_img, x, y, region_count + 1, &regions[region_count]);
 
-                // 创建临时连通域信息进行有效性检查
+                // 检查是否为有效连通域
                 connected_component_info temp_component = {
                     .area = regions[region_count].area,
                     .min_x = regions[region_count].min_x,
@@ -171,48 +187,43 @@ static component_analysis_result find_components_flood_fill(uint8 *binary_image)
 
                 if (is_valid_target(&temp_component))
                 {
-                    region_count++;
+                    // 存储到全局数组
+                    all_components[total_found_components] = temp_component;
+                    all_components[total_found_components].center.x = (temp_component.min_x + temp_component.max_x) / 2;
+                    all_components[total_found_components].center.y = (temp_component.min_y + temp_component.max_y) / 2;
+                    all_components[total_found_components].is_valid = true;
+
+                    // 更新最大连通域
+                    if (temp_component.area > max_area)
+                    {
+                        max_area = temp_component.area;
+                        max_idx = total_found_components;
+                    }
+
+                    total_found_components++;
                 }
+                region_count++;
             }
         }
     }
 
-    result.total_components = region_count;
+    result.total_components = total_found_components;
 
-    // 找最大区域
-    if (region_count > 0)
+    // 设置最大连通域信息
+    if (total_found_components > 0)
     {
-        uint32 max_area = 0;
-        uint8 max_idx = 0;
-
-        for (uint8 i = 0; i < region_count; i++)
-        {
-            if (regions[i].area > max_area)
-            {
-                max_area = regions[i].area;
-                max_idx = i;
-            }
-        }
-
-        // 填充结果
-        result.largest_component.area = regions[max_idx].area;
-        result.largest_component.min_x = regions[max_idx].min_x;
-        result.largest_component.max_x = regions[max_idx].max_x;
-        result.largest_component.min_y = regions[max_idx].min_y;
-        result.largest_component.max_y = regions[max_idx].max_y;
-        result.largest_component.center.x = (regions[max_idx].min_x + regions[max_idx].max_x) / 2;
-        result.largest_component.center.y = (regions[max_idx].min_y + regions[max_idx].max_y) / 2;
-        result.largest_component.is_valid = true;
+        result.largest_component = all_components[max_idx];
     }
 
     return result;
 }
 
-// two-pass
+// 重构后的two-pass算法 - 一次性收集所有连通域
 static component_analysis_result find_components_two_pass(uint8 *binary_image)
 {
     component_analysis_result result = {0};
     result.largest_component.is_valid = false;
+    total_found_components = 0;
 
     init_union_find();
 
@@ -239,7 +250,6 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
 
                 if (left_label == 0 && up_label == 0)
                 {
-                    // 新连通域
                     if (label_count < MAX_REGIONS)
                     {
                         temp_labels[y][x] = label_count;
@@ -290,17 +300,24 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
         }
     }
 
-    // 找最大连通域
-    uint16 max_label = 0;
+    // 收集所有有效连通域信息
+    static bool processed[MAX_REGIONS] = {false};
     uint32 max_area = 0;
-    uint16 valid_components = 0;
+    uint8 max_idx = 0;
+
+    // 重置处理标记
+    for (uint16 i = 0; i < MAX_REGIONS; i++)
+    {
+        processed[i] = false;
+    }
 
     for (uint16 i = 1; i < label_count; i++)
     {
         uint16 root = find_root(i);
-        if (area[root] > 0)
+        if (area[root] > 0 && !processed[root])
         {
-            // 创建临时连通域信息进行有效性检查
+            processed[root] = true;
+
             connected_component_info temp_component = {
                 .area = area[root],
                 .min_x = component_min_x[root],
@@ -310,51 +327,95 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
 
             if (is_valid_target(&temp_component))
             {
-                valid_components++;
-                if (area[root] > max_area)
+                // 计算精确中心点
+                int32 sum_x = 0, sum_y = 0;
+                uint32 count = 0;
+
+                for (int16 y = 0; y < IMG_HEIGHT; y++)
                 {
-                    max_area = area[root];
-                    max_label = root;
+                    for (int16 x = 0; x < IMG_WIDTH; x++)
+                    {
+                        if (temp_labels[y][x] != 0 && find_root(temp_labels[y][x]) == root)
+                        {
+                            sum_x += x;
+                            sum_y += y;
+                            count++;
+                        }
+                    }
+                }
+
+                if (count > 0)
+                {
+                    // 存储到全局数组
+                    all_components[total_found_components] = temp_component;
+                    all_components[total_found_components].center.x = sum_x / count;
+                    all_components[total_found_components].center.y = sum_y / count;
+                    all_components[total_found_components].is_valid = true;
+
+                    // 更新最大连通域
+                    if (temp_component.area > max_area)
+                    {
+                        max_area = temp_component.area;
+                        max_idx = total_found_components;
+                    }
+
+                    total_found_components++;
                 }
             }
         }
     }
 
-    result.total_components = valid_components;
+    result.total_components = total_found_components;
 
-    if (max_area > 0)
+    // 设置最大连通域信息
+    if (total_found_components > 0)
     {
-        // 计算精确中心点
-        int32 sum_x = 0, sum_y = 0;
-        uint32 count = 0;
-
-        for (int16 y = 0; y < IMG_HEIGHT; y++)
-        {
-            for (int16 x = 0; x < IMG_WIDTH; x++)
-            {
-                if (temp_labels[y][x] != 0 && find_root(temp_labels[y][x]) == max_label)
-                {
-                    sum_x += x;
-                    sum_y += y;
-                    count++;
-                }
-            }
-        }
-
-        if (count > 0)
-        {
-            result.largest_component.center.x = sum_x / count;
-            result.largest_component.center.y = sum_y / count;
-            result.largest_component.area = max_area;
-            result.largest_component.min_x = component_min_x[max_label];
-            result.largest_component.max_x = component_max_x[max_label];
-            result.largest_component.min_y = component_min_y[max_label];
-            result.largest_component.max_y = component_max_y[max_label];
-            result.largest_component.is_valid = true;
-        }
+        result.largest_component = all_components[max_idx];
     }
 
     return result;
+}
+
+// 简化的获取所有目标点坐标接口
+uint8 find_all_white_centers(uint8 *binary_image, Point *points_array, uint8 max_points, connected_component_algorithm_enum algorithm)
+{
+    if (binary_image == NULL || points_array == NULL || max_points == 0)
+    {
+        return 0;
+    }
+
+    // 执行连通域分析
+    find_largest_connected_component_with_algo(binary_image, algorithm);
+
+    // 复制结果到用户数组
+    uint8 copy_count = (total_found_components < max_points) ? total_found_components : max_points;
+    for (uint8 i = 0; i < copy_count; i++)
+    {
+        points_array[i] = all_components[i].center;
+    }
+
+    return copy_count;
+}
+
+uint8 get_all_components_info(connected_component_info *components_array, uint8 max_components)
+{
+    if (components_array == NULL || max_components == 0)
+    {
+        return 0;
+    }
+
+    uint8 copy_count = (total_found_components < max_components) ? total_found_components : max_components;
+    for (uint8 i = 0; i < copy_count; i++)
+    {
+        components_array[i] = all_components[i];
+    }
+
+    return copy_count;
+}
+
+uint8 get_total_components_count(void)
+{
+    return total_found_components;
 }
 
 Point find_white_center(uint8 *binary_image, connected_component_algorithm_enum algorithm)

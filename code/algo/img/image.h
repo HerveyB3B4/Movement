@@ -18,6 +18,8 @@ void draw_Vline(uint8 *img, uint8 x, uint8 color);
 void draw_Hline(uint8 *img, uint8 y, uint8 color);
 
 int16 get_img_target_error();
-float get_img_target_distance();
+
+void img_handler_alltarget();
+void img_handler(uint8 lcd_flag);
 
 #endif

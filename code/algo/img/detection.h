@@ -41,7 +41,17 @@ typedef struct
     uint32 total_white_pixels;                  // 总白色像素数
 } component_analysis_result;
 
+// 主要接口函数
 Point find_white_center(uint8 *binary_image, connected_component_algorithm_enum algorithm);
+
+// 获取所有目标点坐标的接口
+uint8 find_all_white_centers(uint8 *binary_image, Point *points_array, uint8 max_points, connected_component_algorithm_enum algorithm);
+
+// 获取所有连通域详细信息的接口
+uint8 get_all_components_info(connected_component_info *components_array, uint8 max_components);
+
+// 获取连通域总数
+uint8 get_total_components_count(void);
 
 // 工具函数
 uint16 find_root(uint16 x);

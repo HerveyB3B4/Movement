@@ -46,33 +46,33 @@ void guide_to_target(struct Control_Target *control_target)
     //     control_target->bottom_vel = -(float)guide_target_vel;
     // }
 
-    int16 current_error = get_img_target_error();
+    // int16 current_error = get_img_target_error();
 
-    if (get_img_target_distance() > 0)
-    {
-        // 目标有效
-        target_lost = false;
-        last_target_error = current_error;
-        control_target->turn_err = current_error;
-    }
-    else
-    {
-        if (!target_lost)
-        {
-            target_lost = true;
-        }
+    // if (get_img_target_distance() > 0)
+    // {
+    //     // 目标有效
+    //     target_lost = false;
+    //     last_target_error = current_error;
+    //     control_target->turn_err = current_error;
+    // }
+    // else
+    // {
+    //     if (!target_lost)
+    //     {
+    //         target_lost = true;
+    //     }
 
-        if (last_target_error > 0)
-        {
-            control_target->turn_err = search_turn_value;
-        }
-        else if (last_target_error < 0)
-        {
-            control_target->turn_err = -search_turn_value;
-        }
-        else
-        {
-            control_target->turn_err = 0;
-        }
-    }
+    //     if (last_target_error > 0)
+    //     {
+    //         control_target->turn_err = search_turn_value;
+    //     }
+    //     else if (last_target_error < 0)
+    //     {
+    //         control_target->turn_err = -search_turn_value;
+    //     }
+    //     else
+    //     {
+    //         control_target->turn_err = 0;
+    //     }
+    // }
 }
