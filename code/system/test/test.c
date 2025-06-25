@@ -13,6 +13,7 @@
 #include "receiver.h"
 #include "detection.h"
 #include "distance.h"
+#include "YawIntegral.h"
 
 // 定义静态变量，从栈移到数据段，避免栈溢出
 static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
@@ -758,10 +759,18 @@ void test_Madgwick()
         attitude_cal_Madgwick();
 
         // 显示当前姿态角度
-        lcd_show_float(0, 1, Madgwick_get_pitch(), 3, 3);
+        lcd_show_float(0, 1, MadgwickAHRS_get_pitch(), 3, 3);
         lcd_show_float(0, 2, g_euler_angle.roll, 3, 3);
         lcd_show_float(0, 3, g_euler_angle.yaw, 3, 3);
 
         system_delay_ms(1); // 控制刷新频率
     }
+}
+
+void test_yaw_integral()
+{
+    lcd_clear();
+    while (keymsg.key != KEY_L) 
+        lcd_show_float(0, 1, YawIntegral_GetValue(), 3, 3);
+    lcd_clear();
 }
