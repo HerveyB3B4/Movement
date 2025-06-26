@@ -64,10 +64,14 @@ void core1_main(void)
         // 此处编写需要循环执行的代码
         // if (g_exit_menu_flag && g_show_run_param_flag)
         // {
-        lcd_show_int(0, 0, runState, 5);
-        lcd_show_float(0, 2, g_euler_angle.pitch, 6, 2);
-        lcd_show_float(0, 3, g_euler_angle.roll, 6, 2);
-        // }
+        // lcd_show_int(0, 0, runState, 5);
+        // lcd_show_float(0, 2, g_euler_angle.pitch, 6, 2);
+        // lcd_show_float(0, 3, g_euler_angle.roll, 6, 2);
+        // lcd_show_int(0, 1, g_pit_ccu61_ch1_cnt, 5);
+        // lcd_show_int(0, 2, g_pit_ccu60_ch0_cnt, 5);
+        // lcd_show_int(0, 3, g_main_1_cnt++, 5);
+        // lcd_show_int(0, 4, g_system_attitude_cnt, 5);
+
         // 此处编写需要循环执行的代码
         system_delay_ms(1);
     }

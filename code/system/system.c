@@ -11,12 +11,16 @@
 #include "receiver.h"
 
 RunState_t runState;
+uint32 g_system_attitude_cnt = 0;
+uint32 g_pit_ccu61_ch1_cnt = 0;
+uint32 g_pit_ccu60_ch0_cnt = 0;
+uint32 g_main_1_cnt = 0;
 
 void system_init()
 {
     // ===================== DEVICE ======================== //
     clock_init(); // 获取时钟频率<务必保留>
-    // debug_init(); // 初始化默认调试串口
+    debug_init(); // 初始化默认调试串口
     motor_init();
     small_driver_uart_init();
     encoder_init();
@@ -63,11 +67,12 @@ void system_attitude_timer(
     struct EulerAngle *euler_angle,
     struct IMU_DATA *imu_data)
 {
-    static uint8 imu_cnt = 0;
-    imu_cnt++;
-    if (imu_cnt >= 2)
+    g_system_attitude_cnt++;
+    static uint8 cnt = 0;
+    cnt++;
+    if (cnt >= 2)
     {
-        imu_cnt = 0;
+        cnt = 0;
         g_attitude_cal_flag = 1;
         attitude_cal_amend(control_turn_params, control_target, vel_motor,
                            euler_angle, imu_data);
@@ -247,6 +252,7 @@ void system_set_runstate(RunState_t state)
 
         stop_bottom_motor();
         stop_momentum_motor();
+        lcd_clear();
         zf_log(0, "shutdown");
         break;
     case CAR_RUNNING:

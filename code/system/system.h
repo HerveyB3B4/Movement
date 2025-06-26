@@ -27,12 +27,12 @@ struct Control_Motion_Manual_Parmas;
 
 void system_init();
 void system_attitude_timer(
-                        struct Control_Turn_Manual_Params *control_turn_params,
-                        struct Control_Target *control_target,
-                        struct Velocity_Motor *vel_motor,
-                        struct EulerAngle *euler_angle,
-                        struct IMU_DATA* imu_data);
-    
+    struct Control_Turn_Manual_Params *control_turn_params,
+    struct Control_Target *control_target,
+    struct Velocity_Motor *vel_motor,
+    struct EulerAngle *euler_angle,
+    struct IMU_DATA *imu_data);
+
 void system_control_timer();
 
 void bottom_control_timer(struct Control_Time *control_time,
@@ -58,5 +58,8 @@ void turn_control_timer(struct Control_Time *control_time,
 void system_set_runstate(RunState_t state);
 
 extern RunState_t runState;
-
+extern uint32 g_system_attitude_cnt;
+extern uint32 g_pit_ccu60_ch0_cnt;
+extern uint32 g_pit_ccu61_ch1_cnt;
+extern uint32 g_main_1_cnt;
 #endif

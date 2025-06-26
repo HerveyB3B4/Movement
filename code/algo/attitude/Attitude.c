@@ -111,6 +111,11 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
         euler_angle->pitch = MahonyAHRS_get_pitch() + control_target->Fbucking;
         euler_angle->yaw = MahonyAHRS_get_yaw();
         break;
+    default:
+        euler_angle->roll = ekf_get_roll() + control_target->bucking;
+        euler_angle->pitch = ekf_get_pitch() + control_target->Fbucking;
+        euler_angle->yaw = ekf_get_yaw();
+        break;
     }
 
     euler_angle->yaw = 360.0f - euler_angle->yaw; // 0~360
