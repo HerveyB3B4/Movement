@@ -76,20 +76,22 @@ struct Control_Target
 struct Control_Flag
 {
     // 控制更新标志
-    uint8_t bottom_angle;
-    uint8_t bottom_angle_vel;
-    uint8_t bottom_vel;
+    uint8 bottom_angle;
+    uint8 bottom_angle_vel;
+    uint8 bottom_vel;
 
-    uint8_t side_angle;
-    uint8_t side_angle_vel;
-    uint8_t side_vel;
+    uint8 side_angle;
+    uint8 side_angle_vel;
+    uint8 side_vel;
 
-    uint8_t turn;
-    uint8_t turn_angle;
-    uint8_t turn_angle_vel;
-    uint8_t turn_vel;
-    uint8_t turnAngleDiffVelocity;
-    uint8_t turn_err;
+    uint8 turn;
+    uint8 turn_angle;
+    uint8 turn_angle_vel;
+    uint8 turn_vel;
+    uint8 turnAngleDiffVelocity;
+    uint8 turn_err;
+
+    uint8 bucking;
 
     uint8 bottom_angle_cnt;
     uint8 bottom_angle_vel_cnt;
@@ -103,6 +105,8 @@ struct Control_Flag
     uint8 turn_angle_vel_cnt;
     uint8 turn_vel_cnt;
     uint8 turn_err_cnt;
+
+    uint8 bucking_cnt;
 };
 
 struct EulerAngle;

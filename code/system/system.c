@@ -61,7 +61,7 @@ void system_attitude_timer(
     struct Control_Target *control_target,
     struct Velocity_Motor *vel_motor,
     struct EulerAngle *euler_angle,
-    struct IMU_DATA* imu_data)
+    struct IMU_DATA *imu_data)
 {
     static uint8 imu_cnt = 0;
     imu_cnt++;
@@ -270,6 +270,16 @@ void system_control_timer()
                              &g_control_motion_params);
     }
 
+    // if (g_control_turn_flag != 0)
+    // {
+    turn_control_timer(&g_control_time,
+                       &g_control_flag,
+                       &g_control_target,
+                       &g_control_turn_manual_params,
+                       &g_control_motion_params,
+                       &g_vel_motor);
+    // }
+
     if (g_control_side_flag != 0)
     {
         side_control_timer(&g_control_time,
@@ -281,14 +291,5 @@ void system_control_timer()
                            &g_control_motion_params);
     }
 
-    // if (g_control_turn_flag != 0)
-    // {
-    turn_control_timer(&g_control_time,
-                       &g_control_flag,
-                       &g_control_target,
-                       &g_control_turn_manual_params,
-                       &g_control_motion_params,
-                       &g_vel_motor);
-    // }
     control_shutdown(&g_control_target, &g_euler_angle_bias, &g_vel_motor);
 }

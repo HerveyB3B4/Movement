@@ -50,19 +50,21 @@ void control_turn(struct Control_Target *control_target,
 
     restrictValueI(&s_momentum_diff, 5000, -5000);
 
-    // if (control_flag->bucking) {
+    // if (control_flag->bucking)
+    // {
     //     control_flag->bucking = 0;
     //     float v = (float)fabsf(vel_motor->bottomReal);
-    //     if (v < 0) {
+    //     if (v < 0)
+    //     {
     //         v = 0;
     //     }
 
     //     // float x = (float) control_target.turn_angle_velocity * 0.01f *
     //     // fabsf(motor_velocity.bottom_filtered * 0.01f);
-    //     float x = (float)control_target.turn_angle_velocity * 0.1f *
-    //               logf(v + 2);  // 使用ln函数，降低速度对压弯的影响
-    //     control_target.bucking = bucking_k * x;
-    //     RestrictValueF(&control_target.bucking, 10.5f, -10.5f);
+    //     float x = (float)control_target->turn_angle_vel * 0.1f *
+    //               logf(v + 2); // 使用ln函数，降低速度对压弯的影响
+    //     control_target->bucking = control_turn_params->buckling_turn_coefficient * x;
+    //     RestrictValueF(&control_target->bucking, 10.5f, -10.5f);
     // }
 }
 
