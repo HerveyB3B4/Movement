@@ -14,7 +14,7 @@ struct EulerAngle g_euler_angle_bias;
 uint8 g_attitude_cal_flag = 0;
 uint8 attitude_time = 0;
 
-static Attitude_algorithm current_algorithm = ATTITUDE_MAHONY; // 默认使用Mahony
+static Attitude_algorithm current_algorithm = ATTITUDE_EKF; // 默认使用Mahony
 
 void attitude_init(Attitude_algorithm algo)
 {
@@ -25,48 +25,52 @@ void attitude_init(Attitude_algorithm algo)
     // IMU_QuaternionEKF_Init(10000, 100000, 1000000, 0.9996, 0.001f, 0);  //
     // ekf初始化
     // IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0); // ekf初始化 (原始参数)
-    switch(current_algorithm) {
-        case ATTITUDE_EKF:
-            IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0); 
-            break;
-        case ATTITUDE_MADGWICK:
-            MadgwickAHRS_init(1000.0f); 
-            break;
-        case ATTITUDE_MAHONY:
-            MahonyAHRS_init(1000.0f);
-            break;
-        default:
-            break;
+    switch (current_algorithm)
+    {
+    case ATTITUDE_EKF:
+        IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0);
+        break;
+    case ATTITUDE_MADGWICK:
+        MadgwickAHRS_init(1000.0f);
+        break;
+    case ATTITUDE_MAHONY:
+        MahonyAHRS_init(1000.0f);
+        break;
+    default:
+        IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0);
+        break;
     }
 
-    imu_init_offset();                                  // 初始化零飘
+    imu_init_offset(); // 初始化零飘
 }
 
-void attitude_cal(struct IMU_DATA* data) {
+void attitude_cal(struct IMU_DATA *data)
+{
     imu_get_data(data);
     imu_remove_offset(data);
 
-    switch (current_algorithm) {
-        case ATTITUDE_EKF:
-            IMU_QuaternionEKF_Update(data);
-            break;
-        case ATTITUDE_MADGWICK:
-            MadgwickAHRS_update(&data);
-            break;
-        case ATTITUDE_MAHONY:
-            MahonyAHRS_update(&data);
-            break;
-        default:
-            break;
+    switch (current_algorithm)
+    {
+    case ATTITUDE_EKF:
+        IMU_QuaternionEKF_Update(data);
+        break;
+    case ATTITUDE_MADGWICK:
+        MadgwickAHRS_update(&data);
+        break;
+    case ATTITUDE_MAHONY:
+        MahonyAHRS_update(&data);
+        break;
+    default:
+        IMU_QuaternionEKF_Update(data);
+        break;
     }
 }
-
 
 void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
                         struct Control_Target *control_target,
                         struct Velocity_Motor *velocity_motor,
                         struct EulerAngle *euler_angle,
-                        struct IMU_DATA* data)
+                        struct IMU_DATA *data)
 {
     // 修正姿态计算
     if (g_attitude_cal_flag == 0)
@@ -88,27 +92,28 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
         restrictValueF(&control_target->Fbucking, 5.0f, -5.0f);
     }
 
-    attitude_cal(data); 
+    attitude_cal(data);
 
-    switch (current_algorithm) {
-        case ATTITUDE_EKF:
-            euler_angle->roll = ekf_get_roll() + control_target->bucking;
-            euler_angle->pitch = ekf_get_pitch() + control_target->Fbucking;
-            euler_angle->yaw = ekf_get_yaw();
-            break;
-        case ATTITUDE_MADGWICK:
-            euler_angle->roll = MadgwickAHRS_get_roll() + control_target->bucking;
-            euler_angle->pitch = MadgwickAHRS_get_pitch() + control_target->Fbucking;
-            euler_angle->yaw = MadgwickAHRS_get_yaw();
-            break;
-        case ATTITUDE_MAHONY:
-            euler_angle->roll = MahonyAHRS_get_roll() + control_target->bucking;
-            euler_angle->pitch = MahonyAHRS_get_pitch() + control_target->Fbucking;
-            euler_angle->yaw = MahonyAHRS_get_yaw();
-            break;
+    switch (current_algorithm)
+    {
+    case ATTITUDE_EKF:
+        euler_angle->roll = ekf_get_roll() + control_target->bucking;
+        euler_angle->pitch = ekf_get_pitch() + control_target->Fbucking;
+        euler_angle->yaw = ekf_get_yaw();
+        break;
+    case ATTITUDE_MADGWICK:
+        euler_angle->roll = MadgwickAHRS_get_roll() + control_target->bucking;
+        euler_angle->pitch = MadgwickAHRS_get_pitch() + control_target->Fbucking;
+        euler_angle->yaw = MadgwickAHRS_get_yaw();
+        break;
+    case ATTITUDE_MAHONY:
+        euler_angle->roll = MahonyAHRS_get_roll() + control_target->bucking;
+        euler_angle->pitch = MahonyAHRS_get_pitch() + control_target->Fbucking;
+        euler_angle->yaw = MahonyAHRS_get_yaw();
+        break;
     }
 
-    euler_angle->yaw = 360.0f - euler_angle->yaw;  // 0~360
+    euler_angle->yaw = 360.0f - euler_angle->yaw; // 0~360
     euler_angle->yaw > 360 ? (euler_angle->yaw -= 360)
                            : euler_angle->yaw; // 0~360
 }

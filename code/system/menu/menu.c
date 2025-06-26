@@ -6,6 +6,7 @@
 #include "single_driver.h"
 #include "system.h"
 #include "test.h"
+#include "guide.h"
 
 //======================================================================================================================
 typedef struct MENU_TABLE MENU_TABLE; // 菜单执行
@@ -74,7 +75,6 @@ uint32 *EEPROM_DATA_UINT[] = {
     (uint32 *)(&g_menu_manual_param.TurnControlTimeParameter[1]),
     (uint32 *)(&g_menu_manual_param.TurnControlTimeParameter[2]),
     (uint32 *)(&g_menu_manual_param.TurnControlTimeParameter[3]),
-    (uint32 *)(&g_menu_manual_param.buckingTurnCoefficient),
     (uint32 *)(&g_menu_manual_param.bucklingFrontCoefficientV),
     (uint32 *)(&g_menu_manual_param.bucklingFrontCoefficientT),
     (uint32 *)(&g_control_shutdown_flag),
@@ -99,10 +99,13 @@ uint32 *EEPROM_DATA_UINT[] = {
 };
 
 int32 *EEPROM_DATA_INT[] = {
+    (int32 *)(&g_menu_manual_param.buckingTurnCoefficient),
     (int32 *)(&g_menu_manual_param.mechanicalYawAngle),
     (int32 *)(&g_menu_manual_param.mechanicalPitchAngle),
     (int32 *)(&g_menu_manual_param.mechanicalRollAngle),
     (int32 *)(&g_menu_manual_param.bottom_velocity),
+    (int32 *)(&g_menu_manual_param.turn_target),
+    (int32 *)(&g_menu_manual_param.side_internal_diff),
     // (int32*)(&g_menu_manual_param.turnCurvatureTest),
 };
 
@@ -111,6 +114,14 @@ MENU_PRMT PID_Prmt;
 MENU_TABLE PID_Table[] = {
     {(uint8 *)"FV",
      {.INT32 = (int32 *)&g_menu_manual_param.bottom_velocity},
+     Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"TURN_TARGET",
+     {.INT32 = (int32 *)&g_menu_manual_param.turn_target},
+     Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"diff",
+     {.INT32 = (int32 *)&g_menu_manual_param.side_internal_diff},
      Param_Int,
      {.ItemFunc = Menu_Null}},
     {(uint8 *)"FAV_kp",
@@ -291,25 +302,25 @@ MENU_TABLE Pid_TimeMenuTable[] = {
 
 MENU_TABLE Buckling[] = {
     {(uint8 *)"BT_coeff",
-     {.UINT32 = (uint32 *)&g_menu_manual_param.buckingTurnCoefficient},
-     Param_Uint,
+     {.INT32 = (int32 *)&g_menu_manual_param.buckingTurnCoefficient},
+     Param_Int,
      {.ItemFunc = Menu_Null}},
     // {(uint8*)"turnCurvature",
     //  {.INT32 = (int32*)&turnCurvatureTest},
     //  Param_Int,
     //  {.ItemFunc = Menu_Null}},
-    {(uint8 *)"T_coeff",
-     {.UINT32 = (uint32 *)&g_menu_manual_param.turnGainCoefficient},
-     Param_Uint,
-     {.ItemFunc = Menu_Null}},
-    {(uint8 *)"FFF_coeff",
-     {.UINT32 = (uint32 *)&g_menu_manual_param.bucklingFrontCoefficientV},
-     Param_Uint,
-     {.ItemFunc = Menu_Null}},
-    {(uint8 *)"BFT_coeff",
-     {.UINT32 = (uint32 *)&g_menu_manual_param.bucklingFrontCoefficientT},
-     Param_Uint,
-     {.ItemFunc = Menu_Null}},
+    // {(uint8 *)"T_coeff",
+    //  {.UINT32 = (uint32 *)&g_menu_manual_param.turnGainCoefficient},
+    //  Param_Uint,
+    //  {.ItemFunc = Menu_Null}},
+    // {(uint8 *)"FFF_coeff",
+    //  {.UINT32 = (uint32 *)&g_menu_manual_param.bucklingFrontCoefficientV},
+    //  Param_Uint,
+    //  {.ItemFunc = Menu_Null}},
+    // {(uint8 *)"BFT_coeff",
+    //  {.UINT32 = (uint32 *)&g_menu_manual_param.bucklingFrontCoefficientT},
+    //  Param_Uint,
+    //  {.ItemFunc = Menu_Null}},
 };
 
 MENU_TABLE Calibration_MenuTable[] = {

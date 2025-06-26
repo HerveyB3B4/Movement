@@ -11,6 +11,7 @@ uint32 g_control_output_sv_flag = 0;
 uint32 g_control_output_sa_flag = 0;
 
 static int32 s_side_balance_duty = 0;
+static int32 s_side_internal_diff = 0;
 
 // side
 static void control_side_velocity(
@@ -24,7 +25,17 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
 static void control_side_angle_velocity(struct Control_Target *control_target,
                                         struct Control_Motion_Manual_Parmas *control_motion_params);
 
-int32 get_side_duty() { return s_side_balance_duty; }
+int32 get_side_duty()
+{
+    return s_side_balance_duty;
+}
+
+void side_set_internal_diff(int32 diff)
+{
+    // 设置内部差值
+    s_side_internal_diff = diff;
+}
+
 void control_side_balance(
     struct Control_Target *control_target,
     struct Control_Flag *control_flag,
@@ -60,16 +71,26 @@ void control_side_balance(
     // s_side_balance_duty = control_target->side_angle * 100;
     // turnControl();
     int32 left_motor_duty, right_motor_duty;
-    left_motor_duty =
-        -s_side_balance_duty -
-        (int32_t)(get_momentum_diff() *
-                  (float)(3.3f -
-                          logf(0.2f * abs(vel_motor->momentumFront) + 8)));
-    right_motor_duty =
-        s_side_balance_duty -
-        (int32_t)(get_momentum_diff() *
-                  (float)(3.3f -
-                          logf(0.2f * abs(vel_motor->momentumBack) + 8)));
+
+    int32 turn_diff_left = (int32_t)(get_momentum_diff() *
+                                     (float)(3.3f -
+                                             logf(0.2f * abs(vel_motor->momentumFront) + 8)));
+    int32 turn_diff_right = (int32_t)(get_momentum_diff() *
+                                      (float)(3.3f -
+                                              logf(0.2f * abs(vel_motor->momentumBack) + 8)));
+
+    left_motor_duty = -s_side_balance_duty - s_side_internal_diff - turn_diff_left;
+    right_motor_duty = s_side_balance_duty + s_side_internal_diff - turn_diff_right;
+    // left_motor_duty =
+    //     -s_side_balance_duty -
+    //     (int32_t)(get_momentum_diff() *
+    //               (float)(3.3f -
+    //                       logf(0.2f * abs(vel_motor->momentumFront) + 8)));
+    // right_motor_duty =
+    //     s_side_balance_duty -
+    //     (int32_t)(get_momentum_diff() *
+    //               (float)(3.3f -
+    //                       logf(0.2f * abs(vel_motor->momentumBack) + 8)));
 
     // 添加死区补偿
     if (left_motor_duty > 0)

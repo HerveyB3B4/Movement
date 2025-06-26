@@ -14,7 +14,10 @@ static void control_turn_error(struct Control_Target *control_target,
                                struct Control_Motion_Manual_Parmas *control_motion_params);
 
 // diff 为正就往右转，为负往左转
-int32 get_momentum_diff() { return s_momentum_diff; }
+int32 get_momentum_diff()
+{
+    return s_momentum_diff;
+}
 
 void control_turn(struct Control_Target *control_target,
                   struct Control_Flag *control_flag,
@@ -32,6 +35,7 @@ void control_turn(struct Control_Target *control_target,
     //     control_flag->turn_vel = 0;
     //     control_turn_velocity(control_target, vel_motor, control_motion_params);
     // }
+
     if (control_flag->turn_err)
     {
         control_flag->turn_err = 0;
@@ -64,7 +68,7 @@ void control_turn(struct Control_Target *control_target,
     //     float x = (float)control_target->turn_angle_vel * 0.1f *
     //               logf(v + 2); // 使用ln函数，降低速度对压弯的影响
     //     control_target->bucking = control_turn_params->buckling_turn_coefficient * x;
-    //     RestrictValueF(&control_target->bucking, 10.5f, -10.5f);
+    //     restrictValueF(&control_target->bucking, 10.5f, -10.5f);
     // }
 }
 
@@ -124,4 +128,18 @@ static void control_turn_velocity(struct Control_Target *control_target,
     // {
     //     printf("%f\n", control_target->turn_angle_vel);
     // }
+}
+
+static void control_turn_curve(struct Control_Target *control_target,
+                               struct Control_Turn_Manual_Params *control_turn_params,
+                               struct Velocity_Motor *vel_motor)
+{
+    static float turn_err_filter[2] = {0}; // err 滤波
+    turn_err_filter[1] = turn_err_filter[0];
+    turn_err_filter[0] = control_target->turn_err;
+
+    lowPassFilterF(&turn_err_filter[0], &turn_err_filter[1], 0.5f);
+
+    control_target->curve_angle = turn_err_filter[0] * control_turn_params->turn_curve_k1 +
+                                  (vel_motor->bottomReal * vel_motor->bottomReal) * turn_err_filter[0] * control_turn_params->turn_curve_k2;
 }

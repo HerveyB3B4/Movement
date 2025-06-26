@@ -16,7 +16,7 @@ void system_init()
 {
     // ===================== DEVICE ======================== //
     clock_init(); // 获取时钟频率<务必保留>
-    debug_init(); // 初始化默认调试串口
+    // debug_init(); // 初始化默认调试串口
     motor_init();
     small_driver_uart_init();
     encoder_init();
@@ -29,7 +29,7 @@ void system_init()
     key_init_rewrite(KEY_NUM);
 
     // ===================== PARAMS ======================== //
-    attitude_init(ATTITUDE_MAHONY);
+    attitude_init(ATTITUDE_EKF);
     menu_manual_param_init();
     velocity_init(&g_vel_motor);
     control_manual_param_init();

@@ -12,4 +12,6 @@ void control_side_balance(
     struct Control_Motion_Manual_Parmas *control_motion_params);
 
 int32 get_side_duty();
+void side_set_internal_diff(int32 diff);
+
 #endif

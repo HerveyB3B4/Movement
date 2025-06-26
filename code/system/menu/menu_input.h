@@ -12,6 +12,8 @@ struct Menu_Manual_Param
     int32 mechanicalRollAngle;
 
     int32 bottom_velocity;
+    int32 turn_target;
+    int32 side_internal_diff;
 
     // PID
     uint32 bottom_angle_velocity_parameter[3];
@@ -42,7 +44,7 @@ struct Menu_Manual_Param
     uint32 FrontControlTimeParameter[3];
     uint32 SideControlTimeParameter[3];
 
-    uint32 buckingTurnCoefficient;
+    int32 buckingTurnCoefficient;
     uint32 turnGainCoefficient;
     uint32 bucklingFrontCoefficientV;
     uint32 bucklingFrontCoefficientT;
