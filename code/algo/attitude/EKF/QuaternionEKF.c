@@ -17,11 +17,10 @@
 #include "math.h"
 
 QEKF_INS_t QEKF_INS = {0};
-float g_gyro_yaw_integral = 0.0f; // 独立的陀螺仪Yaw角积分值
-float g_yaw_gyro_bias = 0.0f;     // 陀螺仪Z轴零偏估计
-float g_yaw_last_time = 0.0f;     // 上次更新时间
-float g_yaw_init_flag = 0;        // 初始化标志
-float g_yaw_scale_factor = 8.0f;  // 陀螺仪比例系数修正 - 解决只有45度的问题
+float g_yaw_gyro_bias = 0.0f;    // 陀螺仪Z轴零偏估计
+float g_yaw_last_time = 0.0f;    // 上次更新时间
+float g_yaw_init_flag = 0;       // 初始化标志
+float g_yaw_scale_factor = 8.0f; // 陀螺仪比例系数修正 - 解决只有45度的问题
 
 const float IMU_QuaternionEKF_F[36] = {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
                                        0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0,

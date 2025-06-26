@@ -70,8 +70,6 @@ typedef struct
 extern QEKF_INS_t QEKF_INS;
 extern float chiSquare;
 extern float ChiSquareTestThreshold;
-// 独立陀螺仪Yaw角积分变量
-extern float g_gyro_yaw_integral;
 
 void IMU_QuaternionEKF_Init(float process_noise1,
                             float process_noise2,

@@ -770,7 +770,15 @@ void test_Madgwick()
 void test_yaw_integral()
 {
     lcd_clear();
-    while (keymsg.key != KEY_L) 
-        lcd_show_float(0, 1, YawIntegral_GetValue(), 3, 3);
+    integral_init(0.001f * PIT_CONTROL_T);
+    while (keymsg.key != KEY_L)
+    {
+        imu_get_data(&g_imu_data);
+        imu_remove_offset(&g_imu_data);
+        integral_update(&g_imu_data.gyro.z);
+        lcd_show_float(0, 0, g_imu_data.gyro.z, 3, 3);
+        lcd_show_float(0, 1, integral_get_yaw(), 3, 3);
+        system_delay_ms(1);
+    }
     lcd_clear();
 }
