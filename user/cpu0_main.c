@@ -37,6 +37,7 @@
 #include "control.h"
 #include "menu.h"
 #include "motor.h"
+#include "image.h"
 #include "velocity.h"
 #include "zf_common_headfile.h"
 #pragma section all "cpu0_dsram"
@@ -57,6 +58,8 @@ int core0_main(void)
     while (TRUE)
     {
         img_handler(g_show_run_param_flag);
+        // lcd_show_int(0, 0, get_momentum_diff(), 5);
+        // lcd_show_int(0, 1, get_side_duty(), 5);
     }
 }
 

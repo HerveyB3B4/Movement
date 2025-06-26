@@ -1,6 +1,7 @@
 #include "menu_input.h"
 #include "attitude.h"
 #include "control.h"
+#include "guide.h"
 
 struct Menu_Manual_Param g_menu_manual_param;
 
@@ -153,5 +154,5 @@ void menu_get_params(
     control_time->side[1] = g_menu_manual_param.SideControlTimeParameter[1]; // SA
     control_time->side[2] = g_menu_manual_param.SideControlTimeParameter[2]; // SV
 
-    guide_set_target_vel(g_menu_manual_param.bottom_velocity * 100);
+    guide_set_target_vel(g_menu_manual_param.bottom_velocity * 10);
 }

@@ -83,8 +83,11 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
                                     struct Control_Motion_Manual_Parmas *control_motion_params)
 {
 #ifdef VELOCITY_KALMAN_FILTER
-    control_target->bottom_angle = control_motion_params->bottom_velocity_polarity * PID_calc_Position(
-                                                                                         &bottom_velocity_PID, (float)vel_motor->bottomFiltered, control_target->bottom_vel);
+    control_target->bottom_angle = control_motion_params->bottom_velocity_polarity *
+                                   PID_calc_Position(
+                                       &bottom_velocity_PID,
+                                       (float)vel_motor->bottomFiltered,
+                                       control_target->bottom_vel);
 #endif
 #ifndef VELOCITY_KALMAN_FILTER
     control_target->bottom_angle =

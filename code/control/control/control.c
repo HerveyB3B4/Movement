@@ -83,9 +83,8 @@ void control_polarity_init(struct Control_Motion_Manual_Parmas *control_motion_p
     control_motion_params->side_angle_polarity = -1;
     control_motion_params->side_velocity_polarity = -1;
 
-    control_motion_params->turn_angle_velocity_polarity =
-        1;
-    control_motion_params->turn_error_polarity = -1;
+    control_motion_params->turn_angle_velocity_polarity = 1;
+    control_motion_params->turn_error_polarity = 1;
     control_motion_params->turn_velocity_polarity = 1;
     control_motion_params->turn_angle_polarity = 1;
 }
@@ -250,10 +249,10 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
     // turn pid
     control_param_init(&turn_angle_velocity_PID,
                        control_motion_params->turn_angle_velocity_parameter, 1, 1, 1,
-                       9999, 500);
+                       5000, 500);
     control_param_init(&turn_error_PID,
                        control_motion_params->turn_error_parameter, 1, 1, 1,
-                       9999, 500);
+                       5000, 500);
     control_param_init(&turn_angle_PID,
                        control_motion_params->turn_angle_parameter, 100, 100, 100, 9999,
                        500);

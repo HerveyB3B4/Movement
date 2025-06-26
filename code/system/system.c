@@ -257,7 +257,7 @@ void system_set_runstate(RunState_t state)
     }
 }
 
-void system_control()
+void system_control_timer()
 {
     if (g_control_bottom_flag != 0)
     {
@@ -280,14 +280,14 @@ void system_control()
                            &g_control_motion_params);
     }
 
-    if (g_control_turn_flag != 0)
-    {
-        turn_control_timer(&g_control_time,
-                           &g_control_flag,
-                           &g_control_target,
-                           &g_control_turn_manual_params,
-                           &g_control_motion_params,
-                           &g_vel_motor);
-    }
+    // if (g_control_turn_flag != 0)
+    // {
+    turn_control_timer(&g_control_time,
+                       &g_control_flag,
+                       &g_control_target,
+                       &g_control_turn_manual_params,
+                       &g_control_motion_params,
+                       &g_vel_motor);
+    // }
     control_shutdown(&g_control_target, &g_euler_angle_bias, &g_vel_motor);
 }
