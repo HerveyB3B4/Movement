@@ -134,7 +134,7 @@ void IMU_QuaternionEKF_Reset(void)
  * @param[in] 	update period in s
  */
 // 计算出来欧拉角的单位是度
-void IMU_QuaternionEKF_Update(IMU_DATA *imu_data)
+void IMU_QuaternionEKF_Update(struct IMU_DATA *imu_data)
 {
     // 0.5(Ohm-Ohm^bias)*deltaT,用于更新工作点处的状态转移F矩阵
     volatile float halfgxdt, halfgydt, halfgzdt;

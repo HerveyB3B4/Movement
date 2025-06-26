@@ -32,12 +32,20 @@ struct Control_Turn_Manual_Params;
 struct Control_Target;
 struct Velocity_Motor;
 
-void attitude_init();    // attitude init
-void attitude_cal_ekf(); // attitude calculate
+typedef enum {
+    ATTITUDE_EKF,
+    ATTITUDE_MADGWICK,
+    ATTITUDE_MAHONY
+} Attitude_algorithm;
+
+void attitude_init(Attitude_algorithm algo);
+void attitude_cal(struct IMU_DATA* data);
+
 void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
                         struct Control_Target *control_target,
                         struct Velocity_Motor *velocity_motor,
-                        struct EulerAngle *euler_angle);
+                        struct EulerAngle *euler_angle,
+                        struct IMU_DATA* data);
 
 extern struct EulerAngle g_euler_angle;
 extern struct EulerAngle g_euler_angle_bias;

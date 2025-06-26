@@ -11,7 +11,7 @@ typedef struct
 } Integral_info;
 
 void integral_init(float dt);
-void integral_update(IMU_DATA *data);
+void integral_update(struct IMU_DATA *data);
 float integral_get_yaw(void);
 void integral_reset(void);
 

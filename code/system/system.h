@@ -2,6 +2,7 @@
 #define _SYSTEM_H_
 
 #include "zf_common_headfile.h"
+#include "imu.h"
 
 #define PIT_KEY_T 5      // 更新频率
 #define PIT_VELOCITY_T 1 // 更新周期(ms)
@@ -26,10 +27,12 @@ struct Control_Motion_Manual_Parmas;
 
 void system_init();
 void system_attitude_timer(
-    struct Control_Turn_Manual_Params *control_turn_params,
-    struct Control_Target *control_target,
-    struct Velocity_Motor *vel_motor,
-    struct EulerAngle *euler_angle);
+                        struct Control_Turn_Manual_Params *control_turn_params,
+                        struct Control_Target *control_target,
+                        struct Velocity_Motor *vel_motor,
+                        struct EulerAngle *euler_angle,
+                        struct IMU_DATA* imu_data);
+    
 void system_control_timer();
 
 void bottom_control_timer(struct Control_Time *control_time,

@@ -77,7 +77,7 @@ void IMU_QuaternionEKF_Init(float process_noise1,
                             float lambda,
                             float dt,
                             float lpf);
-void IMU_QuaternionEKF_Update(IMU_DATA *data);
+void IMU_QuaternionEKF_Update(struct IMU_DATA *data);
 void IMU_QuaternionEKF_Reset(void);
 
 float ekf_get_pitch(void); // get pitch
