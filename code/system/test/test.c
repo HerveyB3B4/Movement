@@ -746,27 +746,6 @@ void test_line()
     }
 }
 
-void test_Madgwick()
-{
-    lcd_clear();
-    MadgwickAHRS_init();
-    lcd_show_string(0, 0, "Waiting");
-    attitude_init_Madgwick();
-    lcd_show_string(0, 0, "Done");
-    while (keymsg.key != KEY_L)
-    {
-        // 调用Madgwick算法进行姿态计算
-        attitude_cal_Madgwick();
-
-        // 显示当前姿态角度
-        lcd_show_float(0, 1, MadgwickAHRS_get_pitch(), 3, 3);
-        lcd_show_float(0, 2, g_euler_angle.roll, 3, 3);
-        lcd_show_float(0, 3, g_euler_angle.yaw, 3, 3);
-
-        system_delay_ms(1); // 控制刷新频率
-    }
-}
-
 void test_yaw_integral()
 {
     lcd_clear();

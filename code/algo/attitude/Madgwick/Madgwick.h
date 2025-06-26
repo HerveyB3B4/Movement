@@ -32,12 +32,14 @@ typedef struct
     unsigned long last_update; // 最后更新时间 (us)
     int is_initialized;        // 初始化标志
     uint16 init_count;
-} MadgwickAHRS;
+} MadgwickAHRS_t;
+
+static MadgwickAHRS_t s_Madgwick_info;
 
 // 函数声明
 void MadgwickAHRS_init(float sample_rate);
-int MadgwickAHRS_calibrate(IMU_DATA *imu_data);
-void MadgwickAHRS_update(IMU_DATA *imu_data);
+int MadgwickAHRS_calibrate(struct IMU_DATA *imu_data);
+void MadgwickAHRS_update(struct IMU_DATA *imu_data);
 
 float MadgwickAHRS_get_pitch(void);
 float MadgwickAHRS_get_roll(void);

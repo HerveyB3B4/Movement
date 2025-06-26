@@ -29,7 +29,7 @@ void system_init()
     key_init_rewrite(KEY_NUM);
 
     // ===================== PARAMS ======================== //
-    attitude_init();
+    attitude_init(ATTITUDE_MAHONY);
     menu_manual_param_init();
     velocity_init(&g_vel_motor);
     control_manual_param_init();
@@ -60,7 +60,8 @@ void system_attitude_timer(
     struct Control_Turn_Manual_Params *control_turn_params,
     struct Control_Target *control_target,
     struct Velocity_Motor *vel_motor,
-    struct EulerAngle *euler_angle)
+    struct EulerAngle *euler_angle,
+    struct IMU_DATA* imu_data)
 {
     static uint8 imu_cnt = 0;
     imu_cnt++;
@@ -69,7 +70,7 @@ void system_attitude_timer(
         imu_cnt = 0;
         g_attitude_cal_flag = 1;
         attitude_cal_amend(control_turn_params, control_target, vel_motor,
-                           euler_angle);
+                           euler_angle, imu_data);
     }
     else
     {

@@ -89,7 +89,7 @@ IFX_INTERRUPT(cc61_pit_ch1_isr,
     pit_clear_flag(CCU61_CH1);
 
     system_attitude_timer(&g_control_turn_manual_params, &g_control_target,
-                          &g_vel_motor, &g_euler_angle);
+                          &g_vel_motor, &g_euler_angle, &g_imu_data);
     if (runState == CAR_RUNNING)
     {
         // 控制

@@ -9,7 +9,7 @@ void integral_init(float dt)
     s_integral.dt = dt;
 }
 
-void integral_update(IMU_DATA *data)
+void integral_update(struct IMU_DATA *data)
 {
 
     s_integral.yaw += data->gyro.z * s_integral.dt;
