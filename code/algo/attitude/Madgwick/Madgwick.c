@@ -234,21 +234,21 @@ int MadgwickAHRS_calibrate(IMU_DATA *imu_data)
     return 0; // 校准进行中
 }
 
-float Madgwick_get_pitch()
+float MadgwickAHRS_get_pitch()
 {
     float sinp = 2.0f * (Madgwick_filter.q0 * Madgwick_filter.q2 - Madgwick_filter.q3 * Madgwick_filter.q1);
     float pitch = (fabsf(sinp) >= 1.0f) ? copysignf(PI_2, sinp) : asinf(sinp);
     return pitch;
 }
 
-float Madgwick_get_roll()
+float MadgwickAHRS_get_roll()
 {
     float roll = atan2f(2.0f * (Madgwick_filter.q0 * Madgwick_filter.q1 + Madgwick_filter.q2 * Madgwick_filter.q3),
                         1.0f - 2.0f * (Madgwick_filter.q1 * Madgwick_filter.q1 + Madgwick_filter.q2 * Madgwick_filter.q2));
     return roll;
 }
 
-float Madgwick_get_yaw()
+float MadgwickAHRS_get_yaw()
 {
     float yaw = atan2f(2.0f * (Madgwick_filter.q0 * Madgwick_filter.q3 + Madgwick_filter.q1 * Madgwick_filter.q2),
                        1.0f - 2.0f * (Madgwick_filter.q2 * Madgwick_filter.q2 + Madgwick_filter.q3 * Madgwick_filter.q3));

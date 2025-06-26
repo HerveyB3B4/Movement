@@ -2,6 +2,7 @@
 #define Mahony_ATTITUDE_H
 
 #include "zf_common_headfile.h"
+#include "YawIntegral.h"
 
 #define USE_EKF
 
@@ -42,4 +43,5 @@ extern struct EulerAngle g_euler_angle;
 extern struct EulerAngle g_euler_angle_bias;
 extern uint8 g_attitude_cal_flag;
 extern uint8 attitude_time;
+
 #endif
