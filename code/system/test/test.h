@@ -19,5 +19,6 @@ void test_receiver();
 void test_img_shoot();
 void test_line();
 void test_Madgwick();
+void test_yaw_integral();
 
 #endif

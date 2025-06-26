@@ -396,6 +396,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_Madgwick}},
+    {(uint8 *)"YawInteg",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_yaw_integral}},
 };
 
 MENU_TABLE Setting_MenuTable[] = {

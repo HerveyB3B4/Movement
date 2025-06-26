@@ -4,6 +4,9 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 #include "Madgwick.h"
+#include "Mahony.h"
+#include "system.h"
+#include "YawIntegral.h"
 
 struct EulerAngle g_euler_angle;
 struct EulerAngle g_euler_angle_bias;
@@ -20,6 +23,7 @@ void attitude_init()
     // IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0); // ekf初始化 (原始参数)
     IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0); // ekf初始化 - 优化Yaw轴旋转
     imu_init_offset();                                  // 初始化零飘
+    YawIntegral_Init();                                 // 初始化Yaw积分
 }
 
 void attitude_cal_ekf()
@@ -54,6 +58,15 @@ void attitude_cal_Madgwick()
     MadgwickAHRS_update(&g_imu_data);
 }
 
+static void attitude_cal_Mahony()
+{
+    imu_get_data(&g_imu_data);
+    imu_remove_offset(&g_imu_data);
+
+    MahonyAHRS_update(&g_imu_data);
+}
+
+
 void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
                         struct Control_Target *control_target,
                         struct Velocity_Motor *velocity_motor,
@@ -79,16 +92,10 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
         restrictValueF(&control_target->Fbucking, 5.0f, -5.0f);
     }
 #ifdef USE_MAHONY
-    Mahony_update(imu963raSensorData.gyro.x, imu963raSensorData.gyro.y,
-                  imu963raSensorData.gyro.z, imu963raSensorData.acc.x,
-                  imu963raSensorData.acc.y, imu963raSensorData.acc.z, 0, 0, 0);
-    Mahony_computeAngles();
-    euler_angle->roll = getRoll() + control_target->bucking;
-    euler_angle->pitch = getPitch();
-    euler_angle->yaw =
-        getYaw() - 180 +
-        YAWCorrection; //-180 because the direction of the sensor is
-                       // opposite to the direction of the motor
+    attitude_cal_Mahony();
+    euler_angle->roll = MahonyAHRS_get_roll() + control_target->bucking;
+    euler_angle->pitch = MahonyAHRS_get_pitch() + control_target->Fbucking;
+    euler_angle->yaw = MahonyAHRS_get_yaw() - 180 + YAWCorrection;;
 #endif
 #ifdef USE_EKF
     attitude_cal_ekf();
@@ -103,6 +110,10 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
     euler_angle->yaw > 360 ? (euler_angle->yaw -= 360)
                            : euler_angle->yaw; // 0~360
     // update module state
+
+    // yaw 角速度积分
+    YawIntegral_Update(YAW_VEL, 0.001f * PIT_CONTROL_T);
+
     // moduleState.attitude = 1;
 
     attitude_time = system_getval();
