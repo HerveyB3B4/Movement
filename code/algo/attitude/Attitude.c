@@ -82,38 +82,38 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
         g_attitude_cal_flag = 0;
     }
 
-    if (g_turn_start_flag)
-    {
-        float x = (float)control_target->turn_angle_vel * 0.01f *
-                  fabsf((float)velocity_motor->bottomFiltered * 0.01f);
-        control_target->bucking = turn_param->buckling_turn_coefficient * x;
-        restrictValueF(&control_target->bucking, 10.5f, -10.5f);
-        control_target->Fbucking = x * turn_param->buckling_front_coefficientT;
-        restrictValueF(&control_target->Fbucking, 5.0f, -5.0f);
-    }
+    // if (g_turn_start_flag)
+    // {
+    //     float x = (float)control_target->turn_angle_vel * 0.01f *
+    //               fabsf((float)velocity_motor->bottomFiltered * 0.01f);
+    //     control_target->bucking = turn_param->buckling_turn_coefficient * x;
+    //     restrictValueF(&control_target->bucking, 10.5f, -10.5f);
+    //     control_target->Fbucking = x * turn_param->buckling_front_coefficientT;
+    //     restrictValueF(&control_target->Fbucking, 5.0f, -5.0f);
+    // }
 
     attitude_cal(data);
 
     switch (current_algorithm)
     {
     case ATTITUDE_EKF:
-        euler_angle->roll = ekf_get_roll() + control_target->bucking;
-        euler_angle->pitch = ekf_get_pitch() + control_target->Fbucking;
+        euler_angle->roll = ekf_get_roll();
+        euler_angle->pitch = ekf_get_pitch();
         euler_angle->yaw = ekf_get_yaw();
         break;
     case ATTITUDE_MADGWICK:
-        euler_angle->roll = MadgwickAHRS_get_roll() + control_target->bucking;
-        euler_angle->pitch = MadgwickAHRS_get_pitch() + control_target->Fbucking;
+        euler_angle->roll = MadgwickAHRS_get_roll();
+        euler_angle->pitch = MadgwickAHRS_get_pitch();
         euler_angle->yaw = MadgwickAHRS_get_yaw();
         break;
     case ATTITUDE_MAHONY:
-        euler_angle->roll = MahonyAHRS_get_roll() + control_target->bucking;
-        euler_angle->pitch = MahonyAHRS_get_pitch() + control_target->Fbucking;
+        euler_angle->roll = MahonyAHRS_get_roll();
+        euler_angle->pitch = MahonyAHRS_get_pitch();
         euler_angle->yaw = MahonyAHRS_get_yaw();
         break;
     default:
-        euler_angle->roll = ekf_get_roll() + control_target->bucking;
-        euler_angle->pitch = ekf_get_pitch() + control_target->Fbucking;
+        euler_angle->roll = ekf_get_roll();
+        euler_angle->pitch = ekf_get_pitch();
         euler_angle->yaw = ekf_get_yaw();
         break;
     }

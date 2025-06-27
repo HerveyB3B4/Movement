@@ -79,8 +79,12 @@ void control_side_balance(
                                       (float)(3.3f -
                                               logf(0.2f * abs(vel_motor->momentumBack) + 8)));
 
-    left_motor_duty = -s_side_balance_duty - s_side_internal_diff - turn_diff_left;
-    right_motor_duty = s_side_balance_duty + s_side_internal_diff - turn_diff_right;
+    // left_motor_duty = -(s_side_balance_duty + s_side_internal_diff + turn_diff_left);
+    // right_motor_duty = s_side_balance_duty + s_side_internal_diff - turn_diff_right;
+
+    left_motor_duty = -(s_side_balance_duty + s_side_internal_diff + get_momentum_diff());
+    right_motor_duty = s_side_balance_duty + s_side_internal_diff - get_momentum_diff();
+
     // left_motor_duty =
     //     -s_side_balance_duty -
     //     (int32_t)(get_momentum_diff() *
@@ -160,7 +164,7 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
                                      PID_calc_Position(
                                          &side_angle_PID,
                                          (momentumAngleFilter[0] - euler_angle_bias->roll),
-                                         control_target->side_angle);
+                                         control_target->side_angle + control_target->bucking); // 压弯
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0)

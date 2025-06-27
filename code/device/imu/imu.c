@@ -4,15 +4,18 @@ struct IMU_DATA g_imu_data;
 float gyroOffset[3] = {0.0f, 0.0f, 0.0f};
 uint32 imu_time;
 
-void imu_init() {
+void imu_init()
+{
     bool tmp_init_flag = imu660rb_init();
-    if (tmp_init_flag == 1) {
+    if (tmp_init_flag == 1)
+    {
         printf("IMU660RB init Failed\n");
         return;
     }
 }
 
-void imu_get_data(struct IMU_DATA* data) {
+void imu_get_data(struct IMU_DATA *data)
+{
     // if (g_imu_use_imu963ra_flag != 0) {
     //     imu963ra_get_gyro();
     //     imu963ra_get_acc();
@@ -39,12 +42,15 @@ void imu_get_data(struct IMU_DATA* data) {
     imu_time = system_getval();
 }
 
-void imu_init_offset() {
+void imu_init_offset()
+{
     struct IMU_DATA data;
-    for (int i = 0; i < 2000; i++) {
+    for (int i = 0; i < 2000; i++)
+    {
         imu_get_data(&data);
         if (fabsf(data.gyro.x) + fabsf(data.gyro.y) + fabsf(data.gyro.z) >
-            gyroscope_threshold) {
+            gyroscope_threshold)
+        {
             i--;
             continue;
         }
@@ -58,7 +64,8 @@ void imu_init_offset() {
     gyroOffset[2] *= 0.0005f;
 }
 
-void imu_remove_offset(struct IMU_DATA* data) {
+void imu_remove_offset(struct IMU_DATA *data)
+{
     data->gyro.x -= gyroOffset[0];
     data->gyro.y -= gyroOffset[1];
     data->gyro.z -= gyroOffset[2];

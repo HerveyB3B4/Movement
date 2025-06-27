@@ -41,35 +41,35 @@ void control_turn(struct Control_Target *control_target,
         control_flag->turn_err = 0;
         control_turn_error(control_target, control_motion_params);
     }
-    // if (control_flag->turn_angle_vel)
-    // {
-    //     control_flag->turn_angle_vel = 0;
-    //     control_turn_angle_velocity(control_target, control_motion_params);
-    // }
+    if (control_flag->turn_angle_vel)
+    {
+        control_flag->turn_angle_vel = 0;
+        control_turn_angle_velocity(control_target, control_motion_params);
+    }
 
     // diff 滤波
     static int32 last_diff = 0;
-    lowPassFilterI(&s_momentum_diff, &last_diff, 0.3f);
+    lowPassFilterI(&s_momentum_diff, &last_diff, 0.2f);
     last_diff = s_momentum_diff;
 
     restrictValueI(&s_momentum_diff, 5000, -5000);
 
-    // if (control_flag->bucking)
-    // {
-    //     control_flag->bucking = 0;
-    //     float v = (float)fabsf(vel_motor->bottomReal);
-    //     if (v < 0)
-    //     {
-    //         v = 0;
-    //     }
+    if (control_flag->bucking)
+    {
+        control_flag->bucking = 0;
+        float v = (float)fabsf(vel_motor->bottomReal);
+        if (v < 0)
+        {
+            v = 0;
+        }
 
-    //     // float x = (float) control_target.turn_angle_velocity * 0.01f *
-    //     // fabsf(motor_velocity.bottom_filtered * 0.01f);
-    //     float x = (float)control_target->turn_angle_vel * 0.1f *
-    //               logf(v + 2); // 使用ln函数，降低速度对压弯的影响
-    //     control_target->bucking = control_turn_params->buckling_turn_coefficient * x;
-    //     restrictValueF(&control_target->bucking, 10.5f, -10.5f);
-    // }
+        // float x = (float) control_target.turn_angle_velocity * 0.01f *
+        // fabsf(motor_velocity.bottom_filtered * 0.01f);
+        float x = (float)control_target->turn_angle_vel * 0.1f *
+                  logf(v + 2); // 使用ln函数，降低速度对压弯的影响
+        control_target->bucking = control_turn_params->buckling_turn_coefficient * x;
+        restrictValueF(&control_target->bucking, 10.5f, -10.5f);
+    }
 }
 
 static void control_turn_angle_velocity(struct Control_Target *control_target,
@@ -98,16 +98,16 @@ static void control_turn_error(struct Control_Target *control_target,
     // noiseFilter(momentumAngleFilter[0], 0.02f);
     // lowPassFilterF(&turn_err_filter[0], &turn_err_filter[1], 0.3f);
 
-    s_momentum_diff = control_motion_params->turn_error_polarity *
-                      PID_calc_Position(
-                          &turn_error_PID,
-                          turn_err_filter[0],
-                          0);
-    // control_target->turn_angle_vel = control_motion_params->turn_error_polarity *
-    //                                  PID_calc_Position(
-    //                                      &turn_error_PID,
-    //                                      turn_err_filter[0],
-    //                                      0);
+    // s_momentum_diff = control_motion_params->turn_error_polarity *
+    //                   PID_calc_Position(
+    //                       &turn_error_PID,
+    //                       turn_err_filter[0],
+    //                       0);
+    control_target->turn_angle_vel = control_motion_params->turn_error_polarity *
+                                     PID_calc_Position(
+                                         &turn_error_PID,
+                                         turn_err_filter[0],
+                                         0);
 }
 
 // 不知道需不需要加个速度环
