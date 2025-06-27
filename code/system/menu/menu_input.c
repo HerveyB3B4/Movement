@@ -132,14 +132,14 @@ void menu_get_params(
     //     g_menu_manual_param.turn_velocity_polarity;
 
     // turn
-    // control_turn_params->buckling_turn_coefficient =
+    // control_turn_params->buckling_side_coefficient =
     //     (float)g_menu_manual_param.buckingTurnCoefficient * 0.01f;
-    control_turn_params->turn_gain_coefficient =
-        (float)g_menu_manual_param.turnGainCoefficient * 0.01f;
-    control_turn_params->buckling_front_coefficientV =
-        g_menu_manual_param.bucklingFrontCoefficientV;
-    control_turn_params->buckling_front_coefficientT =
-        g_menu_manual_param.bucklingFrontCoefficientT;
+    // control_turn_params->turn_gain_coefficient =
+    //     (float)g_menu_manual_param.turnGainCoefficient * 0.01f;
+    // control_turn_params->buckling_front_coefficientV =
+    //     g_menu_manual_param.bucklingFrontCoefficientV;
+    // control_turn_params->buckling_front_coefficientT =
+    //     g_menu_manual_param.bucklingFrontCoefficientT;
 
     control_time->turn[0] = g_menu_manual_param.TurnControlTimeParameter[0]; // TAV
     control_time->turn[1] = g_menu_manual_param.TurnControlTimeParameter[1]; // TE
@@ -157,4 +157,9 @@ void menu_get_params(
     guide_set_target_vel(g_menu_manual_param.bottom_velocity * 10);
     guide_set_target_turn(g_menu_manual_param.turn_target);
     side_set_internal_diff(g_menu_manual_param.side_internal_diff);
+
+    control_turn_params->buckling_side_coefficient =
+        g_menu_manual_param.buckling_side_coefficient * 0.01f;
+    control_turn_params->buckling_front_coefficient =
+        g_menu_manual_param.buckling_front_coefficient * 0.01f;
 }

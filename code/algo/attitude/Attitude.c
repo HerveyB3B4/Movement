@@ -86,10 +86,10 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
     // {
     //     float x = (float)control_target->turn_angle_vel * 0.01f *
     //               fabsf((float)velocity_motor->bottomFiltered * 0.01f);
-    //     control_target->bucking = turn_param->buckling_turn_coefficient * x;
-    //     restrictValueF(&control_target->bucking, 10.5f, -10.5f);
-    //     control_target->Fbucking = x * turn_param->buckling_front_coefficientT;
-    //     restrictValueF(&control_target->Fbucking, 5.0f, -5.0f);
+    //     control_target->buckling_side = turn_param->buckling_side_coefficient * x;
+    //     restrictValueF(&control_target->buckling_side, 10.5f, -10.5f);
+    //     control_target->buckling_front = x * turn_param->buckling_front_coefficientT;
+    //     restrictValueF(&control_target->buckling_front, 5.0f, -5.0f);
     // }
 
     attitude_cal(data);

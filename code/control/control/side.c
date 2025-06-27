@@ -137,7 +137,9 @@ static void control_side_velocity(
     control_target->side_angle = control_motion_params->side_velocity_polarity *
                                  PID_calc_Position(&side_velocity_PID,
                                                    side_vel_filter[0],
-                                                   0.0f); // 速度是正反馈，因此set和ref要反过来
+                                                   0.0f);
+
+    control_target->side_angle += control_target->buckling_side;
 
     static float side_tar_angle_filter[2] = {0};
     side_tar_angle_filter[1] = side_tar_angle_filter[0];
@@ -164,7 +166,7 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
                                      PID_calc_Position(
                                          &side_angle_PID,
                                          (momentumAngleFilter[0] - euler_angle_bias->roll),
-                                         control_target->side_angle + control_target->bucking); // 压弯
+                                         control_target->side_angle); // 压弯
 
     // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0)

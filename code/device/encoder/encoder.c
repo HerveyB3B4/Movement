@@ -25,7 +25,6 @@ static void pass_bottom_encoder(int32 value, struct Velocity_Motor *vel_motor)
         value > 0 ? (value -= 5) : (value += 5);
     }
     vel_motor->bottom = value;
-    vel_motor->bottomSum += value;
 }
 
 void encoder_init()

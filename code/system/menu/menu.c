@@ -301,8 +301,12 @@ MENU_TABLE Pid_TimeMenuTable[] = {
 };
 
 MENU_TABLE Buckling[] = {
-    {(uint8 *)"BT_coeff",
-     {.INT32 = (int32 *)&g_menu_manual_param.buckingTurnCoefficient},
+    {(uint8 *)"bucking_turn",
+     {.INT32 = (int32 *)&g_menu_manual_param.buckling_side_coefficient},
+     Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"bucking_front",
+     {.INT32 = (int32 *)&g_menu_manual_param.buckling_front_coefficient},
      Param_Int,
      {.ItemFunc = Menu_Null}},
     // {(uint8*)"turnCurvature",

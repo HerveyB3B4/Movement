@@ -39,7 +39,7 @@ void test_bottom_motor()
             pwm_set_duty(MOTOR_BOTTOM, 8000);
         }
         lcd_show_int(0, 5, g_vel_motor.bottom, 5);
-        lcd_show_float(0, 6, g_vel_motor.bottomReal, 5, 5);
+        lcd_show_float(0, 6, g_vel_motor.bottom_real, 5, 5);
         lcd_show_float(0, 7, g_vel_motor.bottomFiltered, 5, 5);
         pwm_set_duty(MOTOR_BOTTOM, 0);
         // encoder_clear_count(ENCODER_BOTTOM);
@@ -381,7 +381,7 @@ void test_bottom_pwm()
         lcd_show_string(0, 6, "Out PWM:");
         lcd_show_int(9, 6, output_pwm, 5);
         lcd_show_string(0, 7, "Speed:");
-        lcd_show_float(7, 7, g_vel_motor.bottomReal, 3, 2);
+        lcd_show_float(7, 7, g_vel_motor.bottom_real, 3, 2);
 
         system_delay_ms(50); // 调整延时控制PWM变化速度
     }
@@ -449,7 +449,7 @@ void test_bottom_deadzone()
         lcd_show_string(0, 2, "FPWM:");
         lcd_show_int(12, 2, forward_deadzone, 5);
         lcd_show_string(0, 3, "Speed:");
-        lcd_show_float(7, 3, g_vel_motor.bottomReal, 3, 2);
+        lcd_show_float(7, 3, g_vel_motor.bottom_real, 3, 2);
 
         // 显示找到的死区值
         if (forward_done)

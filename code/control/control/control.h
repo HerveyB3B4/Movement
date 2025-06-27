@@ -6,14 +6,8 @@
 
 struct Control_Turn_Manual_Params
 {
-    float buckling_turn_coefficient;    // 屈曲转动系数
-    uint32 buckling_front_coefficientV; // 前部屈曲系数V
-    uint32 buckling_front_coefficientT; // 前部屈曲系数T
-    uint32 turn_gain_coefficient;       // 转弯增益系数
-    int32 turnCurvature;                // 转弯曲率
-
-    float turn_curve_k1;
-    float turn_curve_k2;
+    float buckling_side_coefficient;
+    float buckling_front_coefficient;
 };
 
 struct Control_Motion_Manual_Parmas
@@ -71,15 +65,12 @@ struct Control_Target
     float side_angle_vel;
 
     // turn
-    float bucking;  // balance bucking
-    float Fbucking; // front balance bucking
+    float buckling_side;
+    float buckling_front;
 
     float turn_angle;
     float turn_angle_vel;
     float turn_err;
-
-    // 压弯
-    float curve_angle;
 };
 
 struct Control_Flag
@@ -101,7 +92,7 @@ struct Control_Flag
     uint8 turn_err;
 
     uint8 turn_curve;
-    uint8 bucking;
+    uint8 buckling_side;
 
     uint8 bottom_angle_cnt;
     uint8 bottom_angle_vel_cnt;

@@ -141,7 +141,7 @@ void control_reset(struct Control_Target *control_target)
     control_target->side_angle = 0;
     control_target->turn_angle = 0;
     control_target->turn_angle_vel = 0;
-    control_target->bucking = 0;
+    control_target->buckling_side = 0;
 
     // 重置控制标志
     g_control_flag.bottom_angle = 0;
@@ -151,7 +151,7 @@ void control_reset(struct Control_Target *control_target)
     g_control_flag.turn_angle = 0;
     g_control_flag.turn_vel = 0;
     g_control_flag.turn_err = 0;
-    // g_control_flag.bucking = 0;
+    // g_control_flag.buckling_side = 0;
 
     control_init(&g_control_motion_params);
 }

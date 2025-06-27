@@ -14,9 +14,8 @@ struct Velocity_Motor
     int32 momentumFront;
     int32 momentumBack;
     int32 bottom;
-    float bottomReal;
+    float bottom_real;
     float bottomFiltered;
-    int32 bottomSum;
     int32 velocityDiff;
 };
 

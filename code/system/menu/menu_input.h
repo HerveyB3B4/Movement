@@ -48,6 +48,9 @@ struct Menu_Manual_Param
     uint32 turnGainCoefficient;
     uint32 bucklingFrontCoefficientV;
     uint32 bucklingFrontCoefficientT;
+
+    int32 buckling_front_coefficient;
+    int32 buckling_side_coefficient;
 };
 
 struct EulerAngle;

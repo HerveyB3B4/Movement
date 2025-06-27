@@ -88,7 +88,8 @@ void bottom_control_timer(struct Control_Time *control_time,
                           struct Control_Target *control_target,
                           struct Velocity_Motor *vel_motor,
                           struct EulerAngle *euler_angle_bias,
-                          struct Control_Motion_Manual_Parmas *control_motion_params)
+                          struct Control_Motion_Manual_Parmas *control_motion_params,
+                          struct Control_Turn_Manual_Params *control_turn_params)
 {
     uint32 bottom_angle_vel_time = control_time->bottom[0];
     uint32 bottom_angle_time = control_time->bottom[1];
@@ -125,8 +126,12 @@ void bottom_control_timer(struct Control_Time *control_time,
     {
         control_flag->bottom_vel = 0;
     }
-    control_bottom_balance(control_target, control_flag, vel_motor,
-                           euler_angle_bias, control_motion_params);
+    control_bottom_balance(control_target,
+                           control_flag,
+                           vel_motor,
+                           euler_angle_bias,
+                           control_motion_params,
+                           control_turn_params);
 }
 
 void side_control_timer(struct Control_Time *control_time,
@@ -273,7 +278,8 @@ void system_control_timer()
                              &g_control_target,
                              &g_vel_motor,
                              &g_euler_angle_bias,
-                             &g_control_motion_params);
+                             &g_control_motion_params,
+                             &g_control_turn_manual_params);
     }
 
     // if (g_control_turn_flag != 0)

@@ -54,10 +54,10 @@ void control_turn(struct Control_Target *control_target,
 
     restrictValueI(&s_momentum_diff, 5000, -5000);
 
-    if (control_flag->bucking)
+    if (control_flag->buckling_side)
     {
-        control_flag->bucking = 0;
-        float v = (float)fabsf(vel_motor->bottomReal);
+        control_flag->buckling_side = 0;
+        float v = (float)fabsf(vel_motor->bottom_real);
         if (v < 0)
         {
             v = 0;
@@ -67,8 +67,8 @@ void control_turn(struct Control_Target *control_target,
         // fabsf(motor_velocity.bottom_filtered * 0.01f);
         float x = (float)control_target->turn_angle_vel * 0.1f *
                   logf(v + 2); // 使用ln函数，降低速度对压弯的影响
-        control_target->bucking = control_turn_params->buckling_turn_coefficient * x;
-        restrictValueF(&control_target->bucking, 10.5f, -10.5f);
+        control_target->buckling_side = control_turn_params->buckling_side_coefficient * x;
+        restrictValueF(&control_target->buckling_side, 10.5f, -10.5f);
     }
 }
 
@@ -116,7 +116,7 @@ static void control_turn_velocity(struct Control_Target *control_target,
                                   struct Velocity_Motor *vel_motor)
 {
     // static float turnVelocityFilter = 0;
-    // turnVelocityFilter = (float)vel_motor->bottomReal;
+    // turnVelocityFilter = (float)vel_motor->bottom_real;
     // control_target->turn_angle_vel =
     //     PID_calc_Position(&turn_velocity_PID, turnVelocityFilter,
     //                       control_target->turn_vel);
@@ -128,18 +128,4 @@ static void control_turn_velocity(struct Control_Target *control_target,
     // {
     //     printf("%f\n", control_target->turn_angle_vel);
     // }
-}
-
-static void control_turn_curve(struct Control_Target *control_target,
-                               struct Control_Turn_Manual_Params *control_turn_params,
-                               struct Velocity_Motor *vel_motor)
-{
-    static float turn_err_filter[2] = {0}; // err 滤波
-    turn_err_filter[1] = turn_err_filter[0];
-    turn_err_filter[0] = control_target->turn_err;
-
-    lowPassFilterF(&turn_err_filter[0], &turn_err_filter[1], 0.5f);
-
-    control_target->curve_angle = turn_err_filter[0] * control_turn_params->turn_curve_k1 +
-                                  (vel_motor->bottomReal * vel_motor->bottomReal) * turn_err_filter[0] * control_turn_params->turn_curve_k2;
 }
