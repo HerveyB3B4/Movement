@@ -761,3 +761,19 @@ void test_yaw_integral()
     }
     lcd_clear();
 }
+
+void test_encoder_to_velocity()
+{
+    lcd_clear();
+    encoder_clear_count(ENCODER_BOTTOM);
+    pit_disable(CCU60_CH0);
+    while (keymsg.key != KEY_L)
+    {
+        int16 count = encoder_get_count(ENCODER_BOTTOM);
+        lcd_show_int(0, 0, count, 5);
+        system_delay_ms(100);
+    }
+    pit_enable(CCU60_CH0);
+    lcd_clear();
+    encoder_clear_count(ENCODER_BOTTOM);
+}

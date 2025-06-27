@@ -407,6 +407,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_yaw_integral}},
+    {(uint8 *)"EncoderToVel",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_encoder_to_velocity}},
 };
 
 MENU_TABLE Setting_MenuTable[] = {
