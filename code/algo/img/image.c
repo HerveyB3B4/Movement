@@ -5,7 +5,7 @@
 
 static int16 img_target_error = 0;
 
-static Point img_target_center = {-1, -1};
+static Point img_target_center = {0, 0};
 static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
 
 static uint32_t frame_count = 0;
@@ -16,6 +16,11 @@ static float current_fps = 0.0f;
 float get_img_fps()
 {
     return current_fps;
+}
+
+Point get_target_point()
+{
+    return img_target_center;
 }
 
 int16 get_img_target_error()

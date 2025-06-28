@@ -1,6 +1,9 @@
 #include "guide.h"
 #include "image.h"
 #include "control.h"
+#include "distance.h"
+#include "detection.h"
+#include "pid.h"
 
 static int16 guide_target_vel = 0;
 static int16 guide_target_turn = 0;
@@ -39,8 +42,17 @@ void guide_receiver(struct Control_Target *control_target)
     control_target->turn_err = guide_target_turn;
 }
 
+void guide_position_pid(struct Control_Target *control_target, Point *target)
+{
+    control_target->bottom_vel = PID_calc_Position(&bottom_position_PID,
+                                                   distance_reckon(target->x, target->y, 0),
+                                                   10.0f);
+}
+
 void guide_to_target(struct Control_Target *control_target)
 {
-    control_target->bottom_vel = (float)guide_target_vel;
-    control_target->turn_err = get_img_target_error();
+    // control_target->bottom_vel = (float)guide_target_vel;
+    // control_target->turn_err = get_img_target_error();
+    Point target_point = get_target_point();
+    guide_position_pid(control_target, &target_point);
 }

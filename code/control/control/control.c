@@ -40,6 +40,7 @@ void control_reset(struct Control_Target *control_target);
 pid_type_def bottom_angle_velocity_PID;
 pid_type_def bottom_angle_PID;
 pid_type_def bottom_velocity_PID;
+pid_type_def bottom_position_PID;
 
 // momentum wheel pid
 pid_type_def side_angle_velocity_PID;
@@ -230,7 +231,11 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
                        10, 1, 10, 9999, 10);
     control_param_init(&bottom_velocity_PID,
                        control_motion_params->bottom_velocity_parameter,
-                       100000, 10000000, 100000, 9999, 2.5f);
+                       100, 10000, 100, 10.0f, 10.0f);
+
+    control_param_init(&bottom_position_PID,
+                       control_motion_params->bottom_position_parameter,
+                       1000, 1000, 1000, 10, 10.0f);
 
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,

@@ -44,6 +44,9 @@ uint32 *EEPROM_DATA_UINT[] = {
     (uint32 *)(&g_menu_manual_param.bottom_angle_velocity_parameter[0]),
     (uint32 *)(&g_menu_manual_param.bottom_angle_velocity_parameter[1]),
     (uint32 *)(&g_menu_manual_param.bottom_angle_velocity_parameter[2]),
+    (uint32 *)(&g_menu_manual_param.bottom_position_parameter[0]),
+    (uint32 *)(&g_menu_manual_param.bottom_position_parameter[1]),
+    (uint32 *)(&g_menu_manual_param.bottom_position_parameter[2]),
     (uint32 *)(&g_menu_manual_param.side_angle_parameter[0]),
     (uint32 *)(&g_menu_manual_param.side_angle_parameter[1]),
     (uint32 *)(&g_menu_manual_param.side_angle_parameter[2]),
@@ -75,8 +78,6 @@ uint32 *EEPROM_DATA_UINT[] = {
     (uint32 *)(&g_menu_manual_param.TurnControlTimeParameter[1]),
     (uint32 *)(&g_menu_manual_param.TurnControlTimeParameter[2]),
     (uint32 *)(&g_menu_manual_param.TurnControlTimeParameter[3]),
-    (uint32 *)(&g_menu_manual_param.bucklingFrontCoefficientV),
-    (uint32 *)(&g_menu_manual_param.bucklingFrontCoefficientT),
     (uint32 *)(&g_control_shutdown_flag),
     (uint32 *)(&g_control_bottom_flag),
     (uint32 *)(&g_control_side_flag),
@@ -99,14 +100,14 @@ uint32 *EEPROM_DATA_UINT[] = {
 };
 
 int32 *EEPROM_DATA_INT[] = {
-    (int32 *)(&g_menu_manual_param.buckingTurnCoefficient),
     (int32 *)(&g_menu_manual_param.mechanicalYawAngle),
     (int32 *)(&g_menu_manual_param.mechanicalPitchAngle),
     (int32 *)(&g_menu_manual_param.mechanicalRollAngle),
     (int32 *)(&g_menu_manual_param.bottom_velocity),
     (int32 *)(&g_menu_manual_param.turn_target),
     (int32 *)(&g_menu_manual_param.side_internal_diff),
-    // (int32*)(&g_menu_manual_param.turnCurvatureTest),
+    (int32 *)(&g_menu_manual_param.buckling_front_coefficient),
+    (int32 *)(&g_menu_manual_param.buckling_side_coefficient),
 };
 
 MENU_PRMT PID_Prmt;
@@ -246,6 +247,18 @@ MENU_TABLE PID_Table[] = {
      {.ItemFunc = Menu_Null}},
     {(uint8 *)"TA_kd",
      {.UINT32 = (uint32 *)&g_menu_manual_param.turn_angle_parameter[2]},
+     Param_Uint,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"BP_kp",
+     {.INT32 = (uint32 *)&g_menu_manual_param.bottom_position_parameter[0]},
+     Param_Uint,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"BP_ki",
+     {.INT32 = (uint32 *)&g_menu_manual_param.bottom_position_parameter[1]},
+     Param_Uint,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"BP_kd",
+     {.INT32 = (uint32 *)&g_menu_manual_param.bottom_position_parameter[2]},
      Param_Uint,
      {.ItemFunc = Menu_Null}},
 };

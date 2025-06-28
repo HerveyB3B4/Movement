@@ -19,6 +19,7 @@ struct Control_Motion_Manual_Parmas
     uint32 bottom_velocity_parameter[3];
     uint32 bottom_angle_velocity_parameter[3];
     uint32 bottom_angle_parameter[3];
+    uint32 bottom_position_parameter[3];
 
     uint32 side_angle_velocity_parameter[3];
     uint32 side_angle_parameter[3];
@@ -157,6 +158,7 @@ extern pid_type_def turn_error_PID;
 extern pid_type_def bottom_angle_PID;
 extern pid_type_def bottom_angle_velocity_PID;
 extern pid_type_def bottom_velocity_PID;
+extern pid_type_def bottom_position_PID;
 
 extern pid_type_def side_angle_velocity_PID;
 extern pid_type_def side_angle_PID;

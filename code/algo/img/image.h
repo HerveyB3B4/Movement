@@ -21,5 +21,6 @@ int16 get_img_target_error();
 
 void img_handler_alltarget();
 void img_handler(uint8 lcd_flag);
+Point get_target_point();
 
 #endif
