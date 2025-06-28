@@ -85,6 +85,9 @@ void control_side_balance(
     left_motor_duty = -(s_side_balance_duty + s_side_internal_diff + get_momentum_diff());
     right_motor_duty = s_side_balance_duty + s_side_internal_diff - get_momentum_diff();
 
+    // left_motor_duty = -get_momentum_diff();
+    // right_motor_duty = -get_momentum_diff();
+
     // left_motor_duty =
     //     -s_side_balance_duty -
     //     (int32_t)(get_momentum_diff() *
@@ -128,7 +131,7 @@ static void control_side_velocity(
     struct Control_Turn_Manual_Params *control_turn_params,
     struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    static float side_vel_filter[2] = {0}; // 角度滤波
+    static float side_vel_filter[2] = {0};
     side_vel_filter[1] = side_vel_filter[0];
     side_vel_filter[0] = (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f;
     // noiseFilter(momentumAngleFilter[0], 0.02f);
@@ -139,14 +142,11 @@ static void control_side_velocity(
                                                    side_vel_filter[0],
                                                    0.0f);
 
-    control_target->side_angle += control_target->buckling_side;
-
     static float side_tar_angle_filter[2] = {0};
     side_tar_angle_filter[1] = side_tar_angle_filter[0];
     side_tar_angle_filter[0] = control_target->side_angle;
     lowPassFilterF(&side_tar_angle_filter[0], &side_tar_angle_filter[1], 0.2f);
 
-    // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sv_flag != 0)
     {
         printf("%f\n", control_target->side_angle);
@@ -166,9 +166,8 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
                                      PID_calc_Position(
                                          &side_angle_PID,
                                          (momentumAngleFilter[0] - euler_angle_bias->roll),
-                                         control_target->side_angle); // 压弯
+                                         control_target->side_angle + control_target->buckling_side); // 压弯
 
-    // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sa_flag != 0)
     {
         printf("%f\n", control_target->side_angle_vel);
@@ -178,7 +177,7 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
 static void control_side_angle_velocity(struct Control_Target *control_target,
                                         struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    static float side_angle_vel_filter[2] = {0}; // 角度速度滤波
+    static float side_angle_vel_filter[2] = {0}; // 角速度滤波
     side_angle_vel_filter[1] = side_angle_vel_filter[0];
     side_angle_vel_filter[0] = ROLL_VEL;
     lowPassFilterF(&side_angle_vel_filter[0], &side_angle_vel_filter[1], 0.5f);
@@ -189,7 +188,6 @@ static void control_side_angle_velocity(struct Control_Target *control_target,
                                side_angle_vel_filter[0],
                                control_target->side_angle_vel));
 
-    // 输出pid信息：error，输出，实际值，目标值
     if (g_control_output_sav_flag != 0)
     {
         printf("%f,%f\n", -ROLL_VEL,

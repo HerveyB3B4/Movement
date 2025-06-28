@@ -254,7 +254,7 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
     // turn pid
     control_param_init(&turn_angle_velocity_PID,
                        control_motion_params->turn_angle_velocity_parameter, 10, 10, 10,
-                       5000, 500);
+                       2000, 2000);
     control_param_init(&turn_error_PID,
                        control_motion_params->turn_error_parameter, 1, 1, 1,
                        5000, 500);

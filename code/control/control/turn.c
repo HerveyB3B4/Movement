@@ -52,7 +52,7 @@ void control_turn(struct Control_Target *control_target,
     lowPassFilterI(&s_momentum_diff, &last_diff, 0.2f);
     last_diff = s_momentum_diff;
 
-    restrictValueI(&s_momentum_diff, 5000, -5000);
+    restrictValueI(&s_momentum_diff, 2000, -2000);
 
     if (control_flag->buckling_side)
     {
