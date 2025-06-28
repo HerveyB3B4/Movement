@@ -141,6 +141,7 @@ extern struct Control_Motion_Manual_Parmas g_control_motion_params;
 extern pid_type_def bottom_angle_velocity_PID;
 
 extern uint32 control_time;
+extern float g_angle_limit;
 
 void control_shutdown(struct Control_Target *control_target,
                       struct EulerAngle *euler_angle_bias,

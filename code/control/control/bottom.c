@@ -97,8 +97,20 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
     //                       (float)vel_motor->bottom_real,
     //                       control_target->bottom_vel);
 
-    // 为了解决抬头问题
-    // control_target->buckling_front = fabs(vel_motor->bottom_real) * control_turn_params->buckling_front_coefficient;
+    // 速度补偿
+    control_target->buckling_front = vel_motor->bottom_real * control_turn_params->buckling_front_coefficient;
+    float original_angle = control_target->bottom_angle;
+    if (original_angle > 0)
+    {
+        // 原始角度为正，补偿后仍保持为正
+        restrictValueF(&control_target->buckling_front, -original_angle * 0.9f, INFINITY);
+    }
+    else if (original_angle < 0)
+    {
+        // 原始角度为负，补偿后仍保持为负
+        restrictValueF(&control_target->buckling_front, -INFINITY, -original_angle * 0.9f);
+    }
+    control_target->bottom_angle += control_target->buckling_front; // 速度快的时候抬头
 
     // control_target->bottom_angle = g_euler_angle_bias->roll - 0.1f *
     // PID_calc_Position_DynamicI(&bottom_velocity_PID,(float)vel_motor->bottom,control_target->bottom_vel,

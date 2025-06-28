@@ -2,6 +2,7 @@
 #include "detection.h"
 #include "Attitude.h"
 #include "distance.h"
+#include "control.h"
 
 static int16 img_target_error = 0;
 
@@ -162,7 +163,7 @@ void img_handler(uint8 lcd_flag)
             // lcd_show_int(6, 7, img_target_center.y, 3);
             lcd_show_float(0, 7, distance_reckon(get_img_target_error(), img_target_center.y, 0), 3, 2);
             lcd_show_int(8, 7, get_img_target_error(), 3);
-            lcd_show_int(13, 7, get_momentum_diff(), 4);
+            lcd_show_int(13, 7, g_control_target.bottom_vel, 4);
         }
     }
 }

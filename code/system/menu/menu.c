@@ -88,15 +88,7 @@ uint32 *EEPROM_DATA_UINT[] = {
     (uint32 *)(&g_control_output_fv_flag),
     (uint32 *)(&g_control_output_fav_flag),
     (uint32 *)(&g_show_run_param_flag),
-    // 添加PID极性控制参数到EEPROM存储
-    // (uint32 *)(&g_menu_manual_param.bottom_velocity_polarity),
-    // (uint32 *)(&g_menu_manual_param.bottom_angle_velocity_polarity),
-    // (uint32 *)(&g_menu_manual_param.bottom_angle_polarity),
-    // (uint32 *)(&g_menu_manual_param.side_angle_velocity_polarity),
-    // (uint32 *)(&g_menu_manual_param.side_angle_polarity),
-    // (uint32 *)(&g_menu_manual_param.side_velocity_polarity),
-    // (uint32 *)(&g_menu_manual_param.turn_angle_polarity),
-    // (uint32 *)(&g_menu_manual_param.turn_velocity_polarity),
+    (uint32 *)(&g_menu_manual_param.angle_limit),
 };
 
 int32 *EEPROM_DATA_INT[] = {
@@ -113,18 +105,6 @@ int32 *EEPROM_DATA_INT[] = {
 MENU_PRMT PID_Prmt;
 
 MENU_TABLE PID_Table[] = {
-    {(uint8 *)"FV",
-     {.INT32 = (int32 *)&g_menu_manual_param.bottom_velocity},
-     Param_Int,
-     {.ItemFunc = Menu_Null}},
-    {(uint8 *)"TURN_TARGET",
-     {.INT32 = (int32 *)&g_menu_manual_param.turn_target},
-     Param_Int,
-     {.ItemFunc = Menu_Null}},
-    {(uint8 *)"diff",
-     {.INT32 = (int32 *)&g_menu_manual_param.side_internal_diff},
-     Param_Int,
-     {.ItemFunc = Menu_Null}},
     {(uint8 *)"FAV_kp",
      {.UINT32 =
           (uint32 *)&g_menu_manual_param.bottom_angle_velocity_parameter[0]},
@@ -263,41 +243,6 @@ MENU_TABLE PID_Table[] = {
      {.ItemFunc = Menu_Null}},
 };
 
-// MENU_TABLE PID_PolarityTable[] = {
-//     {(uint8 *)"FV_Polarity",
-//      {.UINT32 = (uint32 *)&g_menu_manual_param.bottom_velocity_polarity},
-//      Param_Uint,
-//      {.ItemFunc = Menu_Null}},
-//     {(uint8 *)"FAV_Polarity",
-//      {.UINT32 = (uint32 *)&g_menu_manual_param.bottom_angle_velocity_polarity},
-//      Param_Uint,
-//      {.ItemFunc = Menu_Null}},
-//     {(uint8 *)"FA_Polarity",
-//      {.UINT32 = (uint32 *)&g_menu_manual_param.bottom_angle_polarity},
-//      Param_Uint,
-//      {.ItemFunc = Menu_Null}},
-//     {(uint8 *)"SAV_Polarity",
-//      {.UINT32 = (uint32 *)&g_menu_manual_param.side_angle_velocity_polarity},
-//      Param_Uint,
-//      {.ItemFunc = Menu_Null}},
-//     {(uint8 *)"SA_Polarity",
-//      {.UINT32 = (uint32 *)&g_menu_manual_param.side_angle_polarity},
-//      Param_Uint,
-//      {.ItemFunc = Menu_Null}},
-//     {(uint8 *)"SV_Polarity",
-//      {.UINT32 = (uint32 *)&g_menu_manual_param.side_velocity_polarity},
-//      Param_Uint,
-//      {.ItemFunc = Menu_Null}},
-//     {(uint8 *)"TA_Polarity",
-//      {.UINT32 = (uint32 *)&g_menu_manual_param.turn_angle_polarity},
-//      Param_Uint,
-//      {.ItemFunc = Menu_Null}},
-//     {(uint8 *)"TV_Polarity",
-//      {.UINT32 = (uint32 *)&g_menu_manual_param.turn_velocity_polarity},
-//      Param_Uint,
-//      {.ItemFunc = Menu_Null}},
-// };
-
 MENU_TABLE Pid_TimeMenuTable[] = {
     {(uint8 *)"FAV_Time", {.UINT32 = (uint32 *)&g_menu_manual_param.FrontControlTimeParameter[0]}, Param_Uint, {.ItemFunc = Menu_Null}},
     {(uint8 *)"FA_Time", {.UINT32 = (uint32 *)&g_menu_manual_param.FrontControlTimeParameter[1]}, Param_Uint, {.ItemFunc = Menu_Null}},
@@ -430,6 +375,25 @@ MENU_TABLE Test_MenuTable[] = {
      {.ItemFunc = test_encoder_to_velocity}},
 };
 
+MENU_TABLE Utils_MenuTable[] = {
+    {(uint8 *)"FV",
+     {.INT32 = (int32 *)&g_menu_manual_param.bottom_velocity},
+     Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"TURN_TARGET",
+     {.INT32 = (int32 *)&g_menu_manual_param.turn_target},
+     Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"diff",
+     {.INT32 = (int32 *)&g_menu_manual_param.side_internal_diff},
+     Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"angle limit",
+     {.UINT32 = (uint32 *)&g_menu_manual_param.angle_limit},
+     Param_Uint,
+     {.ItemFunc = Menu_Null}},
+};
+
 MENU_TABLE Setting_MenuTable[] = {
     {(uint8 *)"sav_output",
      {.INT32 = (int32 *)&g_control_output_sav_flag},
@@ -482,10 +446,10 @@ MENU_TABLE MainMenu_Table[] = {
      {.SubMenu = PID_Table},
      Sub_Menus,
      {.SubMenuNum = MenuNum(PID_Table)}},
-    // {(uint8 *)"2.PID_Polarity",
-    //  {.SubMenu = PID_PolarityTable},
-    //  Sub_Menus,
-    //  {.SubMenuNum = MenuNum(PID_PolarityTable)}},
+    {(uint8 *)"2.Utils",
+     {.SubMenu = Utils_MenuTable},
+     Sub_Menus,
+     {.SubMenuNum = MenuNum(Utils_MenuTable)}},
     {(uint8 *)"3.PID_TimePara",
      {.SubMenu = Pid_TimeMenuTable},
      Sub_Menus,

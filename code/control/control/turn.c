@@ -54,22 +54,22 @@ void control_turn(struct Control_Target *control_target,
 
     restrictValueI(&s_momentum_diff, 2000, -2000);
 
-    if (control_flag->buckling_side)
-    {
-        control_flag->buckling_side = 0;
-        float v = (float)fabsf(vel_motor->bottom_real);
-        if (v < 0)
-        {
-            v = 0;
-        }
+    // if (control_flag->buckling_side)
+    // {
+    //     control_flag->buckling_side = 0;
+    //     float v = (float)fabsf(vel_motor->bottom_real);
+    //     if (v < 0)
+    //     {
+    //         v = 0;
+    //     }
 
-        // float x = (float) control_target.turn_angle_velocity * 0.01f *
-        // fabsf(motor_velocity.bottom_filtered * 0.01f);
-        float x = (float)control_target->turn_angle_vel * 0.1f *
-                  logf(v + 2); // 使用ln函数，降低速度对压弯的影响
-        control_target->buckling_side = control_turn_params->buckling_side_coefficient * x;
-        restrictValueF(&control_target->buckling_side, 10.5f, -10.5f);
-    }
+    //     // float x = (float) control_target.turn_angle_velocity * 0.01f *
+    //     // fabsf(motor_velocity.bottom_filtered * 0.01f);
+    //     float x = (float)control_target->turn_angle_vel * 0.1f *
+    //               logf(v + 2); // 使用ln函数，降低速度对压弯的影响
+    //     control_target->buckling_side = control_turn_params->buckling_side_coefficient * x;
+    //     restrictValueF(&control_target->buckling_side, 10.5f, -10.5f);
+    // }
 }
 
 static void control_turn_angle_velocity(struct Control_Target *control_target,

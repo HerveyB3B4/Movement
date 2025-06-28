@@ -47,6 +47,8 @@ struct Menu_Manual_Param
 
     int32 buckling_front_coefficient;
     int32 buckling_side_coefficient;
+
+    uint32 angle_limit;
 };
 
 struct EulerAngle;

@@ -16,6 +16,8 @@ uint32 g_control_bottom_flag = 0;
 uint32 g_control_side_flag = 0;
 uint32 g_control_turn_flag = 0;
 
+float g_angle_limit = 50.0f; // 菜单上的角度限制
+
 struct Control_Turn_Manual_Params g_control_turn_manual_params;
 struct Control_Target g_control_target;
 struct Control_Flag g_control_flag;
@@ -231,7 +233,7 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
                        10, 1, 10, 9999, 10);
     control_param_init(&bottom_velocity_PID,
                        control_motion_params->bottom_velocity_parameter,
-                       100, 10000, 100, 10.0f, 10.0f);
+                       100, 10000, 100, g_angle_limit, 10.0f);
 
     control_param_init(&bottom_position_PID,
                        control_motion_params->bottom_position_parameter,
