@@ -11,7 +11,7 @@ struct Menu_Manual_Param
     int32 mechanicalPitchAngle;
     int32 mechanicalRollAngle;
 
-    int16 bottom_velocity;
+    int32 bottom_velocity;
     int32 turn_target;
     int32 side_internal_diff;
 
