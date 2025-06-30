@@ -34,6 +34,7 @@ void control_bottom_balance(struct Control_Target *control_target,
     if (control_flag->bottom_vel)
     {
         control_flag->bottom_vel = 0;
+        velocity_update_bottom(vel_motor); // update bottom velocity
         control_bottom_velocity(vel_motor, control_target, control_motion_params, control_turn_params);
     }
     if (control_flag->bottom_angle)
@@ -64,7 +65,8 @@ void control_bottom_balance(struct Control_Target *control_target,
     //             bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
     //     }
     // }
-    // s_bottom_balance_duty = control_target->bottom_angle_vel * 10;
+    // s_bottom_balance_duty = control_target->bottom_angle * 100;
+
     if (s_bottom_balance_duty > 0)
     {
         s_bottom_balance_duty += bottom_motor_deadzone_forward;
@@ -98,19 +100,19 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
     //                       control_target->bottom_vel);
 
     // 速度补偿
-    control_target->buckling_front = vel_motor->bottom_real * control_turn_params->buckling_front_coefficient;
-    float original_angle = control_target->bottom_angle;
-    if (original_angle > 0)
-    {
-        // 原始角度为正，补偿后仍保持为正
-        restrictValueF(&control_target->buckling_front, -original_angle * 0.9f, INFINITY);
-    }
-    else if (original_angle < 0)
-    {
-        // 原始角度为负，补偿后仍保持为负
-        restrictValueF(&control_target->buckling_front, -INFINITY, -original_angle * 0.9f);
-    }
-    control_target->bottom_angle += control_target->buckling_front; // 速度快的时候抬头
+    // control_target->buckling_front = vel_motor->bottom_real * control_turn_params->buckling_front_coefficient;
+    // float original_angle = control_target->bottom_angle;
+    // if (original_angle > 0)
+    // {
+    //     // 原始角度为正，补偿后仍保持为正
+    //     restrictValueF(&control_target->buckling_front, -original_angle * 0.9f, INFINITY);
+    // }
+    // else if (original_angle < 0)
+    // {
+    //     // 原始角度为负，补偿后仍保持为负
+    //     restrictValueF(&control_target->buckling_front, -INFINITY, -original_angle * 0.9f);
+    // }
+    // control_target->bottom_angle += control_target->buckling_front; // 速度快的时候抬头
 
     // control_target->bottom_angle = g_euler_angle_bias->roll - 0.1f *
     // PID_calc_Position_DynamicI(&bottom_velocity_PID,(float)vel_motor->bottom,control_target->bottom_vel,
@@ -122,7 +124,7 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
     // }
     if (g_control_output_fv_flag != 0)
     {
-        printf("%f, %f, %f\n", control_target->bottom_angle, (float)vel_motor->bottom_filtered, control_target->bottom_vel);
+        printf("%f, %f, %d\n", control_target->bottom_angle, (float)vel_motor->bottom_filtered, vel_motor->bottom);
     }
 }
 
@@ -139,7 +141,7 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
 
     // simpleFuzzyProcess(&frontBalanceSimpleFuzzy,angleControlFilter[0],control_target->bottom_angle,&bottom_angle_PID);
     control_target->bottom_angle_vel = control_motion_params->bottom_angle_polarity *
-                                       (PID_calc_Position(
+                                       (PID_calc_Position_LowPassD(
                                            &bottom_angle_PID,
                                            angleControlFilter[0] - euler_angle_bias->pitch,
                                            control_target->bottom_angle));
@@ -160,7 +162,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[0] = PITCH_VEL;
 
     s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity *
-                            (PID_calc_Position(
+                            (PID_calc_Position_LowPassD(
                                 &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
                                 control_target->bottom_angle_vel));
     if (g_control_output_fav_flag != 0)

@@ -58,7 +58,8 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,
     interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU60_CH0);
     g_pit_ccu60_ch0_cnt++;
-    velocity_update(&g_vel_motor);
+    // velocity_update(&g_vel_motor);
+    velocity_update_side(&g_vel_motor);
 }
 
 IFX_INTERRUPT(cc60_pit_ch1_isr,

@@ -53,7 +53,7 @@ void guide_position_pid(struct Control_Target *control_target, Point *target)
 void guide_to_target(struct Control_Target *control_target)
 {
     control_target->bottom_vel = (float)guide_target_vel;
-    control_target->turn_err = get_img_target_error();
+    // control_target->turn_err = get_img_target_error();
     // control_target->bottom_vel = (float)guide_target_vel;
     // control_target->turn_err = get_img_target_error();
     // Point target_point = get_target_point();

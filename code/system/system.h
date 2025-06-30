@@ -5,7 +5,7 @@
 #include "imu.h"
 
 #define PIT_KEY_T 5      // 更新频率
-#define PIT_VELOCITY_T 1 // 更新周期(ms)
+#define PIT_VELOCITY_T 5 // 更新周期(ms)
 #define PIT_CONTROL_T 1  // 控制周期(ms)
 
 typedef enum

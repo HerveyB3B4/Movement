@@ -54,6 +54,7 @@ void control_turn(struct Control_Target *control_target,
 
     restrictValueI(&s_momentum_diff, 2000, -2000);
 
+    control_target->buckling_side = control_turn_params->buckling_side_coefficient * control_target->turn_err;
     // if (control_flag->buckling_side)
     // {
     //     control_flag->buckling_side = 0;

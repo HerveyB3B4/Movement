@@ -25,4 +25,7 @@ extern struct Velocity_Motor g_vel_motor;
 
 void velocity_init(struct Velocity_Motor *vel_motor);
 void velocity_update(struct Velocity_Motor *vel_motor);
+void velocity_update_bottom(struct Velocity_Motor *vel_motor);
+void velocity_update_side(struct Velocity_Motor *vel_motor);
+
 #endif

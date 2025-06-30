@@ -47,6 +47,7 @@ void control_side_balance(
     if (control_flag->side_vel)
     {
         control_flag->side_vel = 0;
+        velocity_update_side(vel_motor);
         control_side_velocity(vel_motor, control_target, control_turn_params, control_motion_params);
     }
 

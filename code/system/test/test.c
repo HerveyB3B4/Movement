@@ -38,6 +38,7 @@ void test_bottom_motor()
             gpio_set_level(DIR_BOTTOM, 0);
             pwm_set_duty(MOTOR_BOTTOM, 8000);
         }
+        velocity_update_bottom(&g_vel_motor);
         lcd_show_int(0, 5, g_vel_motor.bottom, 5);
         lcd_show_float(0, 6, g_vel_motor.bottom_real, 5, 5);
         lcd_show_float(0, 7, g_vel_motor.bottom_filtered, 5, 5);

@@ -78,6 +78,6 @@ void get_bottom_encoder(struct Velocity_Motor *vel_motor)
 
     int32 bottom = -encoder_get_count(ENCODER_BOTTOM);
 
-    encoder_clear_count(ENCODER_BOTTOM);
     pass_bottom_encoder(bottom, vel_motor);
+    encoder_clear_count(ENCODER_BOTTOM);
 }
