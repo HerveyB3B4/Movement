@@ -80,7 +80,7 @@ void control_polarity_init(struct Control_Motion_Manual_Parmas *control_motion_p
 {
     control_motion_params->bottom_angle_velocity_polarity = 1;
     control_motion_params->bottom_angle_polarity = -1;
-    control_motion_params->bottom_velocity_polarity = 1;
+    control_motion_params->bottom_velocity_polarity = -1;
 
     control_motion_params->side_angle_velocity_polarity = 1;
     control_motion_params->side_angle_polarity = -1;
@@ -235,7 +235,7 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
     //                    100, 10);
     control_param_init(&bottom_angle_PID,
                        control_motion_params->bottom_angle_parameter,
-                       10, 1, 10, 9999, 10);
+                       10, 1, 100, 9999, 10);
     control_param_init(&bottom_velocity_PID,
                        control_motion_params->bottom_velocity_parameter,
                        1000, 10000, 1000, 5000, 10.0f);

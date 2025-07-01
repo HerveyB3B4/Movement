@@ -142,6 +142,9 @@ void PID_init_DELTA(pid_type_def *pid,
 float32 PID_calc_DELTA(pid_type_def *pid, float32 ref, float32 set);
 
 float32 PID_calc_Position_Opposite_D(pid_type_def *pid, float32 ref, float32 set);
+
+float32 PID_calc_Position_Gyro_D(pid_type_def *pid, float32 ref, float32 set);
+
 /**
  * @brief          pid out clear
  * @param[out]     pid: PID struct data point

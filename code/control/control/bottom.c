@@ -65,7 +65,6 @@ void control_bottom_balance(struct Control_Target *control_target,
     //             bottom_motor_deadzone * (vel_motorDeadV + 0.1f);
     //     }
     // }
-    // s_bottom_balance_duty = control_target->bottom_angle * 100;
 
     if (s_bottom_balance_duty > 0)
     {
@@ -91,7 +90,7 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
     control_target->bottom_angle = control_motion_params->bottom_velocity_polarity *
                                    PID_calc_Position(
                                        &bottom_velocity_PID,
-                                       vel_motor->bottom_filtered,
+                                       vel_motor->bottom,
                                        control_target->bottom_vel);
 
     // control_target->bottom_angle =
@@ -124,7 +123,7 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
     // }
     if (g_control_output_fv_flag != 0)
     {
-        printf("%f, %f, %d\n", control_target->bottom_angle, (float)vel_motor->bottom_filtered, vel_motor->bottom);
+        printf("%f, %f, %d\n", control_target->bottom_angle, PITCH, vel_motor->bottom);
     }
 }
 
@@ -141,7 +140,7 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
 
     // simpleFuzzyProcess(&frontBalanceSimpleFuzzy,angleControlFilter[0],control_target->bottom_angle,&bottom_angle_PID);
     control_target->bottom_angle_vel = control_motion_params->bottom_angle_polarity *
-                                       (PID_calc_Position_LowPassD(
+                                       (PID_calc_Position_Gyro_D(
                                            &bottom_angle_PID,
                                            angleControlFilter[0] - euler_angle_bias->pitch,
                                            control_target->bottom_angle));
@@ -162,7 +161,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[0] = PITCH_VEL;
 
     s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity *
-                            (PID_calc_Position_LowPassD(
+                            (PID_calc_DELTA(
                                 &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
                                 control_target->bottom_angle_vel));
     if (g_control_output_fav_flag != 0)

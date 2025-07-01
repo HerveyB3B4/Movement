@@ -33,7 +33,7 @@ void system_init()
     key_init_rewrite(KEY_NUM);
 
     // ===================== PARAMS ======================== //
-    attitude_init(ATTITUDE_EKF);
+    attitude_init(ATTITUDE_MAHONY);
     menu_manual_param_init();
     velocity_init(&g_vel_motor);
     control_manual_param_init();
