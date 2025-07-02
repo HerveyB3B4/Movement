@@ -58,9 +58,7 @@ int core0_main(void)
     system_set_runstate(CAR_RUNNING);
     while (TRUE)
     {
-        lcd_show_float(0, 0, PITCH, 3, 3);
-        lcd_show_float(0, 1, ROLL, 3, 3);
-        lcd_show_float(0, 2, YAW, 3, 3);
+        // printf("%f,%f\n", twoKpDef, twoKiDef);
 
         // lcd_show_uint(0, 0, mahony_cnt, 5);
         // img_handler(g_show_run_param_flag);

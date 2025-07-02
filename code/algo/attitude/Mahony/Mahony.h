@@ -14,8 +14,10 @@
 // #define twoKpDef (2.0f * 250.0f) // 2 * proportional gain
 // #define twoKiDef (2.0f * 5.0f)   // 2 * integral gain
 
-#define twoKpDef (2.0f * 500.0f) // 2 * proportional gain
-#define twoKiDef (2.0f * 50.0f)  // 2 * integral gain
+#define TauDef (0.001f)
+
+#define twoKpDef ((1.0f / (2.0f * TauDef)) * 2.0f)
+#define twoKiDef ((twoKpDef * 0.1f) * 2.0f)
 
 typedef struct
 {
