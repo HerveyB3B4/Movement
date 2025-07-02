@@ -5,7 +5,6 @@ static MahonyAHRS_INFO s_mahonyAHRS_info;
 
 // func
 static float Mahony_invSqrt(float x);
-static void Mahony_computeAngles();
 
 uint32 mahony_cnt = 0;
 void MahonyAHRS_init(float sampleFrequency)
@@ -72,10 +71,13 @@ void MahonyAHRS_update(struct IMU_DATA *imu_data)
     float halfex, halfey, halfez;
     float qa, qb, qc;
 
+    imu_data->gyro.x *= 0.0174533f;
+    imu_data->gyro.y *= 0.0174533f;
+    imu_data->gyro.z *= 0.0174533f;
+
     // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
     if (!((imu_data->acc.x == 0.0f) && (imu_data->acc.y == 0.0f) && (imu_data->acc.z == 0.0f)))
     {
-
         // Normalise accelerometer measurement
         recipNorm = Mahony_invSqrt(imu_data->acc.x * imu_data->acc.x + imu_data->acc.y * imu_data->acc.y + imu_data->acc.z * imu_data->acc.z);
         imu_data->acc.x *= recipNorm;
@@ -134,30 +136,26 @@ void MahonyAHRS_update(struct IMU_DATA *imu_data)
     s_mahonyAHRS_info.q2 *= recipNorm;
     s_mahonyAHRS_info.q3 *= recipNorm;
 
-    Mahony_computeAngles();
+    s_mahonyAHRS_info.roll = atan2(s_mahonyAHRS_info.q0 * s_mahonyAHRS_info.q1 + s_mahonyAHRS_info.q2 * s_mahonyAHRS_info.q3, 0.5f - s_mahonyAHRS_info.q1 * s_mahonyAHRS_info.q1 - s_mahonyAHRS_info.q2 * s_mahonyAHRS_info.q2); // 英飞凌的加速试一下  用了英飞凌的底层支持库 ，不是英飞凌的换成atan就行
+    s_mahonyAHRS_info.pitch = asinf(-2.0f * (s_mahonyAHRS_info.q1 * s_mahonyAHRS_info.q3 - s_mahonyAHRS_info.q0 * s_mahonyAHRS_info.q2));
+    s_mahonyAHRS_info.yaw = atan2(s_mahonyAHRS_info.q1 * s_mahonyAHRS_info.q2 + s_mahonyAHRS_info.q0 * s_mahonyAHRS_info.q3, 0.5f - s_mahonyAHRS_info.q2 * s_mahonyAHRS_info.q2 - s_mahonyAHRS_info.q3 * s_mahonyAHRS_info.q3); // 加速我来试一下
+
     mahony_cnt++;
 }
 
 float MahonyAHRS_get_roll()
 {
-    return s_mahonyAHRS_info.roll;
+    return s_mahonyAHRS_info.roll * 57.29578f;
 }
 
 float MahonyAHRS_get_pitch()
 {
-    return s_mahonyAHRS_info.pitch;
+    return s_mahonyAHRS_info.pitch * 57.29578f;
 }
 
 float MahonyAHRS_get_yaw()
 {
-    return s_mahonyAHRS_info.yaw;
-}
-
-static void Mahony_computeAngles()
-{
-    s_mahonyAHRS_info.roll = atan2(s_mahonyAHRS_info.q0 * s_mahonyAHRS_info.q1 + s_mahonyAHRS_info.q2 * s_mahonyAHRS_info.q3, 0.5f - s_mahonyAHRS_info.q1 * s_mahonyAHRS_info.q1 - s_mahonyAHRS_info.q2 * s_mahonyAHRS_info.q2); // 英飞凌的加速试一下  用了英飞凌的底层支持库 ，不是英飞凌的换成atan就行
-    s_mahonyAHRS_info.pitch = asinf(-2.0f * (s_mahonyAHRS_info.q1 * s_mahonyAHRS_info.q3 - s_mahonyAHRS_info.q0 * s_mahonyAHRS_info.q2));
-    s_mahonyAHRS_info.yaw = atan2(s_mahonyAHRS_info.q1 * s_mahonyAHRS_info.q2 + s_mahonyAHRS_info.q0 * s_mahonyAHRS_info.q3, 0.5f - s_mahonyAHRS_info.q2 * s_mahonyAHRS_info.q2 - s_mahonyAHRS_info.q3 * s_mahonyAHRS_info.q3); // 加速我来试一下
+    return s_mahonyAHRS_info.yaw * 57.29578f + 180.0f;
 }
 
 static float Mahony_invSqrt(float x)

@@ -35,9 +35,13 @@ void attitude_init(Attitude_algorithm algo)
         break;
     case ATTITUDE_MAHONY:
         MahonyAHRS_init(500.0f);
+        imu_get_data(&g_imu_data);
+        MahonyAHRS_calibrate(&g_imu_data);
         break;
     default:
         MahonyAHRS_init(500.0f);
+        imu_get_data(&g_imu_data);
+        MahonyAHRS_calibrate(&g_imu_data);
         break;
     }
 
@@ -55,13 +59,13 @@ void attitude_cal(struct IMU_DATA *data)
         IMU_QuaternionEKF_Update(data);
         break;
     case ATTITUDE_MADGWICK:
-        MadgwickAHRS_update(&data);
+        MadgwickAHRS_update(data);
         break;
     case ATTITUDE_MAHONY:
-        MahonyAHRS_update(&data);
+        MahonyAHRS_update(data);
         break;
     default:
-        MahonyAHRS_update(&data);
+        MahonyAHRS_update(data);
         break;
     }
 }

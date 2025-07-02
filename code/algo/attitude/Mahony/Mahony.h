@@ -16,6 +16,8 @@ typedef struct
     float roll, pitch, yaw;
 } MahonyAHRS_INFO;
 
+struct IMU_DATA;
+
 void MahonyAHRS_calibrate(struct IMU_DATA *imu_data);
 void MahonyAHRS_init(float sampleFreq);
 void MahonyAHRS_update(struct IMU_DATA *imu_data);
