@@ -12,7 +12,7 @@ void integral_init(float dt)
 void integral_update(struct IMU_DATA *data)
 {
 
-    s_integral.yaw += data->gyro.z * s_integral.dt;
+    s_integral.yaw += data->gyro.z;
 
     // 限制积分值的范围，防止溢出或累积过大的误差
     restrictValueF(&s_integral.yaw, 1000.0f, -1000.0f);
