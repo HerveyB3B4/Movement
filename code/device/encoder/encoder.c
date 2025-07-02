@@ -16,14 +16,14 @@ static void pass_momentum_encoder(int32 frontValue,
 static void pass_bottom_encoder(int32 value, struct Velocity_Motor *vel_motor)
 {
     // filter the noise
-    if (abs(value) < 5)
-    {
-        value = 0;
-    }
-    else
-    {
-        value > 0 ? (value -= 5) : (value += 5);
-    }
+    // if (abs(value) < 5)
+    // {
+    //     value = 0;
+    // }
+    // else
+    // {
+    //     value > 0 ? (value -= 5) : (value += 5);
+    // }
     vel_motor->bottom = value;
 }
 

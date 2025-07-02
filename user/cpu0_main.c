@@ -40,6 +40,7 @@
 #include "image.h"
 #include "velocity.h"
 #include "zf_common_headfile.h"
+#include "Mahony.h"
 #pragma section all "cpu0_dsram"
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU0的RAM中
 
@@ -57,6 +58,7 @@ int core0_main(void)
     system_set_runstate(CAR_RUNNING);
     while (TRUE)
     {
+        // lcd_show_uint(0, 0, mahony_cnt, 5);
         // img_handler(g_show_run_param_flag);
         // img_handler(g_show_run_param_flag);
         // lcd_show_int(0, 0, get_momentum_diff(), 5);

@@ -7,7 +7,7 @@
 #define VELOCITY_KALMAN_FILTER
 
 // 一块砖长度(m)/编码器脉冲数/速度更新周期(ms)
-#define ENCODER_TO_VELOCITY ((0.6f) / (7200.0f) / (PIT_VELOCITY_T) * 1000.0f)
+#define ENCODER_TO_VELOCITY ((0.6f) / (3600.0f) / (PIT_VELOCITY_T) * 1000.0f)
 #define BOTTOM_VELOCITY_PARAMS 100.0f
 
 extern uint32 vel_time;
