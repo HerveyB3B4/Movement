@@ -4,8 +4,18 @@
 #include "zf_common_headfile.h"
 #include "imu.h"
 
-#define twoKpDef (2.0f * 0.5f) // 2 * proportional gain
-#define twoKiDef (2.0f * 0.0f) // 2 * integral gain
+// 在时间τ内，系统会达到系统响应时间所需的63.2%
+// 在时间2τ内，会达到约86.5%
+// 在时间3τ内，会达到约95%
+
+// Kp = 1 / (2 × τ)
+// Ki / Kp = 0.10
+
+// #define twoKpDef (2.0f * 250.0f) // 2 * proportional gain
+// #define twoKiDef (2.0f * 5.0f)   // 2 * integral gain
+
+#define twoKpDef (2.0f * 500.0f) // 2 * proportional gain
+#define twoKiDef (2.0f * 50.0f)  // 2 * integral gain
 
 typedef struct
 {
