@@ -80,6 +80,8 @@ IFX_INTERRUPT(cc61_pit_ch0_isr,
 {
     interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU61_CH0);
+    system_attitude_timer(&g_control_turn_manual_params, &g_control_target,
+                          &g_vel_motor, &g_euler_angle, &g_imu_data);
 }
 
 IFX_INTERRUPT(cc61_pit_ch1_isr,
@@ -90,8 +92,7 @@ IFX_INTERRUPT(cc61_pit_ch1_isr,
     pit_clear_flag(CCU61_CH1);
 
     g_pit_ccu61_ch1_cnt++;
-    system_attitude_timer(&g_control_turn_manual_params, &g_control_target,
-                          &g_vel_motor, &g_euler_angle, &g_imu_data);
+
     if (runState == CAR_RUNNING)
     {
         // 控制

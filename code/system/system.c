@@ -33,7 +33,7 @@ void system_init()
     key_init_rewrite(KEY_NUM);
 
     // ===================== PARAMS ======================== //
-    attitude_init(ATTITUDE_MAHONY);
+    attitude_init(ATTITUDE_EKF);
     menu_manual_param_init();
     velocity_init(&g_vel_motor);
     control_manual_param_init();
@@ -48,7 +48,9 @@ void system_init()
     // control
     pit_ms_init(CCU61_CH1, PIT_CONTROL_T);
     pit_enable(CCU61_CH1);
-
+    // attitude
+    pit_ms_init(CCU61_CH0, PIT_ATTITUDE_T);
+    pit_enable(CCU61_CH0);
     // ===================== MENU ======================== //
     Read_EEPROM();
     // menu

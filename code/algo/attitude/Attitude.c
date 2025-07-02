@@ -28,7 +28,7 @@ void attitude_init(Attitude_algorithm algo)
     switch (current_algorithm)
     {
     case ATTITUDE_EKF:
-        IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0);
+        IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.002f, 0);
         break;
     case ATTITUDE_MADGWICK:
         MadgwickAHRS_init(1000.0f);
@@ -37,7 +37,7 @@ void attitude_init(Attitude_algorithm algo)
         MahonyAHRS_init(1000.0f);
         break;
     default:
-        IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0);
+        IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.002f, 0);
         break;
     }
 
