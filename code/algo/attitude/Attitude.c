@@ -35,13 +35,13 @@ void attitude_init(Attitude_algorithm algo)
         break;
     case ATTITUDE_MAHONY:
         MahonyAHRS_init(500.0f);
-        imu_get_data(&g_imu_data);
-        MahonyAHRS_calibrate(&g_imu_data);
+        imu_get_data(&g_imu_data); // 获取一个初始的acc信息加速收敛
+        MahonyAHRS_calibrate(g_imu_data);
         break;
     default:
         MahonyAHRS_init(500.0f);
         imu_get_data(&g_imu_data);
-        MahonyAHRS_calibrate(&g_imu_data);
+        MahonyAHRS_calibrate(g_imu_data);
         break;
     }
 
@@ -62,10 +62,10 @@ void attitude_cal(struct IMU_DATA *data)
         MadgwickAHRS_update(data);
         break;
     case ATTITUDE_MAHONY:
-        MahonyAHRS_update(data);
+        MahonyAHRS_update(*data);
         break;
     default:
-        MahonyAHRS_update(data);
+        MahonyAHRS_update(*data);
         break;
     }
 }

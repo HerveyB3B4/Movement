@@ -58,6 +58,7 @@ int core0_main(void)
     system_set_runstate(CAR_RUNNING);
     while (TRUE)
     {
+        printf("%f\n", ROLL_VEL);
         // printf("%f,%f\n", twoKpDef, twoKiDef);
 
         // lcd_show_uint(0, 0, mahony_cnt, 5);

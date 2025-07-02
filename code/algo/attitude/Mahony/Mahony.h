@@ -30,9 +30,9 @@ typedef struct
 
 struct IMU_DATA;
 
-void MahonyAHRS_calibrate(struct IMU_DATA *imu_data);
+void MahonyAHRS_calibrate(struct IMU_DATA imu_data);
 void MahonyAHRS_init(float sampleFreq);
-void MahonyAHRS_update(struct IMU_DATA *imu_data);
+void MahonyAHRS_update(struct IMU_DATA imu_data);
 float MahonyAHRS_get_roll(void);
 float MahonyAHRS_get_pitch(void);
 float MahonyAHRS_get_yaw(void);

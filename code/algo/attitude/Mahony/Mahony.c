@@ -20,7 +20,7 @@ void MahonyAHRS_init(float sampleFrequency)
     s_mahonyAHRS_info.invSampleFreq = 1.0f / sampleFrequency;
 }
 
-void MahonyAHRS_calibrate(struct IMU_DATA *imu_data)
+void MahonyAHRS_calibrate(struct IMU_DATA imu_data)
 {
     float recipNorm;
     float init_yaw, init_pitch, init_roll;
@@ -28,13 +28,13 @@ void MahonyAHRS_calibrate(struct IMU_DATA *imu_data)
     float sin_roll, cos_roll, sin_pitch, cos_pitch;
     float magX, magY;
 
-    recipNorm = Mahony_invSqrt(imu_data->acc.x * imu_data->acc.x + imu_data->acc.y * imu_data->acc.y + imu_data->acc.z * imu_data->acc.z);
-    imu_data->acc.x *= recipNorm;
-    imu_data->acc.y *= recipNorm;
-    imu_data->acc.z *= recipNorm;
+    recipNorm = Mahony_invSqrt(imu_data.acc.x * imu_data.acc.x + imu_data.acc.y * imu_data.acc.y + imu_data.acc.z * imu_data.acc.z);
+    imu_data.acc.x *= recipNorm;
+    imu_data.acc.y *= recipNorm;
+    imu_data.acc.z *= recipNorm;
 
-    init_pitch = atan2f(-imu_data->acc.x, imu_data->acc.z);
-    init_roll = atan2f(imu_data->acc.y, imu_data->acc.z);
+    init_pitch = atan2f(-imu_data.acc.x, imu_data.acc.z);
+    init_roll = atan2f(imu_data.acc.y, imu_data.acc.z);
 
     sin_roll = sinf(init_roll);
     cos_roll = cosf(init_roll);
@@ -64,25 +64,25 @@ void MahonyAHRS_calibrate(struct IMU_DATA *imu_data)
     s_mahonyAHRS_info.q3 *= recipNorm;
 }
 
-void MahonyAHRS_update(struct IMU_DATA *imu_data)
+void MahonyAHRS_update(struct IMU_DATA imu_data)
 {
     float recipNorm;
     float halfvx, halfvy, halfvz;
     float halfex, halfey, halfez;
     float qa, qb, qc;
 
-    imu_data->gyro.x *= 0.0174533f;
-    imu_data->gyro.y *= 0.0174533f;
-    imu_data->gyro.z *= 0.0174533f;
+    // imu_data.gyro.x *= 0.0174533f;
+    // imu_data.gyro.y *= 0.0174533f;
+    // imu_data.gyro.z *= 0.0174533f;
 
     // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
-    if (!((imu_data->acc.x == 0.0f) && (imu_data->acc.y == 0.0f) && (imu_data->acc.z == 0.0f)))
+    if (!((imu_data.acc.x == 0.0f) && (imu_data.acc.y == 0.0f) && (imu_data.acc.z == 0.0f)))
     {
         // Normalise accelerometer measurement
-        recipNorm = Mahony_invSqrt(imu_data->acc.x * imu_data->acc.x + imu_data->acc.y * imu_data->acc.y + imu_data->acc.z * imu_data->acc.z);
-        imu_data->acc.x *= recipNorm;
-        imu_data->acc.y *= recipNorm;
-        imu_data->acc.z *= recipNorm;
+        recipNorm = Mahony_invSqrt(imu_data.acc.x * imu_data.acc.x + imu_data.acc.y * imu_data.acc.y + imu_data.acc.z * imu_data.acc.z);
+        imu_data.acc.x *= recipNorm;
+        imu_data.acc.y *= recipNorm;
+        imu_data.acc.z *= recipNorm;
 
         // Estimated direction of gravity and vector perpendicular to magnetic flux
         halfvx = s_mahonyAHRS_info.q1 * s_mahonyAHRS_info.q3 - s_mahonyAHRS_info.q0 * s_mahonyAHRS_info.q2;
@@ -90,9 +90,9 @@ void MahonyAHRS_update(struct IMU_DATA *imu_data)
         halfvz = s_mahonyAHRS_info.q0 * s_mahonyAHRS_info.q0 - 0.5f + s_mahonyAHRS_info.q3 * s_mahonyAHRS_info.q3;
 
         // Error is sum of cross product between estimated and measured direction of gravity
-        halfex = (imu_data->acc.y * halfvz - imu_data->acc.z * halfvy);
-        halfey = (imu_data->acc.z * halfvx - imu_data->acc.x * halfvz);
-        halfez = (imu_data->acc.x * halfvy - imu_data->acc.y * halfvx);
+        halfex = (imu_data.acc.y * halfvz - imu_data.acc.z * halfvy);
+        halfey = (imu_data.acc.z * halfvx - imu_data.acc.x * halfvz);
+        halfez = (imu_data.acc.x * halfvy - imu_data.acc.y * halfvx);
 
         // Compute and apply integral feedback if enabled
         if (s_mahonyAHRS_info.twoKi > 0.0f)
@@ -100,9 +100,9 @@ void MahonyAHRS_update(struct IMU_DATA *imu_data)
             s_mahonyAHRS_info.integralFBx += s_mahonyAHRS_info.twoKi * halfex * s_mahonyAHRS_info.invSampleFreq; // integral error scaled by Ki
             s_mahonyAHRS_info.integralFBy += s_mahonyAHRS_info.twoKi * halfey * s_mahonyAHRS_info.invSampleFreq;
             s_mahonyAHRS_info.integralFBz += s_mahonyAHRS_info.twoKi * halfez * s_mahonyAHRS_info.invSampleFreq;
-            imu_data->gyro.x += s_mahonyAHRS_info.integralFBx; // apply integral feedback
-            imu_data->gyro.y += s_mahonyAHRS_info.integralFBy;
-            imu_data->gyro.z += s_mahonyAHRS_info.integralFBz;
+            imu_data.gyro.x += s_mahonyAHRS_info.integralFBx; // apply integral feedback
+            imu_data.gyro.y += s_mahonyAHRS_info.integralFBy;
+            imu_data.gyro.z += s_mahonyAHRS_info.integralFBz;
         }
         else
         {
@@ -112,22 +112,22 @@ void MahonyAHRS_update(struct IMU_DATA *imu_data)
         }
 
         // Apply proportional feedback
-        imu_data->gyro.x += twoKpDef * halfex;
-        imu_data->gyro.y += twoKpDef * halfey;
-        imu_data->gyro.z += twoKpDef * halfez;
+        imu_data.gyro.x += twoKpDef * halfex;
+        imu_data.gyro.y += twoKpDef * halfey;
+        imu_data.gyro.z += twoKpDef * halfez;
     }
 
     // Integrate rate of change of quaternion
-    imu_data->gyro.x *= (0.5f * s_mahonyAHRS_info.invSampleFreq); // pre-multiply common factors
-    imu_data->gyro.y *= (0.5f * s_mahonyAHRS_info.invSampleFreq);
-    imu_data->gyro.z *= (0.5f * s_mahonyAHRS_info.invSampleFreq);
+    imu_data.gyro.x *= (0.5f * s_mahonyAHRS_info.invSampleFreq); // pre-multiply common factors
+    imu_data.gyro.y *= (0.5f * s_mahonyAHRS_info.invSampleFreq);
+    imu_data.gyro.z *= (0.5f * s_mahonyAHRS_info.invSampleFreq);
     qa = s_mahonyAHRS_info.q0;
     qb = s_mahonyAHRS_info.q1;
     qc = s_mahonyAHRS_info.q2;
-    s_mahonyAHRS_info.q0 += (-qb * imu_data->gyro.x - qc * imu_data->gyro.y - s_mahonyAHRS_info.q3 * imu_data->gyro.z);
-    s_mahonyAHRS_info.q1 += (qa * imu_data->gyro.x + qc * imu_data->gyro.z - s_mahonyAHRS_info.q3 * imu_data->gyro.y);
-    s_mahonyAHRS_info.q2 += (qa * imu_data->gyro.y - qb * imu_data->gyro.z + s_mahonyAHRS_info.q3 * imu_data->gyro.x);
-    s_mahonyAHRS_info.q3 += (qa * imu_data->gyro.z + qb * imu_data->gyro.y - qc * imu_data->gyro.x);
+    s_mahonyAHRS_info.q0 += (-qb * imu_data.gyro.x - qc * imu_data.gyro.y - s_mahonyAHRS_info.q3 * imu_data.gyro.z);
+    s_mahonyAHRS_info.q1 += (qa * imu_data.gyro.x + qc * imu_data.gyro.z - s_mahonyAHRS_info.q3 * imu_data.gyro.y);
+    s_mahonyAHRS_info.q2 += (qa * imu_data.gyro.y - qb * imu_data.gyro.z + s_mahonyAHRS_info.q3 * imu_data.gyro.x);
+    s_mahonyAHRS_info.q3 += (qa * imu_data.gyro.z + qb * imu_data.gyro.y - qc * imu_data.gyro.x);
 
     // Normalise quaternion
     recipNorm = Mahony_invSqrt(s_mahonyAHRS_info.q0 * s_mahonyAHRS_info.q0 + s_mahonyAHRS_info.q1 * s_mahonyAHRS_info.q1 + s_mahonyAHRS_info.q2 * s_mahonyAHRS_info.q2 + s_mahonyAHRS_info.q3 * s_mahonyAHRS_info.q3);
