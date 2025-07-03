@@ -778,3 +778,20 @@ void test_encoder_to_velocity()
     lcd_clear();
     encoder_clear_count(ENCODER_BOTTOM);
 }
+
+void test_switch()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "Switch Test");
+    lcd_show_string(0, 1, "Switch 1:");
+    lcd_show_int(9, 1, switch_get_state(SWITCH_1), 1);
+    lcd_show_string(0, 2, "Switch 2:");
+    lcd_show_int(9, 2, switch_get_state(SWITCH_2), 1);
+    lcd_show_string(0, 3, "Switch 3:");
+    lcd_show_int(9, 3, switch_get_state(SWITCH_3), 1);
+    lcd_show_string(0, 4, "Switch 4:");
+    lcd_show_int(9, 4, switch_get_state(SWITCH_4), 1);
+    while (keymsg.key != KEY_L)
+        ;
+    lcd_clear();
+}

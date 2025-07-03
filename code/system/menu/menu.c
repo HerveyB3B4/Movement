@@ -373,6 +373,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_encoder_to_velocity}},
+    {(uint8 *)"Switch",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_switch}},
 };
 
 MENU_TABLE Utils_MenuTable[] = {

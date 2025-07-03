@@ -8,6 +8,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 #include "key.h"
+#include "switch.h"
 #include "receiver.h"
 
 RunState_t runState;
@@ -30,6 +31,7 @@ void system_init()
     // mt9v03x2_init();
     // receiver_init();
     // wireless_init();
+    switch_init();
     key_init_rewrite(KEY_NUM);
 
     // ===================== PARAMS ======================== //
