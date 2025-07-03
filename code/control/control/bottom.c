@@ -140,10 +140,11 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
 
     // simpleFuzzyProcess(&frontBalanceSimpleFuzzy,angleControlFilter[0],control_target->bottom_angle,&bottom_angle_PID);
     control_target->bottom_angle_vel = control_motion_params->bottom_angle_polarity *
-                                       (PID_calc_Position_Gyro_D(
+                                       PID_calc_Position_Gyro_D(
                                            &bottom_angle_PID,
                                            angleControlFilter[0] - euler_angle_bias->pitch,
-                                           control_target->bottom_angle));
+                                           control_target->bottom_angle,
+                                           PITCH_VEL);
 
     if (g_control_output_fa_flag != 0)
     {

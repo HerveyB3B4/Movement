@@ -77,7 +77,7 @@ float32 PID_calc_Position(pid_type_def *pid, float32 ref, float32 set)
     return pid->out;
 }
 
-float32 PID_calc_Position_Opposite_D(pid_type_def *pid, float32 ref, float32 set)
+float32 PID_calc_Position_Gyro_D(pid_type_def *pid, float32 ref, float32 set, float Dbuf)
 {
     if (pid == NULL)
     {
@@ -90,33 +90,7 @@ float32 PID_calc_Position_Opposite_D(pid_type_def *pid, float32 ref, float32 set
     pid->error[0] = set - ref;
     pid->Pout = pid->Kp * pid->error[0];
     pid->Iout += pid->Ki * pid->error[0];
-    pid->Dbuf[2] = pid->Dbuf[1];
-    pid->Dbuf[1] = pid->Dbuf[0];
-    pid->Dbuf[0] = (pid->error[0] - pid->error[1]);
-    pid->Dout = -(pid->Kd * pid->Dbuf[0]);
-    LimitMax(pid->Iout, pid->max_iout);
-    pid->out = pid->Pout + pid->Iout + pid->Dout;
-    LimitMax(pid->out, pid->max_out);
-    return pid->out;
-}
-
-float32 PID_calc_Position_Gyro_D(pid_type_def *pid, float32 ref, float32 set)
-{
-    if (pid == NULL)
-    {
-        return 0.0f;
-    }
-    pid->error[2] = pid->error[1];
-    pid->error[1] = pid->error[0];
-    pid->set = set;
-    pid->fdb = ref;
-    pid->error[0] = set - ref;
-    pid->Pout = pid->Kp * pid->error[0];
-    pid->Iout += pid->Ki * pid->error[0];
-    pid->Dbuf[2] = pid->Dbuf[1];
-    pid->Dbuf[1] = pid->Dbuf[0];
-    pid->Dbuf[0] = (pid->error[0] - pid->error[1]);
-    pid->Dout = -PITCH_VEL * pid->Kd;
+    pid->Dout = -Dbuf * pid->Kd;
     LimitMax(pid->Iout, pid->max_iout);
     pid->out = pid->Pout + pid->Iout + pid->Dout;
     LimitMax(pid->out, pid->max_out);
