@@ -164,15 +164,15 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
     // noiseFilter(momentumAngleFilter[0],0.02f);
     // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
     control_target->side_angle_vel = control_motion_params->side_angle_polarity *
-                                     PID_calc_Position_Gyro_D(
+                                     PID_calc_Position(
                                          &side_angle_PID,
                                          (momentumAngleFilter[0] - euler_angle_bias->roll),
-                                         control_target->side_angle + control_target->buckling_side, // 压弯
-                                         -ROLL_VEL);
+                                         control_target->side_angle + control_target->buckling_side // 压弯
+                                     );
 
     if (g_control_output_sa_flag != 0)
     {
-        printf("%f\n", control_target->side_angle_vel);
+        printf("%f\n", ROLL);
     }
 }
 
@@ -182,7 +182,7 @@ static void control_side_angle_velocity(struct Control_Target *control_target,
     static float side_angle_vel_filter[2] = {0}; // 角速度滤波
     side_angle_vel_filter[1] = side_angle_vel_filter[0];
     side_angle_vel_filter[0] = ROLL_VEL;
-    lowPassFilterF(&side_angle_vel_filter[0], &side_angle_vel_filter[1], 0.5f);
+    // lowPassFilterF(&side_angle_vel_filter[0], &side_angle_vel_filter[1], 0.5f);
 
     s_side_balance_duty =
         control_motion_params->side_angle_velocity_polarity *
