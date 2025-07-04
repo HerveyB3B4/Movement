@@ -72,17 +72,17 @@ void system_attitude_timer(
     g_system_attitude_cnt++;
     static uint8 cnt = 0;
     cnt++;
-    if (cnt >= 2)
-    {
-        cnt = 0;
-        g_attitude_cal_flag = 1;
-        attitude_cal_amend(control_turn_params, control_target, vel_motor,
-                           euler_angle, imu_data);
-    }
-    else
-    {
-        g_attitude_cal_flag = 0;
-    }
+    // if (cnt >= 2)
+    // {
+    //     cnt = 0;
+    //     g_attitude_cal_flag = 1;
+    attitude_cal_amend(control_turn_params, control_target, vel_motor,
+                       euler_angle, imu_data);
+    // }
+    // else
+    // {
+    //     g_attitude_cal_flag = 0;
+    // }
 }
 
 void bottom_control_timer(struct Control_Time *control_time,
