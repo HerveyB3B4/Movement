@@ -40,8 +40,7 @@ void velocity_update(struct Velocity_Motor *vel_motor)
     kalman_filter_velocity_predict(&s_kf);
     // printf("%f\n", ENCODER_TO_VELOCITY);
     float z_1 = (float)vel_motor->bottom * ENCODER_TO_VELOCITY; // m/s
-    float z_2 = -PITCH_ACC /
-                cosf(ANGLE_TO_RAD(PITCH)); // m/s^2
+    float z_2 = -PITCH_ACC / cosf(ANGLE_TO_RAD(PITCH));         // m/s^2
     float z[MEASUREMENT_SIZE] = {z_1, z_2};
     kalman_filter_velocity_update(&s_kf, z);
     vel_motor->bottom_real = s_kf.x[0];

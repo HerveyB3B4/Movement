@@ -59,7 +59,7 @@
 // 定义CCU6_0 PIT通道0中断服务类型，即中断是由谁响应处理
 // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
 // 不可设置为其他值
-#define CCU6_0_CH0_INT_SERVICE IfxSrc_Tos_cpu2 // velocity
+#define CCU6_0_CH0_INT_SERVICE IfxSrc_Tos_cpu1 // velocity
 // 定义CCU6_0 PIT通道0中断优先级 优先级范围1-255 越大优先级越高
 // 与平时使用的单片机不一样
 #define CCU6_0_CH0_ISR_PRIORITY 50

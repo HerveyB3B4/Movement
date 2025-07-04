@@ -14,7 +14,7 @@ struct EulerAngle g_euler_angle_bias;
 uint8 g_attitude_cal_flag = 0;
 uint8 attitude_time = 0;
 
-static Attitude_algorithm current_algorithm = ATTITUDE_MAHONY; // 默认使用Mahony
+static Attitude_algorithm current_algorithm = ATTITUDE_MADGWICK; // 默认使用Mahony
 
 void attitude_init(Attitude_algorithm algo)
 {
@@ -28,18 +28,19 @@ void attitude_init(Attitude_algorithm algo)
     switch (current_algorithm)
     {
     case ATTITUDE_EKF:
-        IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.002f, 0);
+        // IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.002f, 0);
+        IMU_QuaternionEKF_Init(10, 30, 50, 0.95, 0.002f, 0);
         break;
     case ATTITUDE_MADGWICK:
-        MadgwickAHRS_init(1000.0f);
+        MadgwickAHRS_init();
         break;
     case ATTITUDE_MAHONY:
-        MahonyAHRS_init(500.0f);
+        MahonyAHRS_init();
         imu_get_data(&g_imu_data); // 获取一个初始的acc信息加速收敛
         MahonyAHRS_calibrate(g_imu_data);
         break;
     default:
-        MahonyAHRS_init(500.0f);
+        MahonyAHRS_init();
         imu_get_data(&g_imu_data);
         MahonyAHRS_calibrate(g_imu_data);
         break;
@@ -59,7 +60,7 @@ void attitude_cal(struct IMU_DATA *data)
         IMU_QuaternionEKF_Update(data);
         break;
     case ATTITUDE_MADGWICK:
-        MadgwickAHRS_update(data);
+        MadgwickAHRS_update(*data);
         break;
     case ATTITUDE_MAHONY:
         MahonyAHRS_update(*data);

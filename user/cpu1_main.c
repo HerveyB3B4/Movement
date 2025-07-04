@@ -67,13 +67,15 @@ void core1_main(void)
         // lcd_show_int(0, 0, g_turn_error, 5);
         // img_handler(1);
         // lcd_show_int(0, 0, runState, 5);
-        // lcd_show_float(0, 2, g_euler_angle.pitch, 6, 2);
-        // lcd_show_float(0, 3, g_euler_angle.roll, 6, 2);
+        // lcd_show_float(0, 0, g_euler_angle.pitch, 6, 2);
+        // lcd_show_float(0, 1, g_euler_angle.roll, 6, 2);
         // lcd_show_int(0, 1, g_pit_ccu61_ch1_cnt, 5);
         // lcd_show_int(0, 2, g_pit_ccu60_ch0_cnt, 5);
         // lcd_show_int(0, 3, g_main_1_cnt++, 5);
         // lcd_show_int(0, 4, g_system_attitude_cnt, 5);
         // lcd_show_int(0, 0, g_vel_motor.bottom, 5);
+
+        // printf("%f,%f\n", ROLL, ROLL_VEL);
         // 此处编写需要循环执行的代码
         system_delay_ms(1);
     }

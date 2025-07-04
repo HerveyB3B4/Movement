@@ -134,9 +134,9 @@ static void control_side_velocity(
 {
     static float side_vel_filter[2] = {0};
     side_vel_filter[1] = side_vel_filter[0];
-    side_vel_filter[0] = (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f;
+    side_vel_filter[0] = (float)(vel_motor->momentumFront - vel_motor->momentumBack);
     // noiseFilter(momentumAngleFilter[0], 0.02f);
-    lowPassFilterF(&side_vel_filter[0], &side_vel_filter[1], 0.1f);
+    // lowPassFilterF(&side_vel_filter[0], &side_vel_filter[1], 0.2f);
 
     control_target->side_angle = control_motion_params->side_velocity_polarity *
                                  PID_calc_Position(&side_velocity_PID,
@@ -146,11 +146,11 @@ static void control_side_velocity(
     static float side_tar_angle_filter[2] = {0};
     side_tar_angle_filter[1] = side_tar_angle_filter[0];
     side_tar_angle_filter[0] = control_target->side_angle;
-    lowPassFilterF(&side_tar_angle_filter[0], &side_tar_angle_filter[1], 0.2f);
+    // lowPassFilterF(&side_tar_angle_filter[0], &side_tar_angle_filter[1], 0.2f);
 
     if (g_control_output_sv_flag != 0)
     {
-        printf("%f\n", control_target->side_angle);
+        printf("%f,%f\n", control_target->side_angle, side_vel_filter[0]);
     }
 }
 
@@ -162,17 +162,18 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
     momentumAngleFilter[1] = momentumAngleFilter[0];
     momentumAngleFilter[0] = ROLL;
     // noiseFilter(momentumAngleFilter[0],0.02f);
-    // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
+    lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
     control_target->side_angle_vel = control_motion_params->side_angle_polarity *
                                      PID_calc_Position_Gyro_D(
                                          &side_angle_PID,
                                          (momentumAngleFilter[0] - euler_angle_bias->roll),
-                                         control_target->side_angle + control_target->buckling_side, // 压弯
+                                         //  control_target->side_angle + control_target->buckling_side // 压弯
+                                         control_target->side_angle,
                                          -ROLL_VEL);
 
     if (g_control_output_sa_flag != 0)
     {
-        printf("%f\n", control_target->side_angle_vel);
+        printf("%f, %f\n", ROLL, control_target->side_angle_vel);
     }
 }
 

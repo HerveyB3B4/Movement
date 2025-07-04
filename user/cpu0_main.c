@@ -55,10 +55,12 @@ int core0_main(void)
     cpu_wait_event_ready(); // 等待所有核心初始化完毕
 
     g_exit_menu_flag = 1;
+    system_start();
+
     system_set_runstate(CAR_RUNNING);
     while (TRUE)
     {
-        printf("%f\n", ROLL_VEL);
+        // printf("%f\n", ROLL_VEL);
         // printf("%f,%f\n", twoKpDef, twoKiDef);
 
         // lcd_show_uint(0, 0, mahony_cnt, 5);

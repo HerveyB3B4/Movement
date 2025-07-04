@@ -3,46 +3,27 @@
 
 #include "zf_common_headfile.h"
 
-#define PI_2 1.57079632679489661923f // π/2
+// Madgwick 使用​​梯度下降法​​最小化误差，Beta是步长
+#define MADGWICK_TAU (0.001f)
+#define MADGWICK_BETA_DEF 0.001f
 
 typedef struct
 {
-    // 四元数状态
-    float q0, q1, q2, q3;
+    float beta;
+    float q0, q1, q2, q3; // quaternion components
+    float sampleFreq;
 
-    // 滤波器参数
-    float beta;         // 基础融合系数
-    float beta_static;  // 静止时的融合系数
-    float beta_dynamic; // 运动时的融合系数
+    float pitch, roll, yaw;
+} MadgwickAHRS_INFO;
 
-    // 传感器校准参数
-    float g_bias_x, g_bias_y, g_bias_z;       // 陀螺仪零偏
-    float acc_bias_x, acc_bias_y, acc_bias_z; // 加速度计零偏
+struct IMU_DATA;
 
-    // 运动状态检测
-    float gravity_ref;          // 参考重力值 (m/s²)
-    float acc_threshold_static; // 静止检测阈值
-    float acc_threshold_motion; // 运动检测阈值
+void MadgwickAHRS_init();
+void MadgwickAHRS_calibrate(struct IMU_DATA imu_data);
+void MadgwickAHRS_update(struct IMU_DATA imu_data);
 
-    // 时间相关
-    float sample_rate;     // 采样频率 (Hz)
-    float inv_sample_rate; // 采样时间 (1/s)
-
-    // 滤波器状态
-    unsigned long last_update; // 最后更新时间 (us)
-    int is_initialized;        // 初始化标志
-    uint16 init_count;
-} MadgwickAHRS_t;
-
-static MadgwickAHRS_t s_Madgwick_info;
-
-// 函数声明
-void MadgwickAHRS_init(float sample_rate);
-int MadgwickAHRS_calibrate(struct IMU_DATA *imu_data);
-void MadgwickAHRS_update(struct IMU_DATA *imu_data);
-
-float MadgwickAHRS_get_pitch(void);
 float MadgwickAHRS_get_roll(void);
+float MadgwickAHRS_get_pitch(void);
 float MadgwickAHRS_get_yaw(void);
 
-#endif // _ATTITUDE_MADGWICK_H
+#endif

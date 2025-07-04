@@ -250,7 +250,7 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
                        1, 10, 10, MOMENTUM_MOTOR_PWM_MAX, 8000);
     control_param_init(&side_angle_PID,
                        control_motion_params->side_angle_parameter,
-                       10, 10, 1, 9999, 2.5f);
+                       10, 10, 10, 9999, 2.5f);
     control_param_init(&side_velocity_PID,
                        control_motion_params->side_velocity_parameter,
                        10000, 10000000, 10000, 9999, 10);
