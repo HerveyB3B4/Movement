@@ -7,7 +7,7 @@ static MahonyAHRS_INFO s_mahonyAHRS_info;
 static float Mahony_invSqrt(float x);
 
 uint32 mahony_cnt = 0;
-void MahonyAHRS_init(float sampleFrequency)
+void MahonyAHRS_init()
 {
     s_mahonyAHRS_info.twoKi = twoKiDef; // 2 * integral gain (Ki)
     s_mahonyAHRS_info.q0 = 1.0f;
@@ -17,7 +17,7 @@ void MahonyAHRS_init(float sampleFrequency)
     s_mahonyAHRS_info.integralFBx = 0.0f;
     s_mahonyAHRS_info.integralFBy = 0.0f;
     s_mahonyAHRS_info.integralFBz = 0.0f;
-    s_mahonyAHRS_info.invSampleFreq = 1.0f / sampleFrequency;
+    s_mahonyAHRS_info.invSampleFreq = TauDef;
 }
 
 void MahonyAHRS_calibrate(struct IMU_DATA imu_data)

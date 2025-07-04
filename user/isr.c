@@ -80,8 +80,12 @@ IFX_INTERRUPT(cc61_pit_ch0_isr,
 {
     interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU61_CH0);
+
+    // uint32 start = system_getval_us();
     system_attitude_timer(&g_control_turn_manual_params, &g_control_target,
                           &g_vel_motor, &g_euler_angle, &g_imu_data);
+    // uint32 end = system_getval_us();
+    // printf("%d,%d,%d\n", end - start, start, end);
 }
 
 IFX_INTERRUPT(cc61_pit_ch1_isr,
