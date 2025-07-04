@@ -9,8 +9,8 @@
 #define CAMERA1_COF_UART_TX (UART1_RX_P11_10) // 摄像头配置串口 TX 引脚
 #define CAMERA1_COF_UART_RX (UART1_TX_P11_12) // 摄像头配置串口 RX 引脚
 // 以上四个暂时没用，但是线画了，先留着
-#define CAMERA1_COF_IIC_SCL (P10_5)
-#define CAMERA1_COF_IIC_SDA (P10_6)
+#define CAMERA1_COF_IIC_SCL (P11_10)
+#define CAMERA1_COF_IIC_SDA (P11_12)
 #define CAMERA1_VSYNC_PIN (ERU_CH5_REQ1_P15_8) // 场中断引脚
 #define CAMERA1_PCLK_PIN (ERU_CH0_REQ0_P15_4)  // PCLK 触发信号 TIM_ETR 引脚禁止随意修改
 #define CAMERA1_DATA_PIN (P02_0)
@@ -21,8 +21,8 @@
 #define CAMERA2_COF_UART_TX (UART10_RX_P13_1) // 摄像头配置串口 TX 引脚
 #define CAMERA2_COF_UART_RX (UART10_TX_P13_0) // 摄像头配置串口 RX 引脚
 // 以上四个暂时没用，但是线画了，先留着
-#define CAMERA2_COF_IIC_SCL (P02_11)
-#define CAMERA2_COF_IIC_SDA (P02_10)
+#define CAMERA2_COF_IIC_SCL (P13_1)
+#define CAMERA2_COF_IIC_SDA (P13_0)
 #define CAMERA2_VSYNC_PIN (ERU_CH2_REQ2_P10_2) // 场中断引脚
 #define CAMERA2_PCLK_PIN (ERU_CH3_REQ3_P10_3)  // PCLK 触发信号 TIM_ETR 引脚禁止随意修改
 #define CAMERA2_DATA_PIN (P00_0)               // 数据引脚 这里是 只能是 GPIOx0 或者 GPIOx8 开始 连续八个引脚例如 P00_0-P00_7
