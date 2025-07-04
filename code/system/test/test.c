@@ -13,6 +13,7 @@
 #include "receiver.h"
 #include "detection.h"
 #include "distance.h"
+#include "buzzer.h"
 #include "YawIntegral.h"
 
 // 定义静态变量，从栈移到数据段，避免栈溢出
@@ -793,5 +794,42 @@ void test_switch()
     lcd_show_int(9, 4, switch_get_state(SWITCH_4), 1);
     while (keymsg.key != KEY_L)
         ;
+    lcd_clear();
+}
+
+void test_buzzer()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "Buzzer Test");
+    lcd_show_string(0, 1, "KEY_U:10, 10, 10");
+    lcd_show_string(0, 2, "KEY_D:5, 10, 10");
+    lcd_show_string(0, 3, "KEY_R:10, 5, 10");
+    lcd_show_string(0, 4, "KEY_B:10, 10, 5");
+    lcd_show_string(0, 5, "Press KEY_L to exit");
+    while (keymsg.key != KEY_L)
+    {
+        
+        if (keymsg.key == KEY_U)
+        {
+            buzzer_set(10, 10, 10);
+            buzzer_on();
+        }
+        else if (keymsg.key == KEY_D)
+        {
+            buzzer_set(5, 10, 10);
+            buzzer_on();
+        }
+        else if (keymsg.key == KEY_R)
+        {
+            buzzer_set(10, 5, 10);
+            buzzer_on();
+        }
+        else if (keymsg.key == KEY_B)
+        {
+            buzzer_set(10, 10, 5);
+            buzzer_on();
+        }
+    }
+    buzzer_off();
     lcd_clear();
 }

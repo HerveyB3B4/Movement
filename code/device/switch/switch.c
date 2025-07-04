@@ -1,4 +1,5 @@
 #include "switch.h"
+#include "pin.h"
 #include "zf_driver_gpio.h"
 
 static const gpio_pin_enum SWITCH_PTxn[SWITCH_NUM] = {SWITCH_LIST}; // 按键引脚列表

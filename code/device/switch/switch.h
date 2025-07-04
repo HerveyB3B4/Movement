@@ -11,8 +11,8 @@ typedef enum
 
 typedef enum
 {
-    SWITCH_ON = 0,  // 开关打开时应为高
-    SWITCH_OFF = 1, // 开关关闭时应为低
+    SWITCH_OFF = 0, // 开关关闭时应为低
+    SWITCH_ON = 1,  // 开关打开时应为高
 } SWITCH_STATUS_e;
 
 void switch_init(void);

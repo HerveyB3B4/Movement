@@ -68,7 +68,7 @@ IFX_INTERRUPT(cc60_pit_ch1_isr,
 {
     interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU60_CH1);
-
+    buzzer_handler();
     key_IRQHandler();
     while (key_get_msg(&keymsg))
         ;

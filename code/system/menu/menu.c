@@ -377,6 +377,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_switch}},
+    {(uint8 *)"Buzzer",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_buzzer}},
 };
 
 MENU_TABLE Utils_MenuTable[] = {

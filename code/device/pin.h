@@ -87,6 +87,5 @@
 
 // buzzer
 #define BUZZER_PIN P33_6
-#define BUZZER_PWM ATOM3_CH2_P33_6
 
 #endif
