@@ -21,5 +21,7 @@ void test_line(void);
 void test_yaw_integral(void);
 void test_encoder_to_velocity(void);
 void test_switch(void);
+void test_buzzer(void);
+
 
 #endif

@@ -8,6 +8,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 #include "key.h"
+#include "buzzer.h"
 #include "switch.h"
 #include "receiver.h"
 
@@ -20,8 +21,8 @@ uint32 g_main_1_cnt = 0;
 void system_init()
 {
     // ===================== DEVICE ======================== //
-    clock_init(); // 获取时钟频率<务必保留>
-    debug_init(); // 初始化默认调试串口
+    clock_init(); // 鑾峰彇鏃堕挓棰戠巼<鍔″繀淇濈暀>
+    debug_init(); // 鍒濆鍖栭粯璁よ皟璇曚覆鍙�
     motor_init();
     small_driver_uart_init();
     encoder_init();
@@ -31,6 +32,7 @@ void system_init()
     // mt9v03x2_init();
     // receiver_init();
     // wireless_init();
+    buzzer_init();
     switch_init();
     key_init_rewrite(KEY_NUM);
 
@@ -244,20 +246,20 @@ void turn_control_timer(struct Control_Time *control_time,
     //     control_flag->turn_angle = 0;
     // }
 
-    // 控制转向
+    // 鎺у埗杞悜
     control_turn(control_target, control_flag, control_turn_params, control_motion_params, vel_motor);
 }
 
 void system_set_runstate(RunState_t state)
 {
-    // 根据不同的车辆状态执行不同的控制操作
+    // 鏍规嵁涓嶅悓鐨勮溅杈嗙姸鎬佹墽琛屼笉鍚岀殑鎺у埗鎿嶄綔
     switch (state)
     {
     case CAR_STOP:
         runState = CAR_STOP;
 
-        pit_disable(CCU61_CH1); // 失能控制中断
-        pit_enable(CCU60_CH1);  // 使能按键中断
+        pit_disable(CCU61_CH1); // 澶辫兘鎺у埗涓柇
+        pit_enable(CCU60_CH1);  // 浣胯兘鎸夐敭涓柇
 
         stop_bottom_motor();
         stop_momentum_motor();
@@ -267,8 +269,8 @@ void system_set_runstate(RunState_t state)
     case CAR_RUNNING:
         runState = CAR_RUNNING;
 
-        // pit_enable(CCU61_CH1);  // 使能控制中断
-        pit_disable(CCU60_CH1); // 失能按键中断
+        // pit_enable(CCU61_CH1);  // 浣胯兘鎺у埗涓柇
+        pit_disable(CCU60_CH1); // 澶辫兘鎸夐敭涓柇
         break;
     }
 }

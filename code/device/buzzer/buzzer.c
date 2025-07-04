@@ -4,7 +4,7 @@
 
 static BUZZER_INFO buzzer_info;
 static BUZZER_STATUS_e buzzer_status;
-static uint8[2] buzzer_count;
+static uint8 buzzer_count[2];
 
 void buzzer_init()
 {
@@ -21,14 +21,14 @@ void buzzer_set(uint8 on, uint8 pause, uint8 count)
 void buzzer_on()
 {
     buzzer_status = BUZZER_ON;
-    buzzer_count = {0, 0};
+    buzzer_count[0] = buzzer_count[1] = 0;
     gpio_set_level(BEEP_ENABLE, BUZZER_ON);
 }
 
 void buzzer_off()
 {
     buzzer_status = BUZZER_OFF;
-    buzzer_count = {0, 0};
+    buzzer_count[0] = buzzer_count[1] = 0;
     gpio_set_level(BEEP_ENABLE, BUZZER_OFF);
 }
 
@@ -43,6 +43,7 @@ void buzzer_handler()
             buzzer_count[0] = 0;
             buzzer_count[1]++;
             buzzer_status = BUZZER_PAUSE;
+            gpio_set_level(BEEP_ENABLE, BUZZER_OFF);
         }
         break;
     case BUZZER_PAUSE:
@@ -50,6 +51,7 @@ void buzzer_handler()
         {
             buzzer_count[0] = 0;
             buzzer_status = BUZZER_ON;
+            gpio_set_level(BEEP_ENABLE, BUZZER_ON);
         }
         break;
     }
