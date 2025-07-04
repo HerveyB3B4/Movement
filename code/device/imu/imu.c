@@ -9,7 +9,7 @@ void imu_init()
     bool tmp_init_flag = imu660rb_init();
     if (tmp_init_flag == 1)
     {
-        printf("IMU660RB init Failed\n");
+        printf("imu660rb init Failed\n");
         return;
     }
 }
