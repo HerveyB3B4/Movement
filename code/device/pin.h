@@ -85,7 +85,8 @@
 #define SWITCH_NAME SWITCH_1, SWITCH_2, SWITCH_3, SWITCH_4
 #define SWITCH_LIST P33_4, P20_6, P20_8, P20_7
 
-// buzzer
-#define BUZZER_PIN P33_6
+// LED&BUZZER
+#define DIODE_NAME BUZZER
+#define DIODE_LIST P33_6
 
 #endif

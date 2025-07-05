@@ -42,6 +42,7 @@
 #include "menu.h"
 #include "system.h"
 #include "test.h"
+#include "diode.h"
 #include "velocity.h"
 
 // 对于TC系列默认是不支持中断嵌套的，希望支持中断嵌套需要在中断内使用
@@ -68,7 +69,7 @@ IFX_INTERRUPT(cc60_pit_ch1_isr,
 {
     interrupt_global_enable(0); // 开启中断嵌套
     pit_clear_flag(CCU60_CH1);
-    buzzer_handler();
+    diode_handler();
     key_IRQHandler();
     while (key_get_msg(&keymsg))
         ;

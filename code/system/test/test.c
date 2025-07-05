@@ -13,7 +13,7 @@
 #include "receiver.h"
 #include "detection.h"
 #include "distance.h"
-#include "buzzer.h"
+#include "diode.h"
 #include "YawIntegral.h"
 
 // 瀹氫箟闈欐�佸彉閲忥紝浠庢爤绉诲埌鏁版嵁娈碉紝閬垮厤鏍堟孩鍑�
@@ -798,10 +798,10 @@ void test_switch()
     lcd_clear();
 }
 
-void test_buzzer()
+void test_diode()
 {
     lcd_clear();
-    lcd_show_string(0, 0, "Buzzer Test");
+    lcd_show_string(0, 0, "LED & Buzzer");
     lcd_show_string(0, 1, "KEY_U: val++");
     lcd_show_string(0, 2, "KEY_D: val--");
     lcd_show_string(0, 3, "KEY_R: switch");
@@ -811,7 +811,6 @@ void test_buzzer()
     uint8 val[3] = {0, 0, 0};
     while (keymsg.key != KEY_L)
     {
-        
         if (keymsg.key == KEY_U)
         {
             val[cur]++;
@@ -826,14 +825,41 @@ void test_buzzer()
         }
         else if (keymsg.key == KEY_B)
         {
-            buzzer_set(val[0], val[1], val[2]);
-            buzzer_on();
+            uint8 i = DIODE_NUM;
+            while (i--)
+            {
+                diode_set(i, val[0], val[1], val[2]);
+                diode_on(i);
+            }
         }
         lcd_show_uint(0, 6, val[0], 3);
         lcd_show_uint(5, 6, val[1], 3);
         lcd_show_uint(10, 6, val[2], 3);
         system_delay_ms(100);
     }
-    buzzer_off();
+    uint8 i = DIODE_NUM;
+    while (i--)
+    {
+        diode_off(i);
+    }
+    lcd_clear();
+}
+
+void test_dual_camera()
+{
+    lcd_clear();
+    while (keymsg.key != KEY_L)
+    {
+        if (mt9v03x_finish_flag)
+        {
+            mt9v03x_finish_flag = 0;
+            tft180_show_gray_image(0, 0, mt9v03x_image, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+        }
+        // if (mt9v03x2_finish_flag)
+        // {
+        //     mt9v03x2_finish_flag = 0;
+        //     tft180_show_gray_image(MT9V03X_W / 2, MT9V03X_H / 2, mt9v03x2_image, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+        // }
+    }
     lcd_clear();
 }

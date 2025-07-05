@@ -377,10 +377,14 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_switch}},
-    {(uint8 *)"Buzzer",
+    {(uint8 *)"Diode",
      {.SubMenu = Table_Null},
      Functions,
-     {.ItemFunc = test_buzzer}},
+     {.ItemFunc = test_diode}},
+    {(uint8 *)"DualCam",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_dual_camera}},
 };
 
 MENU_TABLE Utils_MenuTable[] = {

@@ -8,7 +8,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 #include "key.h"
-#include "buzzer.h"
+#include "diode.h"
 #include "switch.h"
 #include "receiver.h"
 
@@ -28,11 +28,11 @@ void system_init()
     encoder_init();
     lcd_init();
     mt9v03x_init();
-    imu_init();
     // mt9v03x2_init();
+    imu_init();
     // receiver_init();
     // wireless_init();
-    buzzer_init();
+    diode_init();
     switch_init();
     key_init_rewrite(KEY_NUM);
 
