@@ -858,7 +858,7 @@ void test_dual_camera()
         // if (mt9v03x2_finish_flag)
         // {
         //     mt9v03x2_finish_flag = 0;
-        //     tft180_show_gray_image(MT9V03X_W / 2, MT9V03X_H / 2, mt9v03x2_image, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+        //     tft180_show_gray_image(tft180_width_max - MT9V03X_W / 2, tft180_height_max - MT9V03X_H / 2, mt9v03x2_image, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
         // }
     }
     lcd_clear();

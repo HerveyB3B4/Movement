@@ -179,12 +179,12 @@ IFX_INTERRUPT(exti_ch2_ch6_isr,
 // **************************** 外部中断函数 ****************************
 
 // **************************** DMA中断函数 ****************************
-IFX_INTERRUPT(dma_ch5_isr, DMA_INT_VECTAB_NUM, DMA_INT_PRIO)
+IFX_INTERRUPT(dma_ch5_isr, DMA_1_INT_VECTAB_NUM, DMA_1_INT_PRIO)
 {
     interrupt_global_enable(0); // 开启中断嵌套
     camera_dma_handler();       // 摄像头采集完成统一回调函数
 }
-IFX_INTERRUPT(dma_ch6_isr, 0, DMA_INT_PRIO_2)
+IFX_INTERRUPT(dma_ch6_isr, DMA_2_INT_VECTAB_NUM, DMA_2_INT_PRIO)
 {
     interrupt_global_enable(0); // 开启中断嵌套
     camera_dma_handler_2();     // 摄像头采集完成统一回调函数
