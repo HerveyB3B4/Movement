@@ -15,10 +15,10 @@
  */
 
 void arm_mat_init_f32(
-    arm_matrix_instance_f32 *S,
-    uint16_t nRows,
-    uint16_t nColumns,
-    float32_t *pData)
+  arm_matrix_instance_f32 * S,
+  uint16_t nRows,
+  uint16_t nColumns,
+  float32_t * pData)
 {
   /* Assign Number of Rows */
   S->numRows = nRows;
@@ -38,38 +38,38 @@ For big matrix, there exist better libraries for Neon.
 
 */
 arm_status arm_mat_add_f32(
-    const arm_matrix_instance_f32 *pSrcA,
-    const arm_matrix_instance_f32 *pSrcB,
-    arm_matrix_instance_f32 *pDst)
+  const arm_matrix_instance_f32 * pSrcA,
+  const arm_matrix_instance_f32 * pSrcB,
+        arm_matrix_instance_f32 * pDst)
 {
-  float32_t *pInA = pSrcA->pData; /* input data matrix pointer A */
-  float32_t *pInB = pSrcB->pData; /* input data matrix pointer B */
-  float32_t *pOut = pDst->pData;  /* output data matrix pointer */
+  float32_t *pInA = pSrcA->pData;                /* input data matrix pointer A */
+  float32_t *pInB = pSrcB->pData;                /* input data matrix pointer B */
+  float32_t *pOut = pDst->pData;                 /* output data matrix pointer */
 
-  uint32_t numSamples; /* total number of elements in the matrix */
-  uint32_t blkCnt;     /* loop counters */
-  arm_status status;   /* status of matrix addition */
+  uint32_t numSamples;                           /* total number of elements in the matrix */
+  uint32_t blkCnt;                               /* loop counters */
+  arm_status status;                             /* status of matrix addition */
 
-  // #ifdef ARM_MATH_MATRIX_CHECK
+// #ifdef ARM_MATH_MATRIX_CHECK
 
-  //   /* Check for matrix mismatch condition */
-  //   if ((pSrcA->numRows != pSrcB->numRows) ||
-  //       (pSrcA->numCols != pSrcB->numCols) ||
-  //       (pSrcA->numRows != pDst->numRows)  ||
-  //       (pSrcA->numCols != pDst->numCols)    )
-  //   {
-  //     /* Set status as ARM_MATH_SIZE_MISMATCH */
-  //     status = ARM_MATH_SIZE_MISMATCH;
-  //   }
-  //   else
+//   /* Check for matrix mismatch condition */
+//   if ((pSrcA->numRows != pSrcB->numRows) ||
+//       (pSrcA->numCols != pSrcB->numCols) ||
+//       (pSrcA->numRows != pDst->numRows)  ||
+//       (pSrcA->numCols != pDst->numCols)    )
+//   {
+//     /* Set status as ARM_MATH_SIZE_MISMATCH */
+//     status = ARM_MATH_SIZE_MISMATCH;
+//   }
+//   else
 
-  // #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
+// #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
 
   {
     /* Total number of samples in input matrix */
-    numSamples = (uint32_t)pSrcA->numRows * pSrcA->numCols;
+    numSamples = (uint32_t) pSrcA->numRows * pSrcA->numCols;
 
-#if defined(ARM_MATH_LOOPUNROLL)
+#if defined (ARM_MATH_LOOPUNROLL)
 
     /* Loop unrolling: Compute 4 outputs at a time */
     blkCnt = numSamples >> 2U;
@@ -120,39 +120,41 @@ arm_status arm_mat_add_f32(
   return (status);
 }
 
+
+
 arm_status arm_mat_sub_f32(
-    const arm_matrix_instance_f32 *pSrcA,
-    const arm_matrix_instance_f32 *pSrcB,
-    arm_matrix_instance_f32 *pDst)
+  const arm_matrix_instance_f32 * pSrcA,
+  const arm_matrix_instance_f32 * pSrcB,
+        arm_matrix_instance_f32 * pDst)
 {
-  float32_t *pInA = pSrcA->pData; /* input data matrix pointer A */
-  float32_t *pInB = pSrcB->pData; /* input data matrix pointer B */
-  float32_t *pOut = pDst->pData;  /* output data matrix pointer */
+  float32_t *pInA = pSrcA->pData;                /* input data matrix pointer A */
+  float32_t *pInB = pSrcB->pData;                /* input data matrix pointer B */
+  float32_t *pOut = pDst->pData;                 /* output data matrix pointer */
 
-  uint32_t numSamples; /* total number of elements in the matrix */
-  uint32_t blkCnt;     /* loop counters */
-  arm_status status;   /* status of matrix subtraction */
+  uint32_t numSamples;                           /* total number of elements in the matrix */
+  uint32_t blkCnt;                               /* loop counters */
+  arm_status status;                             /* status of matrix subtraction */
 
-  // #ifdef ARM_MATH_MATRIX_CHECK
+// #ifdef ARM_MATH_MATRIX_CHECK
 
-  //   /* Check for matrix mismatch condition */
-  //   if ((pSrcA->numRows != pSrcB->numRows) ||
-  //       (pSrcA->numCols != pSrcB->numCols) ||
-  //       (pSrcA->numRows != pDst->numRows)  ||
-  //       (pSrcA->numCols != pDst->numCols)    )
-  //   {
-  //     /* Set status as ARM_MATH_SIZE_MISMATCH */
-  //     status = ARM_MATH_SIZE_MISMATCH;
-  //   }
-  //   else
+//   /* Check for matrix mismatch condition */
+//   if ((pSrcA->numRows != pSrcB->numRows) ||
+//       (pSrcA->numCols != pSrcB->numCols) ||
+//       (pSrcA->numRows != pDst->numRows)  ||
+//       (pSrcA->numCols != pDst->numCols)    )
+//   {
+//     /* Set status as ARM_MATH_SIZE_MISMATCH */
+//     status = ARM_MATH_SIZE_MISMATCH;
+//   }
+//   else
 
-  // #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
+// #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
 
   {
     /* Total number of samples in input matrix */
-    numSamples = (uint32_t)pSrcA->numRows * pSrcA->numCols;
+    numSamples = (uint32_t) pSrcA->numRows * pSrcA->numCols;
 
-#if defined(ARM_MATH_LOOPUNROLL)
+#if defined (ARM_MATH_LOOPUNROLL)
 
     /* Loop unrolling: Compute 4 outputs at a time */
     blkCnt = numSamples >> 2U;
@@ -209,29 +211,29 @@ arm_status arm_mat_sub_f32(
  * <code>ARM_MATH_SIZE_MISMATCH</code> or <code>ARM_MATH_SUCCESS</code> based on the outcome of size checking.
  */
 arm_status arm_mat_mult_f32(
-    const arm_matrix_instance_f32 *pSrcA,
-    const arm_matrix_instance_f32 *pSrcB,
-    arm_matrix_instance_f32 *pDst)
+  const arm_matrix_instance_f32 * pSrcA,
+  const arm_matrix_instance_f32 * pSrcB,
+        arm_matrix_instance_f32 * pDst)
 {
-  float32_t *pIn1 = pSrcA->pData;               /* Input data matrix pointer A */
-  float32_t *pIn2 = pSrcB->pData;               /* Input data matrix pointer B */
-  float32_t *pInA = pSrcA->pData;               /* Input data matrix pointer A */
-  float32_t *pInB = pSrcB->pData;               /* Input data matrix pointer B */
-  float32_t *pOut = pDst->pData;                /* Output data matrix pointer */
-  float32_t *px;                                /* Temporary output data matrix pointer */
-  float32_t sum;                                /* Accumulator */
-  uint16_t numRowsA = pSrcA->numRows;           /* Number of rows of input matrix A */
-  uint16_t numColsB = pSrcB->numCols;           /* Number of columns of input matrix B */
-  uint16_t numColsA = pSrcA->numCols;           /* Number of columns of input matrix A */
-  uint32_t col, i = 0U, row = numRowsA, colCnt; /* Loop counters */
-  arm_status status;                            /* Status of matrix multiplication */
+  float32_t *pIn1 = pSrcA->pData;                /* Input data matrix pointer A */
+  float32_t *pIn2 = pSrcB->pData;                /* Input data matrix pointer B */
+  float32_t *pInA = pSrcA->pData;                /* Input data matrix pointer A */
+  float32_t *pInB = pSrcB->pData;                /* Input data matrix pointer B */
+  float32_t *pOut = pDst->pData;                 /* Output data matrix pointer */
+  float32_t *px;                                 /* Temporary output data matrix pointer */
+  float32_t sum;                                 /* Accumulator */
+  uint16_t numRowsA = pSrcA->numRows;            /* Number of rows of input matrix A */
+  uint16_t numColsB = pSrcB->numCols;            /* Number of columns of input matrix B */
+  uint16_t numColsA = pSrcA->numCols;            /* Number of columns of input matrix A */
+  uint32_t col, i = 0U, row = numRowsA, colCnt;  /* Loop counters */
+  arm_status status;                             /* Status of matrix multiplication */
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
   if ((pSrcA->numCols != pSrcB->numRows) ||
-      (pSrcA->numRows != pDst->numRows) ||
-      (pSrcB->numCols != pDst->numCols))
+      (pSrcA->numRows != pDst->numRows)  ||
+      (pSrcB->numCols != pDst->numCols)    )
   {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
@@ -263,7 +265,7 @@ arm_status arm_mat_mult_f32(
         /* Initialize pointer pIn1 to point to starting address of column being processed */
         pIn1 = pInA;
 
-#if defined(ARM_MATH_LOOPUNROLL)
+#if defined (ARM_MATH_LOOPUNROLL)
 
         /* Loop unrolling: Compute 4 MACs at a time. */
         colCnt = numColsA >> 2U;
@@ -340,23 +342,24 @@ arm_status arm_mat_mult_f32(
   return (status);
 }
 
+
 arm_status arm_mat_trans_f32(
-    const arm_matrix_instance_f32 *pSrc,
-    arm_matrix_instance_f32 *pDst)
+  const arm_matrix_instance_f32 * pSrc,
+        arm_matrix_instance_f32 * pDst)
 {
-  float32_t *pIn = pSrc->pData;      /* input data matrix pointer */
-  float32_t *pOut = pDst->pData;     /* output data matrix pointer */
-  float32_t *px;                     /* Temporary output data matrix pointer */
-  uint16_t nRows = pSrc->numRows;    /* number of rows */
-  uint16_t nCols = pSrc->numCols;    /* number of columns */
-  uint32_t col, row = nRows, i = 0U; /* Loop counters */
-  arm_status status;                 /* status of matrix transpose */
+  float32_t *pIn = pSrc->pData;                  /* input data matrix pointer */
+  float32_t *pOut = pDst->pData;                 /* output data matrix pointer */
+  float32_t *px;                                 /* Temporary output data matrix pointer */
+  uint16_t nRows = pSrc->numRows;                /* number of rows */
+  uint16_t nCols = pSrc->numCols;                /* number of columns */
+  uint32_t col, row = nRows, i = 0U;             /* Loop counters */
+  arm_status status;                             /* status of matrix transpose */
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
   if ((pSrc->numRows != pDst->numCols) ||
-      (pSrc->numCols != pDst->numRows))
+      (pSrc->numCols != pDst->numRows)   )
   {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
@@ -373,12 +376,12 @@ arm_status arm_mat_trans_f32(
       /* Pointer px is set to starting address of column being processed */
       px = pOut + i;
 
-#if defined(ARM_MATH_LOOPUNROLL)
+#if defined (ARM_MATH_LOOPUNROLL)
 
       /* Loop unrolling: Compute 4 outputs at a time */
       col = nCols >> 2U;
 
-      while (col > 0U) /* column loop */
+      while (col > 0U)        /* column loop */
       {
         /* Read and store input element in destination */
         *px = *pIn++;
@@ -425,7 +428,7 @@ arm_status arm_mat_trans_f32(
       /* Decrement row loop counter */
       row--;
 
-    } while (row > 0U); /* row loop end */
+    } while (row > 0U);          /* row loop end */
 
     /* Set status as ARM_MATH_SUCCESS */
     status = ARM_MATH_SUCCESS;
@@ -434,6 +437,7 @@ arm_status arm_mat_trans_f32(
   /* Return to application */
   return (status);
 }
+
 
 /**
   @defgroup MatrixInv Matrix Inverse
@@ -453,8 +457,8 @@ arm_status arm_mat_trans_f32(
   of elementary row-operations to an identity matrix yields the inverse matrix.
   If the input matrix is singular, then the algorithm terminates and returns error status
   <code>ARM_MATH_SINGULAR</code>.
-
-  @par Matrix Inverse of a 3 x 3 matrix using Gauss-Jordan Method
+ 
+  @par Matrix Inverse of a 3 x 3 matrix using Gauss-Jordan Method 
 
   \f[
   \begin{pmatrix}
@@ -486,26 +490,27 @@ arm_status arm_mat_trans_f32(
                    - \ref ARM_MATH_SINGULAR      : Input matrix is found to be singular (non-invertible)
  */
 arm_status arm_mat_inverse_f32(
-    const arm_matrix_instance_f32 *pSrc,
-    arm_matrix_instance_f32 *pDst)
+  const arm_matrix_instance_f32 * pSrc,
+        arm_matrix_instance_f32 * pDst)
 {
-  float32_t *pIn = pSrc->pData;  /* input data matrix pointer */
-  float32_t *pOut = pDst->pData; /* output data matrix pointer */
-
+  float32_t *pIn = pSrc->pData;                  /* input data matrix pointer */
+  float32_t *pOut = pDst->pData;                 /* output data matrix pointer */
+  
   float32_t *pTmp;
-  uint32_t numRows = pSrc->numRows; /* Number of rows in the matrix  */
-  uint32_t numCols = pSrc->numCols; /* Number of Cols in the matrix  */
+  uint32_t numRows = pSrc->numRows;              /* Number of rows in the matrix  */
+  uint32_t numCols = pSrc->numCols;              /* Number of Cols in the matrix  */
 
-  float32_t pivot = 0.0f, newPivot = 0.0f;                                /* Temporary input values  */
-  uint32_t selectedRow, pivotRow, i, rowNb, rowCnt, flag = 0U, j, column; /* loop counters */
-  arm_status status;                                                      /* status of matrix inverse */
+
+  float32_t pivot = 0.0f, newPivot=0.0f;                /* Temporary input values  */
+  uint32_t selectedRow,pivotRow,i, rowNb, rowCnt, flag = 0U, j,column;      /* loop counters */
+  arm_status status;                             /* status of matrix inverse */
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
   if ((pSrc->numRows != pSrc->numCols) ||
       (pDst->numRows != pDst->numCols) ||
-      (pSrc->numRows != pDst->numRows))
+      (pSrc->numRows != pDst->numRows)   )
   {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
@@ -586,7 +591,7 @@ arm_status arm_mat_inverse_f32(
        All the elements in each column are processed by the row operations */
 
     /* Index modifier to navigate through the columns */
-    for (column = 0U; column < numCols; column++)
+    for(column = 0U; column < numCols; column++)
     {
       /* Check if the pivot element is zero..
        * If it is zero then interchange the row with non zero row below.
@@ -596,37 +601,42 @@ arm_status arm_mat_inverse_f32(
       pivotRow = column;
 
       /* Temporary variable to hold the pivot value */
-      pTmp = ELEM(pSrc, column, column);
+      pTmp = ELEM(pSrc,column,column) ;
       pivot = *pTmp;
       selectedRow = column;
 
       /* Find maximum pivot in column */
+      
+        /* Loop over the number rows present below */
 
-      /* Loop over the number rows present below */
-
-      for (rowNb = column + 1; rowNb < numRows; rowNb++)
+      for (rowNb = column+1; rowNb < numRows; rowNb++)
       {
-        /* Update the input and destination pointers */
-        pTmp = ELEM(pSrc, rowNb, column);
-        newPivot = *pTmp;
-        if (fabsf(newPivot) > fabsf(pivot))
-        {
-          selectedRow = rowNb;
-          pivot = newPivot;
-        }
+          /* Update the input and destination pointers */
+          pTmp = ELEM(pSrc,rowNb,column);
+          newPivot = *pTmp;
+          if (fabsf(newPivot) > fabsf(pivot))
+          {
+            selectedRow = rowNb; 
+            pivot = newPivot;
+          }
       }
-
+        
       /* Check if there is a non zero pivot element to
        * replace in the rows below */
       if ((pivot != 0.0f) && (selectedRow != column))
       {
+            
+            SWAP_ROWS_F32(pSrc,column, pivotRow,selectedRow);
+            SWAP_ROWS_F32(pDst,0, pivotRow,selectedRow);
 
-        SWAP_ROWS_F32(pSrc, column, pivotRow, selectedRow);
-        SWAP_ROWS_F32(pDst, 0, pivotRow, selectedRow);
+    
+            /* Flag to indicate whether exchange is done or not */
+            flag = 1U;
+       }
 
-        /* Flag to indicate whether exchange is done or not */
-        flag = 1U;
-      }
+
+      
+      
 
       /* Update the status if the matrix is singular */
       if ((flag != 1U) && (pivot == 0.0f))
@@ -634,33 +644,39 @@ arm_status arm_mat_inverse_f32(
         return ARM_MATH_SINGULAR;
       }
 
+     
       /* Pivot element of the row */
       pivot = 1.0f / pivot;
 
-      SCALE_ROW_F32(pSrc, column, pivot, pivotRow);
-      SCALE_ROW_F32(pDst, 0, pivot, pivotRow);
+      SCALE_ROW_F32(pSrc,column,pivot,pivotRow);
+      SCALE_ROW_F32(pDst,0,pivot,pivotRow);
 
+      
       /* Replace the rows with the sum of that row and a multiple of row i
        * so that each new element in column i above row i is zero.*/
 
       rowNb = 0;
-      for (; rowNb < pivotRow; rowNb++)
+      for (;rowNb < pivotRow; rowNb++)
       {
-        pTmp = ELEM(pSrc, rowNb, column);
-        pivot = *pTmp;
+           pTmp = ELEM(pSrc,rowNb,column) ;
+           pivot = *pTmp;
 
-        MAS_ROW_F32(column, pSrc, rowNb, pivot, pSrc, pivotRow);
-        MAS_ROW_F32(0, pDst, rowNb, pivot, pDst, pivotRow);
+           MAS_ROW_F32(column,pSrc,rowNb,pivot,pSrc,pivotRow);
+           MAS_ROW_F32(0     ,pDst,rowNb,pivot,pDst,pivotRow);
+
+
       }
 
       for (rowNb = pivotRow + 1; rowNb < numRows; rowNb++)
       {
-        pTmp = ELEM(pSrc, rowNb, column);
-        pivot = *pTmp;
+           pTmp = ELEM(pSrc,rowNb,column) ;
+           pivot = *pTmp;
 
-        MAS_ROW_F32(column, pSrc, rowNb, pivot, pSrc, pivotRow);
-        MAS_ROW_F32(0, pDst, rowNb, pivot, pDst, pivotRow);
+           MAS_ROW_F32(column,pSrc,rowNb,pivot,pSrc,pivotRow);
+           MAS_ROW_F32(0     ,pDst,rowNb,pivot,pDst,pivotRow);
+
       }
+
     }
 
     /* Set status as ARM_MATH_SUCCESS */
@@ -672,7 +688,7 @@ arm_status arm_mat_inverse_f32(
       for (i = 0; i < numRows * numCols; i++)
       {
         if (pIn[i] != 0.0f)
-          break;
+            break;
       }
 
       if (i == numRows * numCols)

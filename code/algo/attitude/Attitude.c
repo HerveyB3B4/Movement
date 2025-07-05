@@ -29,7 +29,8 @@ void attitude_init(Attitude_algorithm algo)
     {
     case ATTITUDE_EKF:
         // IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.002f, 0);
-        IMU_QuaternionEKF_Init(10, 30, 50, 0.95, 0.002f, 0);
+        // IMU_QuaternionEKF_Init(10, 30, 50, 0.95, 0.002f, 0);
+        IMU_QuaternionEKF_Init(10, 0.001, 10000000, 1, 0.001f, 0);
         break;
     case ATTITUDE_MADGWICK:
         MadgwickAHRS_init();
@@ -57,7 +58,7 @@ void attitude_cal(struct IMU_DATA *data)
     switch (current_algorithm)
     {
     case ATTITUDE_EKF:
-        IMU_QuaternionEKF_Update(data);
+        IMU_QuaternionEKF_Update(*data);
         break;
     case ATTITUDE_MADGWICK:
         MadgwickAHRS_update(*data);
@@ -77,16 +78,6 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
                         struct EulerAngle *euler_angle,
                         struct IMU_DATA *data)
 {
-    // 修正姿态计算
-    if (g_attitude_cal_flag == 0)
-    {
-        return;
-    }
-    else
-    {
-        g_attitude_cal_flag = 0;
-    }
-
     // if (g_turn_start_flag)
     // {
     //     float x = (float)control_target->turn_angle_vel * 0.01f *
@@ -102,9 +93,9 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
     switch (current_algorithm)
     {
     case ATTITUDE_EKF:
-        euler_angle->roll = ekf_get_roll();
-        euler_angle->pitch = ekf_get_pitch();
-        euler_angle->yaw = ekf_get_yaw();
+        euler_angle->roll = EKF_get_roll();
+        euler_angle->pitch = EKF_get_pitch();
+        euler_angle->yaw = EKF_get_yaw();
         break;
     case ATTITUDE_MADGWICK:
         euler_angle->roll = MadgwickAHRS_get_roll();
@@ -117,9 +108,9 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
         euler_angle->yaw = MahonyAHRS_get_yaw();
         break;
     default:
-        euler_angle->roll = ekf_get_roll();
-        euler_angle->pitch = ekf_get_pitch();
-        euler_angle->yaw = ekf_get_yaw();
+        euler_angle->roll = EKF_get_roll();
+        euler_angle->pitch = EKF_get_pitch();
+        euler_angle->yaw = EKF_get_yaw();
         break;
     }
 
