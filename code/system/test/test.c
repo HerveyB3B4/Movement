@@ -863,3 +863,22 @@ void test_dual_camera()
     }
     lcd_clear();
 }
+
+void test_cpu_freq()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "CPU Freq");
+    while (keymsg.key != KEY_L)
+    {
+        lcd_show_string(0, 1, "CPU0: ");
+        lcd_show_float(6, 1, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_0) / 1e6, 5, 2);
+        lcd_show_string(11, 1, " MHz");
+        lcd_show_string(0, 2, "CPU1: ");
+        lcd_show_float(6, 2, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_1) / 1e6, 5, 2);
+        lcd_show_string(11, 2, " MHz");
+        lcd_show_string(0, 3, "CPU2: ");
+        lcd_show_float(6, 3, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_2) / 1e6, 5, 2);
+        lcd_show_string(11, 3, " MHz");
+    }
+    lcd_clear();
+}

@@ -21,8 +21,8 @@ uint32 g_main_1_cnt = 0;
 void system_init()
 {
     // ===================== DEVICE ======================== //
-    clock_init(); // é‘¾å³°å½‡éƒå •æŒ“æ£°æˆ å·¼<é”â€³ç¹€æ·‡æ¿ˆæš€>
-    debug_init(); // é’æ¿†îé–æ ­ç²¯ç’ã‚ˆçšŸç’‡æ›šè¦†é™ï¿½
+    clock_init(); // »ñÈ¡Ê±ÖÓÆµÂÊ<Îñ±Ø±£Áô>
+    debug_init(); // ³õÊ¼»¯Ä¬ÈÏµ÷ÊÔ´®¿Ú
     motor_init();
     small_driver_uart_init();
     encoder_init();
@@ -246,20 +246,20 @@ void turn_control_timer(struct Control_Time *control_time,
     //     control_flag->turn_angle = 0;
     // }
 
-    // éºÑƒåŸ—æî„€æ‚œ
+    // ¿ØÖÆ×ªÏò
     control_turn(control_target, control_flag, control_turn_params, control_motion_params, vel_motor);
 }
 
 void system_set_runstate(RunState_t state)
 {
-    // éè§„åµæ¶“å¶…æ‚“é¨å‹®æº…æˆå—™å§¸é¬ä½¹å¢½ç›å±¼ç¬‰éšå²€æ®‘éºÑƒåŸ—é¿å¶„ç¶”
+    // ¸ù¾İ²»Í¬µÄ³µÁ¾×´Ì¬Ö´ĞĞ²»Í¬µÄ¿ØÖÆ²Ù×÷
     switch (state)
     {
     case CAR_STOP:
         runState = CAR_STOP;
 
-        pit_disable(CCU61_CH1); // æ¾¶è¾«å…˜éºÑƒåŸ—æ¶“î…ŸæŸ‡
-        pit_enable(CCU60_CH1);  // æµ£èƒ¯å…˜é¸å¤æ•­æ¶“î…ŸæŸ‡
+        pit_disable(CCU61_CH1); // Ê§ÄÜ¿ØÖÆÖĞ¶Ï
+        pit_enable(CCU60_CH1);  // Ê¹ÄÜ°´¼üÖĞ¶Ï
 
         stop_bottom_motor();
         stop_momentum_motor();
@@ -269,8 +269,8 @@ void system_set_runstate(RunState_t state)
     case CAR_RUNNING:
         runState = CAR_RUNNING;
 
-        // pit_enable(CCU61_CH1);  // æµ£èƒ¯å…˜éºÑƒåŸ—æ¶“î…ŸæŸ‡
-        pit_disable(CCU60_CH1); // æ¾¶è¾«å…˜é¸å¤æ•­æ¶“î…ŸæŸ‡
+        // pit_enable(CCU61_CH1); // Ê¹ÄÜ¿ØÖÆÖĞ¶Ï
+        pit_disable(CCU60_CH1); // Ê§ÄÜ°´¼üÖĞ¶Ï
         break;
     }
 }
