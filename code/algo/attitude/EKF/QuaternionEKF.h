@@ -12,8 +12,8 @@
  */
 #ifndef _QUAT_EKF_H
 #define _QUAT_EKF_H
-#include "imu.h"
 #include "kalman_filter.h"
+#include "imu.h"
 
 /* boolean type definitions */
 #ifndef TRUE
@@ -71,16 +71,12 @@ extern QEKF_INS_t QEKF_INS;
 extern float chiSquare;
 extern float ChiSquareTestThreshold;
 
-void IMU_QuaternionEKF_Init(float process_noise1,
-                            float process_noise2,
-                            float measure_noise,
-                            float lambda,
-                            float dt,
-                            float lpf);
-void IMU_QuaternionEKF_Update(struct IMU_DATA *data);
+void IMU_QuaternionEKF_Init(float process_noise1, float process_noise2, float measure_noise, float lambda, float dt, float lpf);
+void IMU_QuaternionEKF_Update(struct IMU_DATA imu_data);
 void IMU_QuaternionEKF_Reset(void);
 
-float ekf_get_pitch(void); // get pitch
-float ekf_get_roll(void);  // get roll
-float ekf_get_yaw(void);   // get yaw
+float EKF_get_pitch(void); // get pitch
+float EKF_get_roll(void);  // get roll
+float EKF_get_yaw(void);   // get yaw
+
 #endif
