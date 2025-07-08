@@ -73,7 +73,8 @@ int core0_main(void)
         // lcd_show_string(0, 3, "CPU2: ");
         // lcd_show_float(6, 3, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_2) / 1e6, 5, 2);
         // lcd_show_string(11, 3, " MHz");
-        // printf("%f\n", ROLL_VEL);
+
+        // system_delay_ms(1);
         // printf("%f,%f\n", twoKpDef, twoKiDef);
         // lcd_show_float(0, 0, side_angle_PID.Kp, 3, 3);
         // lcd_show_float(0, 1, side_angle_PID.Ki, 3, 3);

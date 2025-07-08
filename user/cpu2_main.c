@@ -33,6 +33,7 @@
  * 2022-11-03       pudding            first version
  ********************************************************************************************************************/
 #include "zf_common_headfile.h"
+#include "Attitude.h"
 #pragma section all "cpu2_dsram"
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU1的RAM中
 
@@ -53,6 +54,7 @@ void core2_main(void)
     {
         // 此处编写需要循环执行的代码
         // lcd_show_float(0, 2, get_cpu_freq(), 3, 3);
+
         // 此处编写需要循环执行的代码
     }
 }

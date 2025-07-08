@@ -229,7 +229,7 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
 {
     control_param_init(&bottom_angle_velocity_PID,
                        control_motion_params->bottom_angle_velocity_parameter,
-                       1, 100, 1, MOTOR_PWM_MAX, 9999);
+                       1, 10, 1, MOTOR_PWM_MAX, 9999);
     // control_param_init(&bottom_angle_PID,
     //                    control_motion_params->bottom_angle_parameter, 10,
     //                    100, 10);

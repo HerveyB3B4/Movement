@@ -78,7 +78,8 @@ void core1_main(void)
 
         // printf("%f,%f\n", ROLL, ROLL_VEL);
         // 此处编写需要循环执行的代码
-        system_delay_ms(1);
+        // system_delay_ms(1);
+        // printf("%f\n", PITCH_VEL);
     }
 }
 #pragma section all restore

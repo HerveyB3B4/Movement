@@ -398,6 +398,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_cpu_freq}},
+    {(uint8 *)"UART",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_uart}},
 };
 
 MENU_TABLE Utils_MenuTable[] = {

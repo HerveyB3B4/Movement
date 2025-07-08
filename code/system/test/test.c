@@ -897,3 +897,16 @@ void test_cpu_freq()
     }
     lcd_clear();
 }
+
+void test_uart()
+{
+    lcd_clear();
+    static uint32 cnt = 0;
+    while (keymsg.key != KEY_L)
+    {
+        cnt++;
+        lcd_show_uint(0, 0, cnt, 3);
+        printf("Hello, UART Test!\n");
+    }
+    lcd_clear();
+}
