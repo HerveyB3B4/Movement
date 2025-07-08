@@ -7,15 +7,11 @@
 #define KEY_HOLD_TIME 11
 
 #define KEY_MSG_FIFO_SIZE 20
-#define KEY_NUM 5 // 定义按键数量，替代 KEY_MAX
+#define KEY_NUM KEY_NONE // 定义按键数量，替代 KEY_MAX
 
 typedef enum
 {
-    KEY_U,
-    KEY_D,
-    KEY_L,
-    KEY_R,
-    KEY_B,
+    MKEY_NAME,
     KEY_NONE, // 无按键状态
 } KEY_e;
 
