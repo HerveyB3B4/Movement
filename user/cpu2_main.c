@@ -52,7 +52,7 @@ void core2_main(void)
     while (TRUE)
     {
         // 此处编写需要循环执行的代码
-
+        // lcd_show_float(0, 2, get_cpu_freq(), 3, 3);
         // 此处编写需要循环执行的代码
     }
 }

@@ -143,9 +143,9 @@ static void control_side_velocity(
                                                    side_vel_filter[0],
                                                    0.0f);
 
-    static float side_tar_angle_filter[2] = {0};
-    side_tar_angle_filter[1] = side_tar_angle_filter[0];
-    side_tar_angle_filter[0] = control_target->side_angle;
+    // static float side_tar_angle_filter[2] = {0};
+    // side_tar_angle_filter[1] = side_tar_angle_filter[0];
+    // side_tar_angle_filter[0] = control_target->side_angle;
     // lowPassFilterF(&side_tar_angle_filter[0], &side_tar_angle_filter[1], 0.2f);
 
     if (g_control_output_sv_flag != 0)
@@ -162,7 +162,7 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
     momentumAngleFilter[1] = momentumAngleFilter[0];
     momentumAngleFilter[0] = ROLL;
     // noiseFilter(momentumAngleFilter[0],0.02f);
-    lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
+    // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.1f);
     control_target->side_angle_vel = control_motion_params->side_angle_polarity *
                                      PID_calc_Position_Gyro_D(
                                          &side_angle_PID,

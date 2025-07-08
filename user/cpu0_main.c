@@ -51,6 +51,8 @@
 // **************************** 代码区域 ****************************
 int core0_main(void)
 {
+    clock_init(); // 获取时钟频率<务必保留>
+
     system_init();
 
     cpu_wait_event_ready(); // 等待所有核心初始化完毕
@@ -61,11 +63,14 @@ int core0_main(void)
     system_set_runstate(CAR_RUNNING);
     while (TRUE)
     {
+        // printf("%f\n", get_cpu_freq());
         // printf("%f\n", ROLL_VEL);
         // printf("%f,%f\n", twoKpDef, twoKiDef);
-
-        lcd_show_float(0, 0, side_angle_PID.Kp, 3, 6);
-        lcd_show_float(0, 1, ROLL, 3, 6);
+        // lcd_show_float(0, 0, side_angle_PID.Kp, 3, 3);
+        // lcd_show_float(0, 1, side_angle_PID.Ki, 3, 3);
+        // lcd_show_float(6, 0, side_velocity_PID.Kp, 3, 3);
+        // lcd_show_float(6, 1, side_velocity_PID.Ki, 3, 3);
+        // lcd_show_float(0, 1, ROLL, 3, 6);
         // lcd_show_uint(0, 0, mahony_cnt, 5);
         // img_handler(g_show_run_param_flag);
         // img_handler(g_show_run_param_flag);

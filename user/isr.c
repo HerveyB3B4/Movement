@@ -102,7 +102,7 @@ IFX_INTERRUPT(cc61_pit_ch1_isr,
         // 控制
         // guide_receiver();
         // guide_receiver(&g_control_target);
-        guide_to_target(&g_control_target);
+        // guide_to_target(&g_control_target);
         system_control_timer();
     }
 }
