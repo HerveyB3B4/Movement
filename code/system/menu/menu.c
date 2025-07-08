@@ -382,6 +382,22 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_encoder}},
+    {(uint8 *)"Switch",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_switch}},
+    {(uint8 *)"Diode",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_diode}},
+    {(uint8 *)"DualCam",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_dual_camera}},
+    {(uint8 *)"CpuFreq",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_cpu_freq}},
 };
 
 MENU_TABLE Utils_MenuTable[] = {

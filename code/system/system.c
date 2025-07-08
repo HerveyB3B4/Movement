@@ -8,6 +8,8 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 #include "key.h"
+#include "diode.h"
+#include "switch.h"
 #include "receiver.h"
 
 RunState_t runState;
@@ -25,10 +27,12 @@ void system_init()
     encoder_init();
     lcd_init();
     mt9v03x_init();
+    mt9v03x2_init();
     imu_init();
-    // mt9v03x2_init();
     // receiver_init();
     // wireless_init();
+    diode_init();
+    switch_init();
     key_init_rewrite(KEY_NUM);
 
     // ===================== PARAMS ======================== //
@@ -265,7 +269,7 @@ void system_set_runstate(RunState_t state)
     case CAR_RUNNING:
         runState = CAR_RUNNING;
 
-        // pit_enable(CCU61_CH1);  // 使能控制中断
+        // pit_enable(CCU61_CH1); // 使能控制中断
         pit_disable(CCU60_CH1); // 失能按键中断
         break;
     }

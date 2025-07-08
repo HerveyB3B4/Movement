@@ -6,7 +6,7 @@
 void encoder_init()
 {
     // bottom encoder
-    encoder_dir_init(ENCODER_BOTTOM, ENCODER_PIN0_BOTTOM, ENCODER_PIN1_BOTTOM);
+    encoder_dir_init(ENCODER_BOTTOM, BOTTOM_ENCODER_PIN0, BOTTOM_ENCODER_PIN1);
 }
 
 void encoder_get_momentum(struct Velocity_Motor *vel_motor)

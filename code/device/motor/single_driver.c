@@ -51,35 +51,19 @@ void uart_control_callback(uint8 uart_index)
                     {
                         if (uart_index == SMALL_DRIVER_UART_LEFT)
                         {
-#if USEREV
                             motor_value.receive_left_speed_data =
                                 (((int)motor_value.receive_data_buffer[2]
                                   << 8) |
                                  (int)motor_value.receive_data_buffer
                                      [3]); // 拟合左侧电机转速数据
-#else
-                            motor_value.receive_left_speed_data =
-                                (((int)motor_value.receive_data_buffer[2]
-                                  << 8) |
-                                 (int)motor_value.receive_data_buffer
-                                     [3]); // 拟合左侧电机转速数据
-#endif
                         }
                         else
                         {
-#if USEREV
                             motor_value.receive_right_speed_data =
                                 (((int)motor_value.receive_data_buffer[2]
                                   << 8) |
                                  (int)motor_value.receive_data_buffer
                                      [3]); // 拟合左侧电机转速数据
-#else
-                            motor_value.receive_right_speed_data =
-                                (((int)motor_value.receive_data_buffer[2]
-                                  << 8) |
-                                 (int)motor_value.receive_data_buffer
-                                     [3]); // 拟合左侧电机转速数据
-#endif
                         }
                     }
 

@@ -13,6 +13,7 @@
 #include "receiver.h"
 #include "detection.h"
 #include "distance.h"
+#include "diode.h"
 #include "YawIntegral.h"
 
 // 定义静态变量，从栈移到数据段，避免栈溢出
@@ -790,5 +791,109 @@ void test_encoder()
     }
     encoder_clear_count(ENCODER_BOTTOM);
     pit_enable(CCU60_CH0);
+    lcd_clear();
+}
+
+void test_switch()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "Switch Test");
+    while (keymsg.key != KEY_L)
+    {
+        lcd_show_string(0, 1, "Switch 1:");
+        lcd_show_int(9, 1, switch_get_state(SWITCH_1), 1);
+        lcd_show_string(0, 2, "Switch 2:");
+        lcd_show_int(9, 2, switch_get_state(SWITCH_2), 1);
+        lcd_show_string(0, 3, "Switch 3:");
+        lcd_show_int(9, 3, switch_get_state(SWITCH_3), 1);
+        lcd_show_string(0, 4, "Switch 4:");
+        lcd_show_int(9, 4, switch_get_state(SWITCH_4), 1);
+    }
+    lcd_clear();
+}
+
+void test_diode()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "LED & Buzzer");
+    lcd_show_string(0, 1, "KEY_U: val++");
+    lcd_show_string(0, 2, "KEY_D: val--");
+    lcd_show_string(0, 3, "KEY_R: switch");
+    lcd_show_string(0, 4, "KEY_B: on");
+    lcd_show_string(0, 5, "Press KEY_L to exit");
+    uint8 cur = 0;
+    uint8 val[3] = {0, 0, 0};
+    while (keymsg.key != KEY_L)
+    {
+        if (keymsg.key == KEY_U)
+        {
+            val[cur]++;
+        }
+        else if (keymsg.key == KEY_D)
+        {
+            val[cur]--;
+        }
+        else if (keymsg.key == KEY_R)
+        {
+            cur = (cur + 1) % 3;
+        }
+        else if (keymsg.key == KEY_B)
+        {
+            uint8 i = DIODE_NUM;
+            while (i--)
+            {
+                diode_set(i, val[0], val[1], val[2]);
+                diode_on(i);
+            }
+        }
+        lcd_show_uint(0, 6, val[0], 3);
+        lcd_show_uint(5, 6, val[1], 3);
+        lcd_show_uint(10, 6, val[2], 3);
+        system_delay_ms(100);
+    }
+    uint8 i = DIODE_NUM;
+    while (i--)
+    {
+        diode_off(i);
+    }
+    lcd_clear();
+}
+
+void test_dual_camera()
+{
+    lcd_clear();
+    while (keymsg.key != KEY_L)
+    {
+
+        if (mt9v03x_finish_flag)
+        {
+            tft180_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+            mt9v03x_finish_flag = 0;
+        }
+        if (mt9v03x2_finish_flag)
+        {
+            tft180_show_gray_image(0, tft180_height_max - MT9V03X_H / 2, mt9v03x2_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+            mt9v03x2_finish_flag = 0;
+        }
+    }
+    lcd_clear();
+}
+
+void test_cpu_freq()
+{
+    lcd_clear();
+    lcd_show_string(0, 0, "CPU Freq");
+    while (keymsg.key != KEY_L)
+    {
+        lcd_show_string(0, 1, "CPU0: ");
+        lcd_show_float(6, 1, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_0) / 1e6, 5, 2);
+        lcd_show_string(11, 1, " MHz");
+        lcd_show_string(0, 2, "CPU1: ");
+        lcd_show_float(6, 2, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_1) / 1e6, 5, 2);
+        lcd_show_string(11, 2, " MHz");
+        lcd_show_string(0, 3, "CPU2: ");
+        lcd_show_float(6, 3, IfxScuCcu_getCpuFrequency(IfxCpu_ResourceCpu_2) / 1e6, 5, 2);
+        lcd_show_string(11, 3, " MHz");
+    }
     lcd_clear();
 }
