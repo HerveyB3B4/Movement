@@ -19,16 +19,20 @@ void imu_get_data(struct IMU_DATA *data)
     imu660rb_get_acc();
     imu660rb_get_gyro();
 
-    data->gyro.x = imu660rb_gyro_transition(imu660rb_gyro_x) * DEG2RAD;
-    data->gyro.y = -imu660rb_gyro_transition(imu660rb_gyro_y) * DEG2RAD;
+    data->gyro.x = imu660rb_gyro_transition(imu660rb_gyro_y) * DEG2RAD;
+    data->gyro.y = -imu660rb_gyro_transition(imu660rb_gyro_x) * DEG2RAD;
     data->gyro.z = imu660rb_gyro_transition(imu660rb_gyro_z) * DEG2RAD;
 
     // data->gyro.x = imu660rb_gyro_transition(imu660rb_gyro_x);
     // data->gyro.y = -imu660rb_gyro_transition(imu660rb_gyro_y);
     // data->gyro.z = imu660rb_gyro_transition(imu660rb_gyro_z);
 
-    data->acc.x = imu660rb_acc_transition(imu660rb_acc_x) * GravityAcc;
-    data->acc.y = -imu660rb_acc_transition(imu660rb_acc_y) * GravityAcc;
+    // data->acc.x = imu660rb_acc_transition(imu660rb_acc_x) * GravityAcc;
+    // data->acc.y = -imu660rb_acc_transition(imu660rb_acc_y) * GravityAcc;
+    // data->acc.z = imu660rb_acc_transition(imu660rb_acc_z) * GravityAcc;
+
+    data->acc.x = imu660rb_acc_transition(imu660rb_acc_y) * GravityAcc;
+    data->acc.y = -imu660rb_acc_transition(imu660rb_acc_x) * GravityAcc;
     data->acc.z = imu660rb_acc_transition(imu660rb_acc_z) * GravityAcc;
 
     // data->gyro.x = imu660rb_gyro_transition(imu660rb_gyro_x);

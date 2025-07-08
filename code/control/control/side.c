@@ -169,7 +169,7 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
                                          (momentumAngleFilter[0] - euler_angle_bias->roll),
                                          //  control_target->side_angle + control_target->buckling_side // 压弯
                                          control_target->side_angle,
-                                         -ROLL_VEL);
+                                         ROLL_VEL);
 
     if (g_control_output_sa_flag != 0)
     {
