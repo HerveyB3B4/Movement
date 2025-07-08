@@ -27,7 +27,7 @@ void system_init()
     encoder_init();
     lcd_init();
     mt9v03x_init();
-    // mt9v03x2_init();
+    mt9v03x2_init();
     imu_init();
     // receiver_init();
     // wireless_init();
@@ -245,20 +245,20 @@ void turn_control_timer(struct Control_Time *control_time,
     //     control_flag->turn_angle = 0;
     // }
 
-    // ����ת��
+    // 控制转向
     control_turn(control_target, control_flag, control_turn_params, control_motion_params, vel_motor);
 }
 
 void system_set_runstate(RunState_t state)
 {
-    // ���ݲ�ͬ�ĳ���״ִ̬�в�ͬ�Ŀ��Ʋ���
+    // 根据不同的车辆状态执行不同的控制操作
     switch (state)
     {
     case CAR_STOP:
         runState = CAR_STOP;
 
-        pit_disable(CCU61_CH1); // ʧ�ܿ����ж�
-        pit_enable(CCU60_CH1);  // ʹ�ܰ����ж�
+        pit_disable(CCU61_CH1); // 失能控制中断
+        pit_enable(CCU60_CH1);  // 使能按键中断
 
         stop_bottom_motor();
         stop_momentum_motor();
@@ -268,8 +268,8 @@ void system_set_runstate(RunState_t state)
     case CAR_RUNNING:
         runState = CAR_RUNNING;
 
-        // pit_enable(CCU61_CH1); // ʹ�ܿ����ж�
-        pit_disable(CCU60_CH1); // ʧ�ܰ����ж�
+        // pit_enable(CCU61_CH1); // 使能控制中断
+        pit_disable(CCU60_CH1); // 失能按键中断
         break;
     }
 }

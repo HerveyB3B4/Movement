@@ -30,7 +30,7 @@ static void pass_bottom_encoder(int32 value, struct Velocity_Motor *vel_motor)
 void encoder_init()
 {
     // bottom encoder
-    encoder_dir_init(ENCODER_BOTTOM, ENCODER_PIN0_BOTTOM, ENCODER_PIN1_BOTTOM);
+    encoder_dir_init(ENCODER_BOTTOM, BOTTOM_ENCODER_PIN0, BOTTOM_ENCODER_PIN1);
 }
 
 void get_momentum_encoder(struct Velocity_Motor *vel_motor)
