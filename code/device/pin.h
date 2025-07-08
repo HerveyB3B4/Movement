@@ -1,7 +1,7 @@
 #ifndef _PIN_H_
 #define _PIN_H_
 
-#define PIN_H_VERSION 401L
+#define PIN_H_VERSION 400L
 
 #if PIN_H_VERSION == 400L
 // v4.0.0
