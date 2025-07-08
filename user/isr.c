@@ -216,7 +216,7 @@ IFX_INTERRUPT(uart1_tx_isr, UART1_INT_VECTAB_NUM, UART1_TX_INT_PRIO)
 }
 IFX_INTERRUPT(uart1_rx_isr, UART1_INT_VECTAB_NUM, UART1_RX_INT_PRIO)
 {
-    interrupt_global_enable(0); // 开启中断嵌套
+    interrupt_global_enable(0);    // 开启中断嵌套
     uart_control_callback(UART_1); // 无刷驱动串口回调函数
     // camera_uart_handler();       // 摄像头参数配置统一回调函数
     // wireless_module_uart_handler();  // 无线模块统一回调函数
@@ -264,6 +264,7 @@ IFX_INTERRUPT(uart5_tx_isr, UART5_INT_VECTAB_NUM, UART5_TX_INT_PRIO)
 IFX_INTERRUPT(uart5_rx_isr, UART5_INT_VECTAB_NUM, UART5_RX_INT_PRIO)
 {
     interrupt_global_enable(0); // 开启中断嵌套
+    receiver_callback();
 }
 
 IFX_INTERRUPT(uart6_tx_isr, UART6_INT_VECTAB_NUM, UART6_TX_INT_PRIO)
