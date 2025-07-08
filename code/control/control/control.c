@@ -82,7 +82,7 @@ void control_polarity_init(struct Control_Motion_Manual_Parmas *control_motion_p
     control_motion_params->bottom_angle_polarity = -1;
     control_motion_params->bottom_velocity_polarity = -1;
 
-    control_motion_params->side_angle_velocity_polarity = 1;
+    control_motion_params->side_angle_velocity_polarity = -1;
     control_motion_params->side_angle_polarity = 1;
     control_motion_params->side_velocity_polarity = 1;
 

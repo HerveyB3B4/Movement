@@ -158,6 +158,10 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
                                struct Control_Target *control_target,
                                struct Control_Motion_Manual_Parmas *control_motion_params)
 {
+    static uint32 last_time = 0;
+    uint32 curr_time = system_getval_ms();
+    printf("%d\n", curr_time - last_time);
+
     static float momentumAngleFilter[2] = {0}; // 角度滤波
     momentumAngleFilter[1] = momentumAngleFilter[0];
     momentumAngleFilter[0] = ROLL;
@@ -175,6 +179,7 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
     {
         printf("%f, %f\n", ROLL, control_target->side_angle_vel);
     }
+    last_time = curr_time;
 }
 
 static void control_side_angle_velocity(struct Control_Target *control_target,
