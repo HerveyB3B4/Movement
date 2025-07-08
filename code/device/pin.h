@@ -5,11 +5,6 @@
 #define EMPTY_nSLEEP P33_0
 
 // camera1
-#define CAMERA1_COF_UART (UART_1) // 摄像头配置所使用的串口
-#define CAMERA1_COF_BAUD (9600) // 摄像头配置串口波特率
-#define CAMERA1_COF_UART_TX (UART1_RX_P11_10) // 摄像头配置串口 TX 引脚
-#define CAMERA1_COF_UART_RX (UART1_TX_P11_12) // 摄像头配置串口 RX 引脚
-// 以上四个暂时没用，但是线画了，先留着
 #define CAMERA1_COF_IIC_SCL (P11_10)
 #define CAMERA1_COF_IIC_SDA (P11_12)
 #define CAMERA1_DMA_CH (IfxDma_ChannelId_7)
@@ -17,11 +12,6 @@
 #define CAMERA1_VSYNC_PIN (ERU_CH5_REQ1_P15_8)
 #define CAMERA1_DATA_PIN (P02_0)
 // camera2
-#define CAMERA2_COF_UART (UART_10) // 摄像头配置所使用的串口
-#define CAMERA2_COF_BAUD (9600) // 摄像头配置串口波特率
-#define CAMERA2_COF_UART_TX (UART10_RX_P13_1) // 摄像头配置串口 TX 引脚
-#define CAMERA2_COF_UART_RX (UART10_TX_P13_0) // 摄像头配置串口 RX 引脚
-// 以上四个暂时没用，但是线画了，先留着
 #define CAMERA2_COF_IIC_SCL (P13_1)
 #define CAMERA2_COF_IIC_SDA (P13_0)
 #define CAMERA2_DMA_CH (IfxDma_ChannelId_8)
@@ -96,11 +86,6 @@
 // #define EMPTY_nSLEEP P33_0
 
 // // camera1
-// #define CAMERA1_COF_UART (UART_1) // 摄像头配置所使用的串口
-// #define CAMERA1_COF_BAUD (9600) // 摄像头配置串口波特率
-// #define CAMERA1_COF_UART_TX (UART1_RX_P11_10) // 摄像头配置串口 TX 引脚
-// #define CAMERA1_COF_UART_RX (UART1_TX_P11_12) // 摄像头配置串口 RX 引脚
-// // 以上四个暂时没用，但是线画了，先留着
 // #define CAMERA1_COF_IIC_SCL (P11_10)
 // #define CAMERA1_COF_IIC_SDA (P11_12)
 // #define CAMERA1_VSYNC_PIN (ERU_CH5_REQ1_P15_8) // 场中断引脚
@@ -108,11 +93,6 @@
 // #define CAMERA1_DATA_PIN (P02_0)
 // #define CAMERA1_DMA_CH (IfxDma_ChannelId_7)
 // // camera2
-// #define CAMERA2_COF_UART (UART_10) // 摄像头配置所使用的串口
-// #define CAMERA2_COF_BAUD (9600) // 摄像头配置串口波特率
-// #define CAMERA2_COF_UART_TX (UART10_RX_P13_1) // 摄像头配置串口 TX 引脚
-// #define CAMERA2_COF_UART_RX (UART10_TX_P13_0) // 摄像头配置串口 RX 引脚
-// // 以上四个暂时没用，但是线画了，先留着
 // #define CAMERA2_COF_IIC_SCL (P13_1)
 // #define CAMERA2_COF_IIC_SDA (P13_0)
 // #define CAMERA2_VSYNC_PIN (ERU_CH2_REQ2_P10_2) // 场中断引脚
