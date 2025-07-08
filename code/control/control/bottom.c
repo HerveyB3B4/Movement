@@ -86,6 +86,12 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
                                     struct Control_Motion_Manual_Parmas *control_motion_params,
                                     struct Control_Turn_Manual_Params *control_turn_params)
 {
+
+    // static uint32 last_time = 0;
+    // uint32 curr_time = system_getval_ms();
+    // printf("%d\n", curr_time - last_time);
+    // last_time = curr_time;
+
     control_target->bottom_angle = control_motion_params->bottom_velocity_polarity *
                                    PID_calc_Position(
                                        &bottom_velocity_PID,
@@ -131,6 +137,10 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
                                  struct Control_Motion_Manual_Parmas *control_motion_params,
                                  struct Control_Turn_Manual_Params *control_turn_params)
 {
+    // static uint32 last_time = 0;
+    // uint32 curr_time = system_getval_ms();
+    // printf("%d\n", curr_time - last_time);
+
     static float angleControlFilter[2] = {0};
     angleControlFilter[1] = angleControlFilter[0];
     angleControlFilter[0] = PITCH;
@@ -149,12 +159,19 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
     {
         printf("%f,%f\n", control_target->bottom_angle_vel, PITCH);
     }
+
+    // last_time = curr_time;
 }
 
 static void control_bottom_angle_velocity(
     struct Control_Target *control_target,
     struct Control_Motion_Manual_Parmas *control_motion_params)
 {
+    // static uint32 last_time = 0;
+    // uint32 curr_time = system_getval_ms();
+    // printf("%d\n", curr_time - last_time);
+    // last_time = curr_time;
+
     // imu963raPushingSensorData();
     static float angleVelocityControlFilter[2] = {0};
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];

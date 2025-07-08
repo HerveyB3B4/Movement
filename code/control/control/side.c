@@ -132,6 +132,10 @@ static void control_side_velocity(
     struct Control_Turn_Manual_Params *control_turn_params,
     struct Control_Motion_Manual_Parmas *control_motion_params)
 {
+    // static uint32 last_time = 0;
+    // uint32 curr_time = system_getval_ms();
+    // printf("%d\n", curr_time - last_time);
+
     static float side_vel_filter[2] = {0};
     side_vel_filter[1] = side_vel_filter[0];
     side_vel_filter[0] = (float)(vel_motor->momentumFront - vel_motor->momentumBack);
@@ -152,15 +156,17 @@ static void control_side_velocity(
     {
         printf("%f,%f\n", control_target->side_angle, side_vel_filter[0]);
     }
+
+    // last_time = curr_time;
 }
 
 static void control_side_angle(struct EulerAngle *euler_angle_bias,
                                struct Control_Target *control_target,
                                struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    static uint32 last_time = 0;
-    uint32 curr_time = system_getval_ms();
-    printf("%d\n", curr_time - last_time);
+    // static uint32 last_time = 0;
+    // uint32 curr_time = system_getval_ms();
+    // printf("%d\n", curr_time - last_time);
 
     static float momentumAngleFilter[2] = {0}; // 角度滤波
     momentumAngleFilter[1] = momentumAngleFilter[0];
@@ -179,12 +185,16 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
     {
         printf("%f, %f\n", ROLL, control_target->side_angle_vel);
     }
-    last_time = curr_time;
+    // last_time = curr_time;
 }
 
 static void control_side_angle_velocity(struct Control_Target *control_target,
                                         struct Control_Motion_Manual_Parmas *control_motion_params)
 {
+    // static uint32 last_time = 0;
+    // uint32 curr_time = system_getval_ms();
+    // printf("%d\n", curr_time - last_time);
+
     static float side_angle_vel_filter[2] = {0}; // 角速度滤波
     side_angle_vel_filter[1] = side_angle_vel_filter[0];
     side_angle_vel_filter[0] = ROLL_VEL;
@@ -201,4 +211,6 @@ static void control_side_angle_velocity(struct Control_Target *control_target,
         printf("%f,%f\n", -ROLL_VEL,
                s_side_balance_duty / 100.0f);
     }
+
+    // last_time = curr_time;
 }
