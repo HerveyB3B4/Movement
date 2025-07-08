@@ -38,7 +38,6 @@ void test_bottom_motor()
             gpio_set_level(DIR_BOTTOM, 0);
             pwm_set_duty(MOTOR_BOTTOM, 8000);
         }
-        velocity_update_bottom(&g_vel_motor);
         lcd_show_int(0, 5, g_vel_motor.bottom, 5);
         lcd_show_float(0, 6, g_vel_motor.bottom_real, 5, 5);
         lcd_show_float(0, 7, g_vel_motor.bottom_filtered, 5, 5);
@@ -777,4 +776,19 @@ void test_encoder_to_velocity()
     pit_enable(CCU60_CH0);
     lcd_clear();
     encoder_clear_count(ENCODER_BOTTOM);
+}
+
+void test_encoder()
+{
+    lcd_clear();
+    pit_disable(CCU60_CH0);
+    encoder_clear_count(ENCODER_BOTTOM);
+    while (keymsg.key != KEY_L)
+    {
+        int16 count = encoder_get_count(ENCODER_BOTTOM);
+        lcd_show_int(0, 0, count, 5);
+    }
+    encoder_clear_count(ENCODER_BOTTOM);
+    pit_enable(CCU60_CH0);
+    lcd_clear();
 }

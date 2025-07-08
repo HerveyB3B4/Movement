@@ -1,16 +1,3 @@
-/*
- * kalman_filter_velocity.c
- *
- *  Created on: 2024年6月7日
- *      Author: symc
- *     Description: kalman filter for velocity
- *    Reference: https://en.wikipedia.org/wiki/Kalman_filter;
- *              https://blog.csdn.net/weixin_43942325/article/details/103416681;
- *    Note: large Q means large process noise which makes the system convergence
- * fast, trust the measurement more; large R means large measurement noise which
- * makes the system convergence slow but more stable.
- */
-
 #include "kalman_filter_velocity.h"
 #include "Ifx_LutAtan2F32.h"
 #include "Ifx_LutLSincosF32.h"
@@ -40,7 +27,8 @@ static void vec_sub(float a[STATE_SIZE],
 static void mat_inv(float a[STATE_SIZE][STATE_SIZE],
                     float b[STATE_SIZE][STATE_SIZE]);
 
-void kalman_filter_velocity_init(kalman_filter_velocity_t* kf) {
+void kalman_filter_velocity_init(kalman_filter_velocity_t *kf)
+{
     // Initialize the state vector
     /**
      * x = [0;
@@ -107,14 +95,15 @@ void kalman_filter_velocity_init(kalman_filter_velocity_t* kf) {
     // Initialize the control vector (not used)
     kf->u[0] = 0;
 }
-void kalman_filter_velocity_predict(kalman_filter_velocity_t* kf) {
+void kalman_filter_velocity_predict(kalman_filter_velocity_t *kf)
+{
     // Predict the state vector
     /**
      * x = A * x + B * u
      */
     float x_temp[STATE_SIZE];
     mat_mult_vec(kf->A, kf->x, x_temp);
-    vec_add(x_temp, kf->B, kf->x);  // B * u = 0
+    vec_add(x_temp, kf->B, kf->x); // B * u = 0
 
     // Predict the state covariance matrix
     /**
@@ -128,8 +117,9 @@ void kalman_filter_velocity_predict(kalman_filter_velocity_t* kf) {
     mat_mult(AP_temp, At, APAt);
     mat_add(APAt, kf->Q, kf->P);
 }
-void kalman_filter_velocity_update(kalman_filter_velocity_t* kf,
-                                   float z[MEASUREMENT_SIZE]) {
+void kalman_filter_velocity_update(kalman_filter_velocity_t *kf,
+                                   float z[MEASUREMENT_SIZE])
+{
     // Calculate the measurement residual
     /**
      * y = z - H * x
@@ -149,7 +139,7 @@ void kalman_filter_velocity_update(kalman_filter_velocity_t* kf,
     mat_transpose(kf->H, Ht);
     float HPHt[MEASUREMENT_SIZE][MEASUREMENT_SIZE];
     mat_mult(HP_temp, Ht, HPHt);
-    float S[MEASUREMENT_SIZE][MEASUREMENT_SIZE];  // residual covariance
+    float S[MEASUREMENT_SIZE][MEASUREMENT_SIZE]; // residual covariance
     mat_add(HPHt, kf->R, S);
 
     // Calculate the Kalman gain
@@ -160,7 +150,7 @@ void kalman_filter_velocity_update(kalman_filter_velocity_t* kf,
     mat_inv(S, S_inv);
     float PHt[STATE_SIZE][MEASUREMENT_SIZE];
     mat_mult(kf->P, Ht, PHt);
-    float K[STATE_SIZE][MEASUREMENT_SIZE];  // Kalman gain
+    float K[STATE_SIZE][MEASUREMENT_SIZE]; // Kalman gain
     mat_mult(PHt, S_inv, K);
 
     // Update the state vector
@@ -184,65 +174,85 @@ void kalman_filter_velocity_update(kalman_filter_velocity_t* kf,
     mat_mult(IKH, kf->P, P_temp);
 
     // Copy P_temp to P
-    for (uint8_t i = 0; i < STATE_SIZE; i++) {
-        for (uint8_t j = 0; j < STATE_SIZE; j++) {
+    for (uint8_t i = 0; i < STATE_SIZE; i++)
+    {
+        for (uint8_t j = 0; j < STATE_SIZE; j++)
+        {
             kf->P[i][j] = P_temp[i][j];
         }
     }
 }
 static void mat_add(float a[STATE_SIZE][STATE_SIZE],
                     float b[STATE_SIZE][STATE_SIZE],
-                    float c[STATE_SIZE][STATE_SIZE]) {
-    for (uint8_t i = 0; i < STATE_SIZE; i++) {
-        for (uint8_t j = 0; j < STATE_SIZE; j++) {
+                    float c[STATE_SIZE][STATE_SIZE])
+{
+    for (uint8_t i = 0; i < STATE_SIZE; i++)
+    {
+        for (uint8_t j = 0; j < STATE_SIZE; j++)
+        {
             c[i][j] = a[i][j] + b[i][j];
         }
     }
 }
 static void mat_sub(float a[STATE_SIZE][STATE_SIZE],
                     float b[STATE_SIZE][STATE_SIZE],
-                    float c[STATE_SIZE][STATE_SIZE]) {
-    for (uint8_t i = 0; i < STATE_SIZE; i++) {
-        for (uint8_t j = 0; j < STATE_SIZE; j++) {
+                    float c[STATE_SIZE][STATE_SIZE])
+{
+    for (uint8_t i = 0; i < STATE_SIZE; i++)
+    {
+        for (uint8_t j = 0; j < STATE_SIZE; j++)
+        {
             c[i][j] = a[i][j] - b[i][j];
         }
     }
 }
 static void mat_mult(float a[STATE_SIZE][STATE_SIZE],
                      float b[STATE_SIZE][STATE_SIZE],
-                     float c[STATE_SIZE][STATE_SIZE]) {
-    for (uint8_t i = 0; i < STATE_SIZE; i++) {
-        for (uint8_t j = 0; j < STATE_SIZE; j++) {
+                     float c[STATE_SIZE][STATE_SIZE])
+{
+    for (uint8_t i = 0; i < STATE_SIZE; i++)
+    {
+        for (uint8_t j = 0; j < STATE_SIZE; j++)
+        {
             c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j];
         }
     }
 }
 static void mat_mult_vec(float a[STATE_SIZE][STATE_SIZE],
                          float b[STATE_SIZE],
-                         float c[STATE_SIZE]) {
-    for (uint8_t i = 0; i < STATE_SIZE; i++) {
+                         float c[STATE_SIZE])
+{
+    for (uint8_t i = 0; i < STATE_SIZE; i++)
+    {
         c[i] = a[i][0] * b[0] + a[i][1] * b[1];
     }
 }
 static void mat_transpose(float a[STATE_SIZE][STATE_SIZE],
-                          float b[STATE_SIZE][STATE_SIZE]) {
-    for (uint8_t i = 0; i < STATE_SIZE; i++) {
-        for (uint8_t j = 0; j < STATE_SIZE; j++) {
+                          float b[STATE_SIZE][STATE_SIZE])
+{
+    for (uint8_t i = 0; i < STATE_SIZE; i++)
+    {
+        for (uint8_t j = 0; j < STATE_SIZE; j++)
+        {
             b[j][i] = a[i][j];
         }
     }
 }
 static void vec_add(float a[STATE_SIZE],
                     float b[STATE_SIZE],
-                    float c[STATE_SIZE]) {
-    for (uint8_t i = 0; i < STATE_SIZE; i++) {
+                    float c[STATE_SIZE])
+{
+    for (uint8_t i = 0; i < STATE_SIZE; i++)
+    {
         c[i] = a[i] + b[i];
     }
 }
 static void vec_sub(float a[STATE_SIZE],
                     float b[STATE_SIZE],
-                    float c[STATE_SIZE]) {
-    for (uint8_t i = 0; i < STATE_SIZE; i++) {
+                    float c[STATE_SIZE])
+{
+    for (uint8_t i = 0; i < STATE_SIZE; i++)
+    {
         c[i] = a[i] - b[i];
     }
 }
@@ -253,10 +263,12 @@ static void vec_sub(float a[STATE_SIZE],
 //     }
 // }
 static void mat_inv(float a[STATE_SIZE][STATE_SIZE],
-                    float b[STATE_SIZE][STATE_SIZE]) {
+                    float b[STATE_SIZE][STATE_SIZE])
+{
     // only for 2x2 matrix
     float det = a[0][0] * a[1][1] - a[0][1] * a[1][0];
-    if (det == 0) {
+    if (det == 0)
+    {
         return;
     }
     float inv_det = 1.0f / det;

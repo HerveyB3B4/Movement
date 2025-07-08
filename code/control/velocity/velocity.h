@@ -4,10 +4,10 @@
 #include "zf_common_headfile.h"
 
 #define V_KALMAN_MULTIPLE 100
-#define VELOCITY_KALMAN_FILTER
 
-// 一块砖长度(m)/编码器脉冲数/速度更新周期(ms)
-#define ENCODER_TO_VELOCITY ((0.6f) / (3600.0f) / (PIT_VELOCITY_T) * 1000.0f)
+// 脉冲当量：1m / 编码器脉冲数
+#define ENCODER_PULSE (1.0f / 5978.0f)
+#define ENCODER2VELOCITY (ENCODER_PULSE / PIT_VELOCITY_T * 1000.0f)
 #define BOTTOM_VELOCITY_PARAMS 100.0f
 
 extern uint32 vel_time;
@@ -24,7 +24,6 @@ struct Velocity_Motor
 extern struct Velocity_Motor g_vel_motor;
 
 void velocity_init(struct Velocity_Motor *vel_motor);
-void velocity_update(struct Velocity_Motor *vel_motor);
 void velocity_update_bottom(struct Velocity_Motor *vel_motor);
 void velocity_update_side(struct Velocity_Motor *vel_motor);
 

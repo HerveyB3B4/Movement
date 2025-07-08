@@ -34,7 +34,6 @@ void control_bottom_balance(struct Control_Target *control_target,
     if (control_flag->bottom_vel)
     {
         control_flag->bottom_vel = 0;
-        velocity_update_bottom(vel_motor); // update bottom velocity
         control_bottom_velocity(vel_motor, control_target, control_motion_params, control_turn_params);
     }
     if (control_flag->bottom_angle)
