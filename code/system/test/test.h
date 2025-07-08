@@ -25,5 +25,6 @@ void test_switch(void);
 void test_diode(void);
 void test_dual_camera(void);
 void test_cpu_freq(void);
+void test_navigation(void);
 
 #endif

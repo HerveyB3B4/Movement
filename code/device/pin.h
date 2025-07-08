@@ -41,7 +41,7 @@
 
 // wireless uart
 #define WL_UART_INDEX (UART_5)          // 无线串口对应使用的串口号
-#define WL_UART_BUAD_RATE (230400)      // 无线串口对应使用的串口波特率
+#define WL_UART_BUAD_RATE (115200)      // 无线串口对应使用的串口波特率
 #define WL_UART_TX_PIN (UART5_TX_P22_2) // 单片机TX引脚
 #define WL_UART_RX_PIN (UART5_RX_P22_3) // 单片机RX引脚
 #define WL_UART_RTS_PIN (P22_7)         // 无线串口对应模块的 RTS 引脚
