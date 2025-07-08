@@ -85,6 +85,8 @@ int core0_main(void)
         // img_handler(g_show_run_param_flag);
         // lcd_show_int(0, 0, get_momentum_diff(), 5);
         // lcd_show_int(0, 1, get_side_duty(), 5);
+        // lcd_show_float(0, 0, ROLL, 3, 3);
+        // printf("%d\n", get_bottom_duty());
     }
 }
 

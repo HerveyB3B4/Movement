@@ -176,6 +176,7 @@ static void control_bottom_angle_velocity(
     static float angleVelocityControlFilter[2] = {0};
     angleVelocityControlFilter[1] = angleVelocityControlFilter[0];
     angleVelocityControlFilter[0] = PITCH_VEL;
+    lowPassFilterF(&angleVelocityControlFilter[0], &angleVelocityControlFilter[1], 0.5f);
 
     s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity *
                             (PID_calc_DELTA(
