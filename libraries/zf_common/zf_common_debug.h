@@ -42,16 +42,17 @@
 
 #include "zf_common_interrupt.h"
 #include "zf_common_typedef.h"
+#include "pin.h"
 
 // #define DEBUG_UART_INDEX (UART_0)          // 指定 debug uart 所使用的的串口
 // #define DEBUG_UART_BAUDRATE (115200)       // 指定 debug uart 所使用的的串口波特率
 // #define DEBUG_UART_TX_PIN (UART0_TX_P14_0) // 指定 debug uart 所使用的的串口引脚
 // #define DEBUG_UART_RX_PIN (UART0_RX_P14_1) // 指定 debug uart 所使用的的串口引脚
-#define DEBUG_UART_INDEX (UART_2)          // 指定 debug uart 所使用的的串口
-#define DEBUG_UART_BAUDRATE (115200)       // 指定 debug uart 所使用的的串口波特率
-#define DEBUG_UART_TX_PIN (UART2_TX_P14_2) // 指定 debug uart 所使用的的串口引脚
-#define DEBUG_UART_RX_PIN (UART2_RX_P14_3) // 指定 debug uart 所使用的的串口引脚
-#define DEBUG_UART_USE_INTERRUPT (1)       // 是否启用 debug uart 接收中断
+#define DEBUG_UART_INDEX (WL_UART_INDEX)        // 指定 debug uart 所使用的的串口
+#define DEBUG_UART_BAUDRATE (WL_UART_BUAD_RATE) // 指定 debug uart 所使用的的串口波特率
+#define DEBUG_UART_TX_PIN (WL_UART_TX_PIN)      // 指定 debug uart 所使用的的串口引脚
+#define DEBUG_UART_RX_PIN (WL_UART_RX_PIN)      // 指定 debug uart 所使用的的串口引脚
+#define DEBUG_UART_USE_INTERRUPT (1)            // 是否启用 debug uart 接收中断
 
 //-------------------------------------------------------------------------------------------------------------------
 // 函数简介     断言

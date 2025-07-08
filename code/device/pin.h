@@ -123,7 +123,7 @@
 
 // wireless uart
 #define WL_UART_INDEX (UART_3)           // 无线串口对应使用的串口号
-#define WL_UART_BUAD_RATE (230400)       // 无线串口对应使用的串口波特率
+#define WL_UART_BUAD_RATE (115200)       // 无线串口对应使用的串口波特率
 #define WL_UART_TX_PIN (UART3_TX_P21_7)  // 单片机TX引脚
 #define WL_UART_RX_PIN (UART3_RX_P20_3)  // 单片机RX引脚
 #define WL_UART_RTS_PIN (P20_0)          // 无线串口对应模块的 RTS 引脚
