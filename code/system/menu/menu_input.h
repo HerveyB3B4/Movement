@@ -46,7 +46,8 @@ struct Menu_Manual_Param
     uint32 SideControlTimeParameter[3];
 
     int32 buckling_front_coefficient;
-    int32 buckling_side_coefficient;
+    int32 buckling_side_state;
+    int32 buckling_side_dynamic;
 
     uint32 angle_limit;
 };

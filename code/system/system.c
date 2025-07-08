@@ -242,6 +242,7 @@ void turn_control_timer(struct Control_Time *control_time,
     // }
 
     // 控制转向
+    control_buckling(control_target, control_turn_params, vel_motor);
     control_turn(control_target, control_flag, control_turn_params, control_motion_params, vel_motor);
 }
 

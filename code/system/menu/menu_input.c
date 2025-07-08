@@ -134,7 +134,7 @@ void menu_get_params(
     //     g_menu_manual_param.turn_velocity_polarity;
 
     // turn
-    // control_turn_params->buckling_side_coefficient =
+    // control_turn_params->buckling_side_state =
     //     (float)g_menu_manual_param.buckingTurnCoefficient * 0.01f;
     // control_turn_params->turn_gain_coefficient =
     //     (float)g_menu_manual_param.turnGainCoefficient * 0.01f;
@@ -160,8 +160,10 @@ void menu_get_params(
     guide_set_target_turn(g_menu_manual_param.turn_target);
     side_set_internal_diff(g_menu_manual_param.side_internal_diff);
 
-    control_turn_params->buckling_side_coefficient =
-        g_menu_manual_param.buckling_side_coefficient * 0.01f;
+    control_turn_params->buckling_side_state =
+        g_menu_manual_param.buckling_side_state * 0.01f;
+    control_turn_params->buckling_side_dynamic =
+        g_menu_manual_param.buckling_side_dynamic * 0.01f;
     control_turn_params->buckling_front_coefficient =
         g_menu_manual_param.buckling_front_coefficient * 0.1f;
 

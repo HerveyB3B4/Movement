@@ -6,7 +6,9 @@
 
 struct Control_Turn_Manual_Params
 {
-    float buckling_side_coefficient;
+    float buckling_side_state;
+    float buckling_side_dynamic;
+
     float buckling_front_coefficient;
 };
 

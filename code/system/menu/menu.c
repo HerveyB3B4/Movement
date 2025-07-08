@@ -99,7 +99,8 @@ int32 *EEPROM_DATA_INT[] = {
     (int32 *)(&g_menu_manual_param.turn_target),
     (int32 *)(&g_menu_manual_param.side_internal_diff),
     (int32 *)(&g_menu_manual_param.buckling_front_coefficient),
-    (int32 *)(&g_menu_manual_param.buckling_side_coefficient),
+    (int32 *)(&g_menu_manual_param.buckling_side_state),
+    (int32 *)(&g_menu_manual_param.buckling_side_dynamic),
 };
 
 MENU_PRMT PID_Prmt;
@@ -259,8 +260,12 @@ MENU_TABLE Pid_TimeMenuTable[] = {
 };
 
 MENU_TABLE Buckling[] = {
-    {(uint8 *)"bucking_turn",
-     {.INT32 = (int32 *)&g_menu_manual_param.buckling_side_coefficient},
+    {(uint8 *)"bucking_TS",
+     {.INT32 = (int32 *)&g_menu_manual_param.buckling_side_state},
+     Param_Int,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"bucking_TD",
+     {.INT32 = (int32 *)&g_menu_manual_param.buckling_side_dynamic},
      Param_Int,
      {.ItemFunc = Menu_Null}},
     {(uint8 *)"bucking_front",

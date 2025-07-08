@@ -19,6 +19,20 @@ int32 get_momentum_diff()
     return s_momentum_diff;
 }
 
+void control_buckling(struct Control_Target *control_target,
+                      struct Control_Turn_Manual_Params *control_turn_params,
+                      struct Velocity_Motor *vel_motor)
+{
+    // 静态项
+    float state = control_turn_params->buckling_side_state * control_target->turn_err;
+
+    // 动态项 - 可省略
+    float dynamic = control_turn_params->buckling_side_dynamic * vel_motor->bottom_real * vel_motor->bottom_real * control_target->turn_err;
+
+    control_target->buckling_side = state + dynamic;
+    // restrictValueI(&control_target->buckling_side, 2000, -2000);
+}
+
 void control_turn(struct Control_Target *control_target,
                   struct Control_Flag *control_flag,
                   struct Control_Turn_Manual_Params *control_turn_params,
@@ -54,23 +68,7 @@ void control_turn(struct Control_Target *control_target,
 
     restrictValueI(&s_momentum_diff, 2000, -2000);
 
-    control_target->buckling_side = control_turn_params->buckling_side_coefficient * control_target->turn_err;
-    // if (control_flag->buckling_side)
-    // {
-    //     control_flag->buckling_side = 0;
-    //     float v = (float)fabsf(vel_motor->bottom_real);
-    //     if (v < 0)
-    //     {
-    //         v = 0;
-    //     }
-
-    //     // float x = (float) control_target.turn_angle_velocity * 0.01f *
-    //     // fabsf(motor_velocity.bottom_filtered * 0.01f);
-    //     float x = (float)control_target->turn_angle_vel * 0.1f *
-    //               logf(v + 2); // 使用ln函数，降低速度对压弯的影响
-    //     control_target->buckling_side = control_turn_params->buckling_side_coefficient * x;
-    //     restrictValueF(&control_target->buckling_side, 10.5f, -10.5f);
-    // }
+    // control_target->buckling_side = control_turn_params->buckling_side_state * control_target->turn_err;
 }
 
 static void control_turn_angle_velocity(struct Control_Target *control_target,

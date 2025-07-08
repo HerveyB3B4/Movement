@@ -8,7 +8,6 @@
 // 脉冲当量：1m / 编码器脉冲数
 #define ENCODER_PULSE (1.0f / 5978.0f)
 #define ENCODER2VELOCITY (ENCODER_PULSE / PIT_VELOCITY_T * 1000.0f)
-#define BOTTOM_VELOCITY_PARAMS 100.0f
 
 extern uint32 vel_time;
 struct Velocity_Motor
