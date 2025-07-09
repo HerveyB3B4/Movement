@@ -147,8 +147,8 @@ void side_control_timer(struct Control_Time *control_time,
                         struct EulerAngle *euler_angle_bias,
                         struct Control_Motion_Manual_Parmas *control_motion_params)
 {
-    uint32 side_angle_time = control_time->side[0];
-    uint32 side_angle_vel_time = control_time->side[1];
+    uint32 side_angle_vel_time = control_time->side[0];
+    uint32 side_angle_time = control_time->side[1];
     uint32 side_vel_time = control_time->side[2];
 
     control_flag->side_vel_cnt++;
