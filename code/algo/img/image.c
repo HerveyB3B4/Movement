@@ -133,6 +133,28 @@ void draw_Hline(uint8 *img, uint8 y, uint8 color)
     }
 }
 
+void draw_rectangle(uint8 *img, uint16 x, uint16 y, uint16 width, uint16 height, uint8 color)
+{
+    uint16 x_end = x + width;
+    uint16 y_end = y + height;
+
+    // 边界检查
+    if (x_end >= IMG_WIDTH) x_end = IMG_WIDTH - 1;
+    if (y_end >= IMG_HEIGHT) y_end = IMG_HEIGHT - 1;
+
+    // 绘制水平线
+    for (uint16 i = x; i <= x_end; ++i) {
+        img[y * IMG_WIDTH + i] = color;         // Top line
+        img[y_end * IMG_WIDTH + i] = color;     // Bottom line
+    }
+
+    // 绘制垂直线
+    for (uint16 i = y; i <= y_end; ++i) {
+        img[i * IMG_WIDTH + x] = color;         // Left line
+        img[i * IMG_WIDTH + x_end] = color;     // Right line
+    }
+}
+
 void img_handler(uint8 lcd_flag)
 {
     if (mt9v03x_finish_flag)

@@ -402,6 +402,10 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_navigation}},
+    {(uint8 *)"DualCamTar",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_dual_camera_logic}},
 };
 
 MENU_TABLE Utils_MenuTable[] = {

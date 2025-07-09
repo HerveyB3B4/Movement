@@ -2,6 +2,7 @@
 #define _IMG_CONNECTED_COMPONENT_H
 
 #include "zf_common_headfile.h"
+#include "image.h"
 
 // 连通域检测相关参数宏定义（可根据需要调整）
 #define MIN_AREA_THRESHOLD 40   // 最小连通域面积阈值
@@ -53,6 +54,13 @@ uint8 get_all_components_info(connected_component_info *components_array, uint8 
 // 获取连通域总数
 uint8 get_total_components_count(void);
 
+// 获取排序后的连通域
+uint8 find_and_sort_components_by_proximity(
+    uint8 *binary_image,
+    connected_component_algorithm_enum algorithm,
+    connected_component_info *sorted_components_array,
+    uint8 max_components);
+
 // 工具函数
 uint16 find_root(uint16 x);
 void union_sets(uint16 x, uint16 y);
@@ -87,6 +95,31 @@ static inline bool is_valid_target(const connected_component_info *component)
     //     return false;
 
     return true;
+}
+
+static inline int8 compare_components(const void *a, const void *b)
+{
+    const connected_component_info *comp_a = (const connected_component_info *)a;
+    const connected_component_info *comp_b = (const connected_component_info *)b;
+
+    const int16 center_x = IMG_WIDTH / 2;
+    const int16 center_y = IMG_HEIGHT / 2;
+
+    int32 dx_a = comp_a->center.x - center_x;
+    int32 dy_a = comp_a->center.y - center_y;
+    uint32 dist_sq_a = dx_a * dx_a + dy_a * dy_a;
+
+    int32 dx_b = comp_b->center.x - center_x;
+    int32 dy_b = comp_b->center.y - center_y;
+    uint32 dist_sq_b = dx_b * dx_b + dy_b * dy_b;
+
+    if (dist_sq_a < dist_sq_b) return -1;
+    if (dist_sq_a > dist_sq_b) return 1;
+
+    if (comp_a->area > comp_b->area) return -1;
+    if (comp_a->area < comp_b->area) return 1;
+
+    return 0;
 }
 
 #endif

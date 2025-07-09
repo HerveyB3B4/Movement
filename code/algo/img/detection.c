@@ -1,5 +1,6 @@
 #include "detection.h"
 #include "image.h"
+#include "stdlib.h"
 
 // 并查集数组，用于两遍扫描算法
 static uint16 parent[MAX_REGIONS];
@@ -450,4 +451,33 @@ static component_analysis_result find_largest_connected_component_with_algo(
     default:
         return find_components_two_pass(binary_image);
     }
+}
+
+uint8 find_and_sort_components_by_proximity(
+    uint8 *binary_image,
+    connected_component_algorithm_enum algorithm,
+    connected_component_info *sorted_components_array,
+    uint8 max_components)
+{
+    if (binary_image == NULL || sorted_components_array == NULL || max_components == 0)
+    {
+        return 0;
+    }
+
+    find_largest_connected_component_with_algo(binary_image, algorithm);
+
+    if (total_found_components == 0)
+    {
+        return 0;
+    }
+
+    qsort(all_components, total_found_components, sizeof(connected_component_info), compare_components);
+
+    uint8 copy_count = (total_found_components < max_components) ? total_found_components : max_components;
+    for (uint8 i = 0; i < copy_count; i++)
+    {
+        sorted_components_array[i] = all_components[i];
+    }
+
+    return copy_count;
 }
