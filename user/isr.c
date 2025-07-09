@@ -87,7 +87,7 @@ IFX_INTERRUPT(cc61_pit_ch0_isr,
     // uint32 start = system_getval_us();
     system_attitude_timer(&g_control_turn_manual_params, &g_control_target,
                           &g_vel_motor, &g_euler_angle, &g_imu_data);
-                          
+
     imu_get_data(&g_imu_data);
     imu_remove_offset(&g_imu_data);
     ins_update(&g_ins_state, ROLL_ACC, PITCH_ACC, YAW_ACC, ROLL * DEG2RAD, PITCH * DEG2RAD, YAW * DEG2RAD, PIT_ATTITUDE_T / 1000.0f);
@@ -104,7 +104,7 @@ IFX_INTERRUPT(cc61_pit_ch1_isr,
 
     g_pit_ccu61_ch1_cnt++;
 
-    if (runState == CAR_RUNNING)
+    if (run_state == CAR_RUNNING)
     {
         // 控制
         // guide_receiver();

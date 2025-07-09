@@ -68,7 +68,7 @@ void core1_main(void)
         // {
         // lcd_show_int(0, 0, g_turn_error, 5);
         // img_handler(1);
-        // lcd_show_int(0, 0, runState, 5);
+        // lcd_show_int(0, 0, run_state, 5);
         // lcd_show_float(0, 0, g_euler_angle.pitch, 6, 2);
         // lcd_show_float(0, 1, g_euler_angle.roll, 6, 2);
         // lcd_show_int(0, 1, g_pit_ccu61_ch1_cnt, 5);

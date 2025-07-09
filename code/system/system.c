@@ -12,7 +12,7 @@
 #include "switch.h"
 #include "receiver.h"
 
-RunState_t runState;
+RunState_t run_state;
 uint32 g_system_attitude_cnt = 0;
 uint32 g_pit_ccu61_ch1_cnt = 0;
 uint32 g_pit_ccu60_ch0_cnt = 0;
@@ -256,7 +256,7 @@ void system_set_runstate(RunState_t state)
     switch (state)
     {
     case CAR_STOP:
-        runState = CAR_STOP;
+        run_state = CAR_STOP;
 
         pit_disable(CCU61_CH1); // 失能控制中断
         pit_enable(CCU60_CH1);  // 使能按键中断
@@ -267,7 +267,7 @@ void system_set_runstate(RunState_t state)
         zf_log(0, "shutdown");
         break;
     case CAR_RUNNING:
-        runState = CAR_RUNNING;
+        run_state = CAR_RUNNING;
 
         // pit_enable(CCU61_CH1); // 使能控制中断
         pit_disable(CCU60_CH1); // 失能按键中断
