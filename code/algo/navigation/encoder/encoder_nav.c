@@ -49,3 +49,11 @@ void encoder_nav_update(struct Velocity_Motor *vel_motor)
     pos.x_encoder += delta_x_encoder;
     pos.y_encoder += delta_y_encoder;
 }
+
+PointF encoder_nav_get_pos(void)
+{
+    PointF p;
+    p.x = pos.x;
+    p.y = pos.y;
+    return p;
+}

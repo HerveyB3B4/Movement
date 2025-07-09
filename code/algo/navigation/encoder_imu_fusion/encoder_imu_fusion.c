@@ -28,3 +28,11 @@ void fusion_nav_update(void)
     pos.x = kf.x[1];
     pos.y = kf.x[0];
 }
+
+PointF fusion_nav_get_pos(void)
+{
+    PointF p;
+    p.x = pos.x;
+    p.y = pos.y;
+    return p;
+}
