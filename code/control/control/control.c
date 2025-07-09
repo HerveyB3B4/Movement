@@ -6,7 +6,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
-uint32 control_params_from = 0; // 0: menu, 1: preset
+uint32 control_params_from = 1; // 0: menu, 1: preset
 uint32 control_time = 0;
 
 // global
@@ -82,8 +82,8 @@ void control_polarity_init(struct Control_Motion_Manual_Parmas *control_motion_p
     control_motion_params->bottom_angle_polarity = -1;
     control_motion_params->bottom_velocity_polarity = -1;
 
-    control_motion_params->side_angle_velocity_polarity = 1;
-    control_motion_params->side_angle_polarity = 1;
+    control_motion_params->side_angle_velocity_polarity = -1;
+    control_motion_params->side_angle_polarity = -1;
     control_motion_params->side_velocity_polarity = 1;
 
     control_motion_params->turn_angle_velocity_polarity = 1;
@@ -175,9 +175,9 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // float bottom_angle_pid[3] = {6, 0.0, 2};
     // float bottom_velocity_pid[3] = {0.00065, 0.0000035, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {20, 0.4, 0};
+    float bottom_angle_velocity_pid[3] = {0, 0, 0};
     float bottom_angle_pid[3] = {0, 0.0, 0};
-    float bottom_velocity_pid[3] = {1, 0, 0};
+    float bottom_velocity_pid[3] = {0, 0, 0};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
                       9999, 9999);
@@ -191,9 +191,9 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // printf("fv: kp: %f, ki: %f, kd: %f\n", bottom_velocity_PID.Kp,
     //        bottom_velocity_PID.Ki, bottom_velocity_PID.Kd);
 
-    float side_angle_velocity_pid[3] = {58, 8, 1};
-    float side_angle_pid[3] = {2.5, 0, 5};
-    float side_velocity_pid[3] = {0.0058, 0.0, 0.000};
+    float side_angle_velocity_pid[3] = {25, 4.0, 0};
+    float side_angle_pid[3] = {0.8, 0, 0};
+    float side_velocity_pid[3] = {0.00, 0.0, 0.000};
 
     PID_init_Position(&side_angle_velocity_PID, side_angle_velocity_pid, MOMENTUM_MOTOR_PWM_MAX, 8000);
     PID_init_Position(&side_angle_PID, side_angle_pid, 9999, 2.5f);
@@ -250,7 +250,7 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
                        1, 10, 10, MOMENTUM_MOTOR_PWM_MAX, 8000);
     control_param_init(&side_angle_PID,
                        control_motion_params->side_angle_parameter,
-                       10, 10, 10, 9999, 2.5f);
+                       10, 10, 1000, 9999, 2.5f);
     control_param_init(&side_velocity_PID,
                        control_motion_params->side_velocity_parameter,
                        10000, 10000000, 10000, 9999, 10);
