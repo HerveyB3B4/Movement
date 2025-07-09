@@ -4,8 +4,6 @@
 #include "zf_common_headfile.h"
 #include "YawIntegral.h"
 
-#define USE_EKF
-
 // front direction
 #define PITCH g_euler_angle.pitch
 #define PITCH_VEL (g_imu_data.gyro.y / (0.0174533f))
