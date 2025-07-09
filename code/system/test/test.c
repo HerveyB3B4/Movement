@@ -483,32 +483,6 @@ void test_bottom_deadzone()
     lcd_clear();
 }
 
-void test_double_camera()
-{
-    lcd_clear();
-    while (keymsg.key != KEY_L)
-    {
-        if (mt9v03x_finish_flag)
-        {
-            mt9v03x_finish_flag = 0;
-            // edge_detect_dynamic(mt9v03x_image, edge_map, &edge_cfg);
-            lcd_show_image_mid(mt9v03x_image, MT9V03X_W, MT9V03X_H, 0);
-        }
-    }
-    lcd_clear();
-}
-
-void test_image()
-{
-    lcd_clear();
-
-    while (keymsg.key != KEY_L)
-    {
-        img_handler(1);
-        // img_handler_alltarget();
-    }
-}
-
 void test_send_img()
 {
     lcd_clear();
@@ -766,22 +740,6 @@ void test_yaw_integral()
     lcd_clear();
 }
 
-void test_encoder_to_velocity()
-{
-    lcd_clear();
-    encoder_clear_count(ENCODER_BOTTOM);
-    pit_disable(CCU60_CH0);
-    while (keymsg.key != KEY_L)
-    {
-        int16 count = encoder_get_count(ENCODER_BOTTOM);
-        lcd_show_int(0, 0, count, 5);
-        system_delay_ms(100);
-    }
-    pit_enable(CCU60_CH0);
-    lcd_clear();
-    encoder_clear_count(ENCODER_BOTTOM);
-}
-
 void test_encoder()
 {
     lcd_clear();
@@ -974,12 +932,12 @@ void test_dual_camera_logic()
             active_camera_t active_cam = sm.active_camera;
 
             // 在被选中的目标图像上绘制标定框
-            if (active_target.is_valid)
+            if (active_target.bbox.area > 0)
             {
                 uint8 *active_buffer = (active_cam == CAM_FRONT) ? binary_front : binary_rear;
-                uint16 width = active_target.max_x - active_target.min_x;
-                uint16 height = active_target.max_y - active_target.min_y;
-                draw_rectangle(active_buffer, active_target.min_x, active_target.min_y, width, height, 128);
+                uint16 width = active_target.bbox.max_x - active_target.bbox.min_x;
+                uint16 height = active_target.bbox.max_y - active_target.bbox.min_y;
+                draw_rectangle(active_buffer, active_target.bbox.min_x, active_target.bbox.min_y, width, height, 128);
                 draw_cross(active_buffer, active_target.center, 5, 200);
             }
 
@@ -1007,7 +965,7 @@ void test_dual_camera_logic()
             lcd_show_string(12, 0, state_str);
 
             // 显示目标信息
-            if (active_target.is_valid)
+            if (active_target.bbox.area > 0)
             {
                 if (active_cam == CAM_FRONT)
                 {

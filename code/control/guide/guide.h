@@ -27,7 +27,7 @@ typedef enum {
 // 用于存储状态机的当前状态和相关数据
 typedef struct {
     state_t current_state;                  // 当前状态
-    connected_component_info current_target; // 当前追踪的目标信息
+    connected_component_info current_target; // 当前追踪的目标信息, bbox.area==0 表示无效
     active_camera_t active_camera;          // 哪个摄像头正在追踪目标
     uint32_t state_timer;                   // 一个简单的计时器，可用于状态内的超时逻辑
 } state_machine_context_t;

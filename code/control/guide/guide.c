@@ -26,7 +26,7 @@ void state_machine_init(state_machine_context_t *sm)
         return;
 
     sm->current_state = STATE_SEARCHING;
-    sm->current_target.is_valid = false;
+    sm->current_target.bbox.area = 0; // area==0 表示无效目标
     sm->active_camera = CAM_NONE;
     sm->state_timer = 0;
 }
@@ -83,13 +83,25 @@ static void find_global_best_target(uint8 *front_image, uint8 *rear_image, conne
     static connected_component_info sorted_front[MAX_REGIONS];
     static connected_component_info sorted_rear[MAX_REGIONS];
 
-    connected_component_info front_best = {.is_valid = false};
-    connected_component_info rear_best = {.is_valid = false};
+    connected_component_info front_best = {.bbox.area = 0};
+    connected_component_info rear_best = {.bbox.area = 0};
+
+    detection_config_t front_config = {
+        .algorithm = ALGORITHM_TWO_PASS,
+        .sorted_components_array = sorted_front,
+        .max_components = MAX_REGIONS};
+
+    detection_config_t rear_config = {
+        .algorithm = ALGORITHM_TWO_PASS,
+        .sorted_components_array = sorted_rear,
+        .max_components = MAX_REGIONS};
 
     // 1. 处理前置摄像头
     if (front_image != NULL)
     {
-        uint8 count = find_and_sort_components_by_proximity(front_image, ALGORITHM_TWO_PASS, sorted_front, MAX_REGIONS);
+        detection_init(&front_config);
+
+        uint8 count = find_and_sort_components_by_proximity(front_image);
         if (count > 0)
         {
             front_best = sorted_front[0];
@@ -99,7 +111,9 @@ static void find_global_best_target(uint8 *front_image, uint8 *rear_image, conne
     // 2. 处理后置摄像头
     if (rear_image != NULL)
     {
-        uint8 count = find_and_sort_components_by_proximity(rear_image, ALGORITHM_TWO_PASS, sorted_rear, MAX_REGIONS);
+        detection_init(&rear_config);
+
+        uint8 count = find_and_sort_components_by_proximity(rear_image);
         if (count > 0)
         {
             rear_best = sorted_rear[0];
@@ -107,26 +121,26 @@ static void find_global_best_target(uint8 *front_image, uint8 *rear_image, conne
     }
 
     // 3. 决策：比较两个摄像头找到的最佳目标
-    if (front_best.is_valid && !rear_best.is_valid)
+    if (front_best.bbox.area > 0 && rear_best.bbox.area == 0)
     {
         *out_target = front_best;
         *out_cam = CAM_FRONT;
     }
-    else if (!front_best.is_valid && rear_best.is_valid)
+    else if (front_best.bbox.area == 0 && rear_best.bbox.area > 0)
     {
         *out_target = rear_best;
         *out_cam = CAM_REAR;
     }
-    else if (front_best.is_valid && rear_best.is_valid)
+    else if (front_best.bbox.area > 0 && rear_best.bbox.area > 0)
     {
         // 两个摄像头都找到了目标，比较哪个更优
         // 优先级1：比较面积，面积大的优先
-        if (front_best.area > rear_best.area)
+        if (front_best.bbox.area > rear_best.bbox.area)
         {
             *out_target = front_best;
             *out_cam = CAM_FRONT;
         }
-        else if (rear_best.area > front_best.area)
+        else if (rear_best.bbox.area > front_best.bbox.area)
         {
             *out_target = rear_best;
             *out_cam = CAM_REAR;
@@ -159,7 +173,7 @@ static void find_global_best_target(uint8 *front_image, uint8 *rear_image, conne
     else
     {
         // 两个摄像头都没找到目标
-        out_target->is_valid = false;
+        out_target->bbox.area = 0;
         *out_cam = CAM_NONE;
     }
 }
@@ -171,7 +185,7 @@ static void handle_searching(state_machine_context_t *sm, uint8 *front_image, ui
 {
     find_global_best_target(front_image, rear_image, &sm->current_target, &sm->active_camera);
 
-    if (sm->current_target.is_valid)
+    if (sm->current_target.bbox.area > 0)
     {
         // 找到了目标，切换到“接近目标”状态
         sm->current_state = STATE_APPROACHING_TARGET;
@@ -195,7 +209,7 @@ static void handle_approaching(state_machine_context_t *sm, uint8 *front_image, 
 {
     find_global_best_target(front_image, rear_image, &sm->current_target, &sm->active_camera);
 
-    if (sm->current_target.is_valid)
+    if (sm->current_target.bbox.area > 0)
     {
         sm->state_timer = 0; // 只要能看到目标就重置丢失计时器
 
@@ -233,7 +247,7 @@ static void handle_approaching(state_machine_context_t *sm, uint8 *front_image, 
         // 目标丢失，检查超时
         if (sm->state_timer > TARGET_LOST_TIMEOUT)
         {
-            sm->current_target.is_valid = false;
+            sm->current_target.bbox.area = 0;
             sm->active_camera = CAM_NONE;
             sm->current_state = STATE_SEARCHING;
             sm->state_timer = 0;
@@ -248,7 +262,7 @@ static void handle_circling(state_machine_context_t *sm, uint8 *front_image, uin
 {
     find_global_best_target(front_image, rear_image, &sm->current_target, &sm->active_camera);
 
-    if (sm->current_target.is_valid)
+    if (sm->current_target.bbox.area > 0)
     {
         sm->state_timer = 0; // 重置目标丢失计时器
 
@@ -265,7 +279,7 @@ static void handle_circling(state_machine_context_t *sm, uint8 *front_image, uin
         // 目标丢失，检查超时
         if (sm->state_timer > TARGET_LOST_TIMEOUT)
         {
-            sm->current_target.is_valid = false;
+            sm->current_target.bbox.area = 0;
             sm->active_camera = CAM_NONE;
             sm->current_state = STATE_SEARCHING;
             sm->state_timer = 0;
