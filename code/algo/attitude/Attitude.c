@@ -30,7 +30,7 @@ void attitude_init(Attitude_algorithm algo)
     case ATTITUDE_EKF:
         // IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.002f, 0);
         // IMU_QuaternionEKF_Init(10, 30, 50, 0.95, 0.002f, 0);
-        IMU_QuaternionEKF_Init(10, 0.001, 10000000, 1, 0.002f, 0);
+        IMU_QuaternionEKF_Init(10, 0.001, 10000000, 1, 0.001f, 0);
         break;
     case ATTITUDE_MADGWICK:
         MadgwickAHRS_init();

@@ -191,9 +191,13 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // printf("fv: kp: %f, ki: %f, kd: %f\n", bottom_velocity_PID.Kp,
     //        bottom_velocity_PID.Ki, bottom_velocity_PID.Kd);
 
-    float side_angle_velocity_pid[3] = {25, 4.0, 0};
-    float side_angle_pid[3] = {0.8, 0, 0};
-    float side_velocity_pid[3] = {0.00, 0.0, 0.000};
+    // float side_angle_velocity_pid[3] = {19, 3.8, 5};
+    // float side_angle_pid[3] = {1.0, 0, 0.5};
+    // float side_velocity_pid[3] = {0.007, 0.0, 0.001};
+
+    float side_angle_velocity_pid[3] = {12, 2, 0};
+    float side_angle_pid[3] = {2, 0, 0.1};
+    float side_velocity_pid[3] = {0.00, 0.0, 0.00};
 
     PID_init_Position(&side_angle_velocity_PID, side_angle_velocity_pid, MOMENTUM_MOTOR_PWM_MAX, 8000);
     PID_init_Position(&side_angle_PID, side_angle_pid, 9999, 2.5f);

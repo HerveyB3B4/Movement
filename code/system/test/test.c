@@ -15,8 +15,8 @@
 #include "distance.h"
 #include "diode.h"
 #include "YawIntegral.h"
-#include "ins_core.h"
-#include "waypoint_manager.h"
+// #include "ins_core.h"
+// #include "waypoint_manager.h"
 
 // 定义静态变量，从栈移到数据段，避免栈溢出
 static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
@@ -900,41 +900,41 @@ void test_cpu_freq()
     lcd_clear();
 }
 
-#define min(x, y) ((x) < (y) ? (x) : (y))
+// #define min(x, y) ((x) < (y) ? (x) : (y))
 
-uint8 txt[20];
+// uint8 txt[20];
 
-void test_navigation()
-{
-    ins_init(&g_ins_state);
-    waypoint_manager_init();
+// void test_navigation()
+// {
+//     ins_init(&g_ins_state);
+//     waypoint_manager_init();
 
-    lcd_clear();
+//     lcd_clear();
 
-    while (keymsg.key != KEY_L)
-    {
-        printf("%f | %f | %f | %f | %f | %f | %f | %f | %f\n", ROLL_ACC, PITCH_ACC, YAW_ACC, g_ins_state.pos_n, g_ins_state.pos_e, g_ins_state.pos_d, g_ins_state.vel_n, g_ins_state.vel_e, g_ins_state.vel_d);
+//     while (keymsg.key != KEY_L)
+//     {
+//         printf("%f | %f | %f | %f | %f | %f | %f | %f | %f\n", ROLL_ACC, PITCH_ACC, YAW_ACC, g_ins_state.pos_n, g_ins_state.pos_e, g_ins_state.pos_d, g_ins_state.vel_n, g_ins_state.vel_e, g_ins_state.vel_d);
 
-        if (keymsg.key == KEY_B)
-        {
-            waypoint_save_current_point(&g_ins_state);
-        }
+//         if (keymsg.key == KEY_B)
+//         {
+//             waypoint_save_current_point(&g_ins_state);
+//         }
 
-        lcd_show_string(0, 0, "pos_n");
-        lcd_show_float(8, 0, g_ins_state.pos_n, 5, 2);
-        lcd_show_string(0, 1, "pos_e");
-        lcd_show_float(8, 1, g_ins_state.pos_e, 5, 2);
-        lcd_show_string(0, 2, "pos_d");
-        lcd_show_float(8, 2, g_ins_state.pos_d, 5, 2);
-        lcd_show_string(0, 3, "vel_n");
-        lcd_show_float(8, 3, g_ins_state.vel_n, 5, 2);
-        lcd_show_string(0, 4, "vel_e");
-        lcd_show_float(8, 4, g_ins_state.vel_e, 5, 2);
-        lcd_show_string(0, 5, "vel_d");
-        lcd_show_float(8, 5, g_ins_state.vel_d, 5, 2);
+//         lcd_show_string(0, 0, "pos_n");
+//         lcd_show_float(8, 0, g_ins_state.pos_n, 5, 2);
+//         lcd_show_string(0, 1, "pos_e");
+//         lcd_show_float(8, 1, g_ins_state.pos_e, 5, 2);
+//         lcd_show_string(0, 2, "pos_d");
+//         lcd_show_float(8, 2, g_ins_state.pos_d, 5, 2);
+//         lcd_show_string(0, 3, "vel_n");
+//         lcd_show_float(8, 3, g_ins_state.vel_n, 5, 2);
+//         lcd_show_string(0, 4, "vel_e");
+//         lcd_show_float(8, 4, g_ins_state.vel_e, 5, 2);
+//         lcd_show_string(0, 5, "vel_d");
+//         lcd_show_float(8, 5, g_ins_state.vel_d, 5, 2);
 
-        system_delay_ms(10);
-    }
+//         system_delay_ms(10);
+//     }
 
-    lcd_clear();
-}
+//     lcd_clear();
+// }

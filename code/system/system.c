@@ -72,9 +72,9 @@ void system_attitude_timer(
     struct EulerAngle *euler_angle,
     struct IMU_DATA *imu_data)
 {
-    g_system_attitude_cnt++;
-    static uint8 cnt = 0;
-    cnt++;
+    // g_system_attitude_cnt++;
+    // static uint8 cnt = 0;
+    // cnt++;
     // if (cnt >= 2)
     // {
     //     cnt = 0;
