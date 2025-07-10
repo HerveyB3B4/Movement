@@ -83,8 +83,8 @@ void control_polarity_init(struct Control_Motion_Manual_Parmas *control_motion_p
     control_motion_params->bottom_velocity_polarity = -1;
 
     control_motion_params->side_angle_velocity_polarity = -1;
-    control_motion_params->side_angle_polarity = -1;
-    control_motion_params->side_velocity_polarity = 1;
+    control_motion_params->side_angle_polarity = 1;
+    control_motion_params->side_velocity_polarity = -1;
 
     control_motion_params->turn_angle_velocity_polarity = 1;
     control_motion_params->turn_error_polarity = 1;
@@ -195,9 +195,9 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // float side_angle_pid[3] = {1.0, 0, 0.5};
     // float side_velocity_pid[3] = {0.007, 0.0, 0.001};
 
-    float side_angle_velocity_pid[3] = {12, 2, 0};
-    float side_angle_pid[3] = {2, 0, 0.1};
-    float side_velocity_pid[3] = {0.00, 0.0, 0.00};
+    float side_angle_velocity_pid[3] = {0, 2, 0};
+    float side_angle_pid[3] = {1, 0, 0};
+    float side_velocity_pid[3] = {0.00, 0.000, 0.00};
 
     PID_init_Position(&side_angle_velocity_PID, side_angle_velocity_pid, MOMENTUM_MOTOR_PWM_MAX, 8000);
     PID_init_Position(&side_angle_PID, side_angle_pid, 9999, 2.5f);
