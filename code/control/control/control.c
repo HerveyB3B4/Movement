@@ -179,14 +179,18 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // float bottom_angle_pid[3] = {4, 0.0, 0.05};
     // float bottom_velocity_pid[3] = {0.005, 0, 0};
 
+    // float bottom_angle_velocity_pid[3] = {15, 4, 0};
+    // float bottom_angle_pid[3] = {1.0, 0.0, 0.3};
+    // float bottom_velocity_pid[3] = {0.02, 0.000005, 0};
+
     float bottom_angle_velocity_pid[3] = {15, 4, 0};
-    float bottom_angle_pid[3] = {1.0, 0.0, 0.3};
-    float bottom_velocity_pid[3] = {0.01, 0, 0};
+    float bottom_angle_pid[3] = {1.2, 0.0, 0.5};
+    float bottom_velocity_pid[3] = {0.02, 0.000005, 0};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
                       9999, 9999);
     PID_init_Position(&bottom_angle_PID, bottom_angle_pid, 9999, 9999);
-    PID_init_Position(&bottom_velocity_PID, bottom_velocity_pid, 9999, 10);
+    PID_init_Position(&bottom_velocity_PID, bottom_velocity_pid, 9999, 30);
 
     // printf("fav: kp: %f, ki: %f, kd: %f\n", bottom_angle_velocity_PID.Kp,
     //        bottom_angle_velocity_PID.Ki, bottom_angle_velocity_PID.Kd);
@@ -205,18 +209,18 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
 
     float side_angle_velocity_pid[3] = {7, 3.5, 0};
     float side_angle_pid[3] = {2.8, 0, 2.0};
-    float side_velocity_pid[3] = {0.003, 0.000, 0.000};
+    float side_velocity_pid[3] = {0.003, 0.00, 0.000};
 
     PID_init_Position(&side_angle_velocity_PID, side_angle_velocity_pid, MOMENTUM_MOTOR_PWM_MAX, 8000);
     PID_init_Position(&side_angle_PID, side_angle_pid, 9999, 2.5f);
     PID_init_Position(&side_velocity_PID, side_velocity_pid, 9999, 10);
 
-    float turn_angle_velocity_pid[3] = {0.0, 0.0, 0.0};
+    float turn_angle_velocity_pid[3] = {7.0, 2, 0.0};
     float turn_angle_pid[3] = {0.0, 0.0, 0.0};
     float turn_velocity_pid[3] = {0.0, 0.0, 0.0};
     float turn_error_pid[3] = {0.0, 0.0, 0.0};
 
-    PID_init_Position(&turn_angle_velocity_PID, turn_angle_velocity_pid, 9999, 500);
+    PID_init_Position(&turn_angle_velocity_PID, turn_angle_velocity_pid, 9999, 9999);
     PID_init_Position(&turn_angle_PID, turn_angle_pid, 9999, 500);
     PID_init_Position(&turn_velocity_PID, turn_velocity_pid, 9999, 500);
     PID_init_Position(&turn_error_PID, turn_error_pid, 9999, 500);

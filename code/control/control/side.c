@@ -73,12 +73,12 @@ void control_side_balance(
     // turnControl();
     int32 left_motor_duty, right_motor_duty;
 
-    int32 turn_diff_left = (int32_t)(get_momentum_diff() *
-                                     (float)(3.3f -
-                                             logf(0.2f * abs(vel_motor->momentum_front) + 8)));
-    int32 turn_diff_right = (int32_t)(get_momentum_diff() *
-                                      (float)(3.3f -
-                                              logf(0.2f * abs(vel_motor->momentum_back) + 8)));
+    // int32 turn_diff_left = (int32_t)(get_momentum_diff() *
+    //                                  (float)(3.3f -
+    //                                          logf(0.2f * abs(vel_motor->momentum_front) + 8)));
+    // int32 turn_diff_right = (int32_t)(get_momentum_diff() *
+    //                                   (float)(3.3f -
+    //                                           logf(0.2f * abs(vel_motor->momentum_back) + 8)));
 
     // left_motor_duty = -(s_side_balance_duty + s_side_internal_diff + turn_diff_left);
     // right_motor_duty = s_side_balance_duty + s_side_internal_diff - turn_diff_right;
