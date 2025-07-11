@@ -44,16 +44,12 @@ void inertial_nav_update()
     pos.y += delta_y;
 }
 
-void inertial_nav_get_pos(float *x, float *y)
+PointF inertial_nav_get_pos(void)
 {
-    if (x != NULL)
-    {
-        *x = pos.x;
-    }
-    if (y != NULL)
-    {
-        *y = pos.y;
-    }
+    PointF p;
+    p.x = pos.x;
+    p.y = pos.y;
+    return p;
 }
 
 void inertial_nav_get_vel(float *x_vel, float *y_vel)

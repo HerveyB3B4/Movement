@@ -14,7 +14,7 @@ typedef struct
 void inertial_nav_init(float sample_time);
 void inertial_nav_update(void);
 
-void inertial_nav_get_pos(float *x, float *y);
+PointF inertial_nav_get_pos(void);
 void inertial_nav_get_vel(float *x_vel, float *y_vel);
 
 #endif

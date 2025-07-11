@@ -26,8 +26,8 @@ void system_init()
     small_driver_uart_init();
     encoder_init();
     lcd_init();
-    mt9v03x_init();
-    mt9v03x2_init();
+    // mt9v03x_init();
+    // mt9v03x2_init();
     imu_init();
     // receiver_init();
     // wireless_init();
@@ -72,9 +72,9 @@ void system_attitude_timer(
     struct EulerAngle *euler_angle,
     struct IMU_DATA *imu_data)
 {
-    g_system_attitude_cnt++;
-    static uint8 cnt = 0;
-    cnt++;
+    // g_system_attitude_cnt++;
+    // static uint8 cnt = 0;
+    // cnt++;
     // if (cnt >= 2)
     // {
     //     cnt = 0;
@@ -290,12 +290,12 @@ void system_control_timer()
 
     // if (g_control_turn_flag != 0)
     // {
-    turn_control_timer(&g_control_time,
-                       &g_control_flag,
-                       &g_control_target,
-                       &g_control_turn_manual_params,
-                       &g_control_motion_params,
-                       &g_vel_motor);
+    // turn_control_timer(&g_control_time,
+    //                    &g_control_flag,
+    //                    &g_control_target,
+    //                    &g_control_turn_manual_params,
+    //                    &g_control_motion_params,
+    //                    &g_vel_motor);
     // }
 
     if (g_control_side_flag != 0)

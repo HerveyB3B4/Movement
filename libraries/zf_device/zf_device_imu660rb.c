@@ -216,6 +216,9 @@ float imu660rb_acc_transition(int16 acc_value)
     case 0x3C:
         acc_data = (float)acc_value / 4098;
         break; // 0x3C 加速度量程为:±8G      获取到的加速度计数据 除以 4098 ， 可以转化为带物理单位的数据，单位：g(m/s^2)
+    case 0x4C:
+        acc_data = (float)acc_value / 4098;
+        break;
     case 0x34:
         acc_data = (float)acc_value / 2049;
         break; // 0x34 加速度量程为:±16G     获取到的加速度计数据 除以 2049 ， 可以转化为带物理单位的数据，单位：g(m/s^2)
@@ -255,6 +258,9 @@ float imu660rb_gyro_transition(int16 gyro_value)
     case 0x51:
         gyro_data = (float)gyro_value / 7.1f;
         break; //  0x51 陀螺仪量程为:±4000dps 获取到的陀螺仪数据除以 7.1，     可以转化为带物理单位的数据，单位为：°/s
+    case 0xA1:
+        gyro_data = (float)gyro_value / 7.1f;
+        break; //  0xA1 陀螺仪量程为:±4000dps 获取到的陀螺仪数据除以 7.1，     可以转化为带物理单位的数据，单位为：°/
     default:
         break;
     }

@@ -11,5 +11,6 @@ typedef struct
 
 void fusion_nav_init();
 void fusion_nav_update(void);
+PointF fusion_nav_get_pos(void);
 
 #endif
