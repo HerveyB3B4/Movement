@@ -111,7 +111,7 @@
 #define IMU660RB_ACC_ADDRESS (0x28)
 #define IMU660RB_GYRO_ADDRESS (0x22)
 
-#define IMU660RB_ACC_SAMPLE (0x4C) // 加速度计量程
+#define IMU660RB_ACC_SAMPLE (0x3C) // 加速度计量程
 // 设置为:0x30 加速度量程为:±2G      获取到的加速度计数据
 // 除以16393，可以转化为带物理单位的数据，单位：g(m/s^2) 设置为:0x38
 // 加速度量程为:±4G      获取到的加速度计数据 除以8197，
