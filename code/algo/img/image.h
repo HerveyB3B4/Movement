@@ -16,11 +16,6 @@ void draw_Vmiddleline(uint8 *img, uint8 color);
 void draw_Hmiddleline(uint8 *img, uint8 color);
 void draw_Vline(uint8 *img, uint8 x, uint8 color);
 void draw_Hline(uint8 *img, uint8 y, uint8 color);
-
-int16 get_img_target_error();
-
-void img_handler_alltarget();
-void img_handler(uint8 lcd_flag);
-Point get_target_point();
+void draw_rectangle(uint8 *img, uint16 x, uint16 y, uint16 width, uint16 height, uint8 color);
 
 #endif

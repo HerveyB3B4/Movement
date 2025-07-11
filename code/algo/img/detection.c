@@ -1,92 +1,117 @@
 #include "detection.h"
 #include "image.h"
+#include "stdlib.h"
 
-// 并查集数组，用于两遍扫描算法
-static uint16 parent[MAX_REGIONS];
-static uint32 area[MAX_REGIONS];
-static uint16 component_min_x[MAX_REGIONS];
-static uint16 component_max_x[MAX_REGIONS];
-static uint16 component_min_y[MAX_REGIONS];
-static uint16 component_max_y[MAX_REGIONS];
+// --- 模块内部数据结构 ---
+
+// 并查集(DSU)节点信息
+typedef struct
+{
+    uint16 parent;
+    component_bbox_t bbox;
+} dsu_node_t;
+
 static uint16 label_count = 0;
-
 // 全局存储所有连通域信息
 static connected_component_info all_components[MAX_REGIONS];
 static uint8 total_found_components = 0;
 
 // 临时标签数组
 static uint16 temp_labels[IMG_HEIGHT][IMG_WIDTH];
-static component_analysis_result find_largest_connected_component_with_algo(
-    uint8 *binary_image,
-    connected_component_algorithm_enum algorithm);
+// 检测配置
+static detection_config_t g_detection_config;
 
-// 种子填充用的区域信息
-typedef struct
-{
-    int16 min_x, min_y, max_x, max_y;
-    uint32 area;
-} flood_fill_region;
+// 并查集数组，用于两遍扫描算法
+static dsu_node_t dsu_sets[MAX_REGIONS];
 
 // 静态辅助函数声明
-static component_analysis_result find_components_flood_fill(uint8 *binary_image);
-static component_analysis_result find_components_two_pass(uint8 *binary_image);
-static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, flood_fill_region *region);
-static uint8 find_all_centers_flood_fill(uint8 *binary_image, Point *points_array, uint8 max_points);
-static uint8 find_all_centers_two_pass(uint8 *binary_image, Point *points_array, uint8 max_points);
-static void init_union_find();
+static void analyze_components(uint8 *binary_image, connected_component_algorithm_enum algorithm);
+static void find_components_flood_fill(uint8 *binary_image);
+static void find_components_two_pass(uint8 *binary_image);
+static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, component_bbox_t *region);
+static void init_union_find(void);
+static uint16 find_root(uint16 x);
+static void union_sets(uint16 x, uint16 y);
+
+// --- 模块初始化 ---
+
+void detection_init(detection_config_t *config)
+{
+    if (config != NULL)
+    {
+        g_detection_config = *config;
+    }
+    else
+    {
+        // 提供一个默认配置
+        g_detection_config.algorithm = ALGORITHM_TWO_PASS;
+        g_detection_config.sorted_components_array = NULL;
+        g_detection_config.max_components = 0;
+    }
+
+    init_union_find();
+    total_found_components = 0;
+    memset(all_components, 0, sizeof(all_components));
+}
 
 // 初始化并查集
-static void init_union_find()
+static void init_union_find(void)
 {
     for (uint16 i = 0; i < MAX_REGIONS; i++)
     {
-        parent[i] = i;
-        area[i] = 0;
-        component_min_x[i] = IMG_WIDTH;
-        component_max_x[i] = 0;
-        component_min_y[i] = IMG_HEIGHT;
-        component_max_y[i] = 0;
+        dsu_sets[i].parent = i;
+        dsu_sets[i].bbox.area = 0;
+        dsu_sets[i].bbox.min_x = IMG_WIDTH;
+        dsu_sets[i].bbox.max_x = 0;
+        dsu_sets[i].bbox.min_y = IMG_HEIGHT;
+        dsu_sets[i].bbox.max_y = 0;
     }
     label_count = 1;
 }
 
 // 查找根节点（路径压缩）
-uint16 find_root(uint16 x)
+static uint16 find_root(uint16 i)
 {
-    if (parent[x] != x)
+    uint16 root = i;
+    while (dsu_sets[root].parent != root)
     {
-        parent[x] = find_root(parent[x]);
+        root = dsu_sets[root].parent;
     }
-    return parent[x];
+    while (dsu_sets[i].parent != root) {
+        uint16 next = dsu_sets[i].parent;
+        dsu_sets[i].parent = root;
+        i = next;
+    }
+    return root;
 }
 
 // 合并两个集合
-void union_sets(uint16 x, uint16 y)
+static void union_sets(uint16 x, uint16 y)
 {
     uint16 root_x = find_root(x);
     uint16 root_y = find_root(y);
 
     if (root_x != root_y)
     {
-        parent[root_y] = root_x;
-        area[root_x] += area[root_y];
+        dsu_sets[root_y].parent = root_x;
+        dsu_sets[root_x].bbox.area += dsu_sets[root_y].bbox.area;
 
         // 更新边界框
-        if (component_min_x[root_y] < component_min_x[root_x])
-            component_min_x[root_x] = component_min_x[root_y];
-        if (component_max_x[root_y] > component_max_x[root_x])
-            component_max_x[root_x] = component_max_x[root_y];
-        if (component_min_y[root_y] < component_min_y[root_x])
-            component_min_y[root_x] = component_min_y[root_y];
-        if (component_max_y[root_y] > component_max_y[root_x])
-            component_max_y[root_x] = component_max_y[root_y];
+        if (dsu_sets[root_y].bbox.min_x < dsu_sets[root_x].bbox.min_x)
+            dsu_sets[root_x].bbox.min_x = dsu_sets[root_y].bbox.min_x;
+        if (dsu_sets[root_y].bbox.max_x > dsu_sets[root_x].bbox.max_x)
+            dsu_sets[root_x].bbox.max_x = dsu_sets[root_y].bbox.max_x;
+        if (dsu_sets[root_y].bbox.min_y < dsu_sets[root_x].bbox.min_y)
+            dsu_sets[root_x].bbox.min_y = dsu_sets[root_y].bbox.min_y;
+        if (dsu_sets[root_y].bbox.max_y > dsu_sets[root_x].bbox.max_y)
+            dsu_sets[root_x].bbox.max_y = dsu_sets[root_y].bbox.max_y;
 
-        area[root_y] = 0;
+        dsu_sets[root_y].bbox.area = 0;
     }
 }
 
 // 种子填充算法
-static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, flood_fill_region *region)
+static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, component_bbox_t *region)
 {
     // 使用栈替代递归
     static int16 stack_x[STACK_SIZE];
@@ -142,17 +167,13 @@ static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, flood_fil
 }
 
 // 重构后的flood fill算法 - 一次性收集所有连通域
-static component_analysis_result find_components_flood_fill(uint8 *binary_image)
+static void find_components_flood_fill(uint8 *binary_image)
 {
-    component_analysis_result result = {0};
-    result.largest_component.is_valid = false;
     total_found_components = 0;
 
-    static flood_fill_region regions[MAX_REGIONS];
+    static component_bbox_t regions[MAX_REGIONS];
     static uint8 temp_img[IMG_WIDTH * IMG_HEIGHT];
     uint8 region_count = 0;
-    uint32 max_area = 0;
-    uint8 max_idx = 0;
 
     memcpy(temp_img, binary_image, IMG_WIDTH * IMG_HEIGHT);
 
@@ -163,8 +184,6 @@ static component_analysis_result find_components_flood_fill(uint8 *binary_image)
         {
             if (temp_img[y * IMG_WIDTH + x] == 0xFF)
             {
-                result.total_white_pixels++;
-
                 if (region_count >= MAX_REGIONS)
                     break;
 
@@ -178,27 +197,20 @@ static component_analysis_result find_components_flood_fill(uint8 *binary_image)
                 flood_fill(temp_img, x, y, region_count + 1, &regions[region_count]);
 
                 // 检查是否为有效连通域
-                connected_component_info temp_component = {
-                    .area = regions[region_count].area,
-                    .min_x = regions[region_count].min_x,
-                    .max_x = regions[region_count].max_x,
-                    .min_y = regions[region_count].min_y,
-                    .max_y = regions[region_count].max_y};
+                connected_component_info temp_component = {.bbox = {
+                                                               .area = regions[region_count].area,
+                                                               .min_x = regions[region_count].min_x,
+                                                               .max_x = regions[region_count].max_x,
+                                                               .min_y = regions[region_count].min_y,
+                                                               .max_y = regions[region_count].max_y,
+                                                           }};
 
                 if (is_valid_target(&temp_component))
                 {
                     // 存储到全局数组
                     all_components[total_found_components] = temp_component;
-                    all_components[total_found_components].center.x = (temp_component.min_x + temp_component.max_x) / 2;
-                    all_components[total_found_components].center.y = (temp_component.min_y + temp_component.max_y) / 2;
-                    all_components[total_found_components].is_valid = true;
-
-                    // 更新最大连通域
-                    if (temp_component.area > max_area)
-                    {
-                        max_area = temp_component.area;
-                        max_idx = total_found_components;
-                    }
+                    all_components[total_found_components].center.x = (temp_component.bbox.min_x + temp_component.bbox.max_x) / 2;
+                    all_components[total_found_components].center.y = (temp_component.bbox.min_y + temp_component.bbox.max_y) / 2;
 
                     total_found_components++;
                 }
@@ -206,23 +218,11 @@ static component_analysis_result find_components_flood_fill(uint8 *binary_image)
             }
         }
     }
-
-    result.total_components = total_found_components;
-
-    // 设置最大连通域信息
-    if (total_found_components > 0)
-    {
-        result.largest_component = all_components[max_idx];
-    }
-
-    return result;
 }
 
 // 重构后的two-pass算法 - 一次性收集所有连通域
-static component_analysis_result find_components_two_pass(uint8 *binary_image)
+static void find_components_two_pass(uint8 *binary_image)
 {
-    component_analysis_result result = {0};
-    result.largest_component.is_valid = false;
     total_found_components = 0;
 
     init_union_find();
@@ -243,8 +243,6 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
         {
             if (binary_image[y * IMG_WIDTH + x] == 0xFF)
             {
-                result.total_white_pixels++;
-
                 uint16 left_label = (x > 0) ? temp_labels[y][x - 1] : 0;
                 uint16 up_label = (y > 0) ? temp_labels[y - 1][x] : 0;
 
@@ -253,11 +251,11 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
                     if (label_count < MAX_REGIONS)
                     {
                         temp_labels[y][x] = label_count;
-                        area[label_count] = 1;
-                        component_min_x[label_count] = x;
-                        component_max_x[label_count] = x;
-                        component_min_y[label_count] = y;
-                        component_max_y[label_count] = y;
+                        dsu_sets[label_count].bbox.area = 1;
+                        dsu_sets[label_count].bbox.min_x = x;
+                        dsu_sets[label_count].bbox.max_x = x;
+                        dsu_sets[label_count].bbox.min_y = y;
+                        dsu_sets[label_count].bbox.max_y = y;
                         label_count++;
                     }
                 }
@@ -265,31 +263,31 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
                 {
                     temp_labels[y][x] = left_label;
                     uint16 root = find_root(left_label);
-                    area[root]++;
-                    if (x > component_max_x[root])
-                        component_max_x[root] = x;
-                    if (y > component_max_y[root])
-                        component_max_y[root] = y;
+                    dsu_sets[root].bbox.area++;
+                    if (x > dsu_sets[root].bbox.max_x)
+                        dsu_sets[root].bbox.max_x = x;
+                    if (y > dsu_sets[root].bbox.max_y)
+                        dsu_sets[root].bbox.max_y = y;
                 }
                 else if (left_label == 0 && up_label != 0)
                 {
                     temp_labels[y][x] = up_label;
                     uint16 root = find_root(up_label);
-                    area[root]++;
-                    if (x > component_max_x[root])
-                        component_max_x[root] = x;
-                    if (y > component_max_y[root])
-                        component_max_y[root] = y;
+                    dsu_sets[root].bbox.area++;
+                    if (x > dsu_sets[root].bbox.max_x)
+                        dsu_sets[root].bbox.max_x = x;
+                    if (y > dsu_sets[root].bbox.max_y)
+                        dsu_sets[root].bbox.max_y = y;
                 }
                 else
                 {
                     temp_labels[y][x] = left_label;
                     uint16 root = find_root(left_label);
-                    area[root]++;
-                    if (x > component_max_x[root])
-                        component_max_x[root] = x;
-                    if (y > component_max_y[root])
-                        component_max_y[root] = y;
+                    dsu_sets[root].bbox.area++;
+                    if (x > dsu_sets[root].bbox.max_x)
+                        dsu_sets[root].bbox.max_x = x;
+                    if (y > dsu_sets[root].bbox.max_y)
+                        dsu_sets[root].bbox.max_y = y;
 
                     if (left_label != up_label)
                     {
@@ -302,8 +300,6 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
 
     // 收集所有有效连通域信息
     static bool processed[MAX_REGIONS] = {false};
-    uint32 max_area = 0;
-    uint8 max_idx = 0;
 
     // 重置处理标记
     for (uint16 i = 0; i < MAX_REGIONS; i++)
@@ -314,16 +310,17 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
     for (uint16 i = 1; i < label_count; i++)
     {
         uint16 root = find_root(i);
-        if (area[root] > 0 && !processed[root])
+        if (dsu_sets[root].bbox.area > 0 && !processed[root])
         {
             processed[root] = true;
 
-            connected_component_info temp_component = {
-                .area = area[root],
-                .min_x = component_min_x[root],
-                .max_x = component_max_x[root],
-                .min_y = component_min_y[root],
-                .max_y = component_max_y[root]};
+            connected_component_info temp_component = {.bbox = {
+                                                               .area = dsu_sets[root].bbox.area,
+                                                               .min_x = dsu_sets[root].bbox.min_x,
+                                                               .max_x = dsu_sets[root].bbox.max_x,
+                                                               .min_y = dsu_sets[root].bbox.min_y,
+                                                               .max_y = dsu_sets[root].bbox.max_y,
+                                                           }};
 
             if (is_valid_target(&temp_component))
             {
@@ -350,104 +347,53 @@ static component_analysis_result find_components_two_pass(uint8 *binary_image)
                     all_components[total_found_components] = temp_component;
                     all_components[total_found_components].center.x = sum_x / count;
                     all_components[total_found_components].center.y = sum_y / count;
-                    all_components[total_found_components].is_valid = true;
-
-                    // 更新最大连通域
-                    if (temp_component.area > max_area)
-                    {
-                        max_area = temp_component.area;
-                        max_idx = total_found_components;
-                    }
 
                     total_found_components++;
                 }
             }
         }
     }
-
-    result.total_components = total_found_components;
-
-    // 设置最大连通域信息
-    if (total_found_components > 0)
-    {
-        result.largest_component = all_components[max_idx];
-    }
-
-    return result;
 }
 
-// 简化的获取所有目标点坐标接口
-uint8 find_all_white_centers(uint8 *binary_image, Point *points_array, uint8 max_points, connected_component_algorithm_enum algorithm)
+static void analyze_components(uint8 *binary_image, connected_component_algorithm_enum algorithm)
 {
-    if (binary_image == NULL || points_array == NULL || max_points == 0)
-    {
-        return 0;
-    }
-
-    // 执行连通域分析
-    find_largest_connected_component_with_algo(binary_image, algorithm);
-
-    // 复制结果到用户数组
-    uint8 copy_count = (total_found_components < max_points) ? total_found_components : max_points;
-    for (uint8 i = 0; i < copy_count; i++)
-    {
-        points_array[i] = all_components[i].center;
-    }
-
-    return copy_count;
-}
-
-uint8 get_all_components_info(connected_component_info *components_array, uint8 max_components)
-{
-    if (components_array == NULL || max_components == 0)
-    {
-        return 0;
-    }
-
-    uint8 copy_count = (total_found_components < max_components) ? total_found_components : max_components;
-    for (uint8 i = 0; i < copy_count; i++)
-    {
-        components_array[i] = all_components[i];
-    }
-
-    return copy_count;
-}
-
-uint8 get_total_components_count(void)
-{
-    return total_found_components;
-}
-
-Point find_white_center(uint8 *binary_image, connected_component_algorithm_enum algorithm)
-{
-    component_analysis_result result = find_largest_connected_component_with_algo(binary_image, algorithm);
-
-    // 如果没有找到有效的连通域，返回(-1, -1)表示无效
-    if (!result.largest_component.is_valid)
-    {
-        Point invalid_point = {-1, -1};
-        return invalid_point;
-    }
-
-    return result.largest_component.center;
-}
-
-static component_analysis_result find_largest_connected_component_with_algo(
-    uint8 *binary_image,
-    connected_component_algorithm_enum algorithm)
-{
-    component_analysis_result result = {0};
-
     if (binary_image == NULL)
-        return result;
+        return;
 
     switch (algorithm)
     {
     case ALGORITHM_FLOOD_FILL:
-        return find_components_flood_fill(binary_image);
+        find_components_flood_fill(binary_image);
+        break;
 
     case ALGORITHM_TWO_PASS:
     default:
-        return find_components_two_pass(binary_image);
+        find_components_two_pass(binary_image);
+        break;
     }
+}
+
+uint8 find_and_sort_components_by_proximity(uint8 *binary_image)
+{
+    if (binary_image == NULL || g_detection_config.sorted_components_array == NULL || g_detection_config.max_components == 0)
+    {
+        return 0;
+    }
+
+    analyze_components(binary_image, g_detection_config.algorithm);
+
+    if (total_found_components == 0)
+    {
+        return 0;
+    }
+
+    qsort(all_components, total_found_components, sizeof(connected_component_info), compare_components);
+
+    uint8 copy_count = (total_found_components < g_detection_config.max_components) ? total_found_components : g_detection_config.max_components;
+    for (uint8 i = 0; i < copy_count; i++)
+    {
+        g_detection_config.sorted_components_array[i] = all_components[i];
+    }
+
+    return copy_count;
 }

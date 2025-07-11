@@ -1,49 +1,4 @@
 #include "image.h"
-#include "detection.h"
-#include "Attitude.h"
-#include "distance.h"
-#include "control.h"
-
-static int16 img_target_error = 0;
-
-static Point img_target_center = {0, 0};
-static uint16_t s_edge_map[MT9V03X_W][MT9V03X_H];
-
-static uint32_t frame_count = 0;
-static uint32_t last_time_ms = 0;
-static float current_fps = 0.0f;
-
-// 获取当前帧率
-float get_img_fps()
-{
-    return current_fps;
-}
-
-Point get_target_point()
-{
-    return img_target_center;
-}
-
-int16 get_img_target_error()
-{
-    // 只有当找到有效目标时才计算偏差，否则保持原有偏差值
-    // if (img_target_center.x >= 0 && img_target_center.y >= 0)
-    // {
-    //     img_target_error = img_target_center.x - IMG_WIDTH / 2;
-    // }
-
-    // 丢目标直接归零
-    if (img_target_center.x >= 0 && img_target_center.y >= 0)
-    {
-        img_target_error = img_target_center.x - IMG_WIDTH / 2;
-    }
-    else
-    {
-        img_target_error = 0;
-    }
-
-    return img_target_error;
-}
 
 void draw_cross(uint8 *img, Point center, uint8 size, uint8 color)
 {
@@ -133,80 +88,24 @@ void draw_Hline(uint8 *img, uint8 y, uint8 color)
     }
 }
 
-void img_handler(uint8 lcd_flag)
+void draw_rectangle(uint8 *img, uint16 x, uint16 y, uint16 width, uint16 height, uint8 color)
 {
-    if (mt9v03x_finish_flag)
-    {
-        mt9v03x_finish_flag = 0;
-        frame_count++;
-        binary_otsu(mt9v03x_image, s_edge_map);
-        img_target_center = find_white_center(s_edge_map, ALGORITHM_TWO_PASS);
+    uint16 x_end = x + width;
+    uint16 y_end = y + height;
 
-        if (frame_count % 10 == 0)
-        {
-            uint32_t current_time = system_getval_ms();
-            if (last_time_ms != 0)
-            {
-                uint32_t time_diff = current_time - last_time_ms;
-                current_fps = 10000.0f / time_diff;
-            }
-            last_time_ms = current_time;
-        }
+    // 边界检查
+    if (x_end >= IMG_WIDTH) x_end = IMG_WIDTH - 1;
+    if (y_end >= IMG_HEIGHT) y_end = IMG_HEIGHT - 1;
 
-        if (lcd_flag != 0)
-        {
-            draw_cross(s_edge_map, img_target_center, -1, RGB565_YELLOW);
-            draw_Vmiddleline(s_edge_map, RGB565_YELLOW);
-            draw_Hline(s_edge_map, get_image_horizon(), RGB565_WHITE);
-            lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
-            // lcd_show_int(0, 7, get_img_target_error(), 3);
-            // lcd_show_int(6, 7, img_target_center.y, 3);
-            lcd_show_float(0, 7, distance_reckon(get_img_target_error(), img_target_center.y, 0), 3, 2);
-            lcd_show_int(8, 7, get_img_target_error(), 3);
-            lcd_show_int(13, 7, g_control_target.bottom_vel, 4);
-        }
+    // 绘制水平线
+    for (uint16 i = x; i <= x_end; ++i) {
+        img[y * IMG_WIDTH + i] = color;         // Top line
+        img[y_end * IMG_WIDTH + i] = color;     // Bottom line
     }
-}
 
-void img_handler_alltarget()
-{
-    if (mt9v03x_finish_flag)
-    {
-        mt9v03x_finish_flag = 0;
-        int16 horizon = get_image_horizon();
-        binary_otsu(mt9v03x_image, s_edge_map);
-
-        Point target_buff[128];
-        find_all_white_centers(s_edge_map, target_buff, 10, ALGORITHM_TWO_PASS);
-
-        Point valid_points[2];
-        int valid_count = 0;
-        int16 x_diff = 0;
-
-        for (int i = 0; i < 10 && valid_count < 2; i++)
-        {
-            if (target_buff[i].x >= 0 && target_buff[i].y >= 0 && target_buff[i].y >= horizon)
-            {
-                valid_points[valid_count] = target_buff[i];
-                valid_count++;
-                draw_cross(s_edge_map, target_buff[i], -1, RGB565_YELLOW);
-            }
-        }
-
-        // 计算前两个点的x坐标差值
-        if (valid_count >= 2)
-        {
-            x_diff = valid_points[1].x > valid_points[0].x ? valid_points[1].x - valid_points[0].x : valid_points[0].x - valid_points[1].x;
-        }
-        else
-        {
-            x_diff = 0;
-        }
-
-        draw_Vmiddleline(s_edge_map, RGB565_YELLOW);
-        draw_Hline(s_edge_map, horizon, RGB565_WHITE);
-        lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
-        lcd_show_int(0, 7, x_diff, 4);
-        lcd_show_int(8, 7, valid_points[0].y, 3);
+    // 绘制垂直线
+    for (uint16 i = y; i <= y_end; ++i) {
+        img[i * IMG_WIDTH + x] = color;         // Left line
+        img[i * IMG_WIDTH + x_end] = color;     // Right line
     }
 }
