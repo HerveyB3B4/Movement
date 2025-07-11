@@ -76,7 +76,7 @@ void control_bottom_balance(struct Control_Target *control_target,
 
     restrictValueI(&s_bottom_balance_duty, -9999, 9999);
 
-    set_bottom_motor_pwn(
+    set_bottom_motor_pwm(
         (int32)(s_bottom_balance_duty)); // set bottom motor pwm to
                                          // keep front balance
 }

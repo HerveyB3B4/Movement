@@ -169,20 +169,20 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
     // noiseFilter(momentumAngleFilter[0],0.02f);
     // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.3f);
 
-    // control_target->side_angle_vel = control_motion_params->side_angle_polarity *
-    //                                  PID_calc_Position_Gyro_D(
-    //                                      &side_angle_PID,
-    //                                      (ROLL - euler_angle_bias->roll),
-    //                                      //  control_target->side_angle + control_target->buckling_side // 压弯
-    //                                      control_target->side_angle,
-    //                                      momentumAngleFilter[0]);
-
     control_target->side_angle_vel = control_motion_params->side_angle_polarity *
-                                     PID_calc_Position(
+                                     PID_calc_Position_Gyro_D(
                                          &side_angle_PID,
                                          (ROLL - euler_angle_bias->roll),
                                          //  control_target->side_angle + control_target->buckling_side // 压弯
-                                         control_target->side_angle);
+                                         control_target->side_angle,
+                                         momentumAngleFilter[0]);
+
+    // control_target->side_angle_vel = control_motion_params->side_angle_polarity *
+    //                                  PID_calc_Position(
+    //                                      &side_angle_PID,
+    //                                      (ROLL - euler_angle_bias->roll),
+    //                                      //  control_target->side_angle + control_target->buckling_side // 压弯
+    //                                      control_target->side_angle);
 
     // if (g_control_output_sa_flag != 0)
     // {

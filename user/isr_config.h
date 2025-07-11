@@ -59,19 +59,19 @@
 // 定义CCU6_0 PIT通道0中断服务类型，即中断是由谁响应处理
 // IfxSrc_Tos_cpu0 IfxSrc_Tos_cpu1 IfxSrc_Tos_dma
 // 不可设置为其他值
-#define CCU6_0_CH0_INT_SERVICE IfxSrc_Tos_cpu0 // velocity
+#define CCU6_0_CH0_INT_SERVICE IfxSrc_Tos_cpu1 // velocity
 // 定义CCU6_0 PIT通道0中断优先级 优先级范围1-255 越大优先级越高
 // 与平时使用的单片机不一样
-#define CCU6_0_CH0_ISR_PRIORITY 50
+#define CCU6_0_CH0_ISR_PRIORITY 52
 
 #define CCU6_0_CH1_INT_SERVICE IfxSrc_Tos_cpu0 // key
 #define CCU6_0_CH1_ISR_PRIORITY 51
 
-#define CCU6_1_CH0_INT_SERVICE IfxSrc_Tos_cpu0
-#define CCU6_1_CH0_ISR_PRIORITY 52
+#define CCU6_1_CH0_INT_SERVICE IfxSrc_Tos_cpu0 // attitude
+#define CCU6_1_CH0_ISR_PRIORITY 53
 
-#define CCU6_1_CH1_INT_SERVICE IfxSrc_Tos_cpu0 // attitude + control
-#define CCU6_1_CH1_ISR_PRIORITY 53
+#define CCU6_1_CH1_INT_SERVICE IfxSrc_Tos_cpu0 // control
+#define CCU6_1_CH1_ISR_PRIORITY 50
 
 //================================================GPIO中断参数相关定义===============================================
 // 通道0与通道4是公用一个中断函数 在中断内部通过标志位判断是谁触发的中断

@@ -13,7 +13,7 @@ void motor_init()
 }
 
 // bottom motor
-void set_bottom_motor_pwn(int32 pwm)
+void set_bottom_motor_pwm(int32 pwm)
 {
     restrictValueI(&pwm, MOTOR_PWM_MIN, MOTOR_PWM_MAX);
     if (pwm >= 0)
@@ -37,7 +37,7 @@ void set_bottom_motor_hertz(int32 hertz)
 
 void stop_bottom_motor(void)
 {
-    set_bottom_motor_pwn(0);
+    set_bottom_motor_pwm(0);
 }
 
 // int32 abs(int32* value) {

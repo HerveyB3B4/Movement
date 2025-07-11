@@ -26,8 +26,8 @@ void system_init()
     small_driver_uart_init();
     encoder_init();
     lcd_init();
-    mt9v03x_init();
-    mt9v03x2_init();
+    // mt9v03x_init();
+    // mt9v03x2_init();
     imu_init();
     // receiver_init();
     // wireless_init();

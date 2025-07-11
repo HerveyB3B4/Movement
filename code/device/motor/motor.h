@@ -20,7 +20,7 @@ extern uint32 bottom_motor_deadzone_backword;
 extern uint32 bottom_motor_deadzone_forward;
 
 void motor_init();
-void set_bottom_motor_pwn(int32 pwm);
+void set_bottom_motor_pwm(int32 pwm);
 void set_bottom_motor_hertz(int32 hertz);
 void stop_bottom_motor(void);
 
