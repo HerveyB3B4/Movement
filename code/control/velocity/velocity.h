@@ -9,15 +9,16 @@
 #define ENCODER_PULSE (1.0f / 5978.0f)
 #define ENCODER2VELOCITY (ENCODER_PULSE / PIT_VELOCITY_T * 1000.0f)
 
-extern uint32 vel_time;
 struct Velocity_Motor
 {
-    int32 momentumFront;
-    int32 momentumBack;
-    int32 bottom;
-    float bottom_real;
-    float bottom_filtered;
-    int32 velocityDiff;
+    int32 momentum_front;
+    int32 momentum_back;
+    int32 momentum_sum;
+    int32 momentum_diff;
+
+    int32 bottom;          // 编码器数据
+    float bottom_real;     // 线速度
+    float bottom_filtered; // 滤波后的速度
 };
 
 extern struct Velocity_Motor g_vel_motor;

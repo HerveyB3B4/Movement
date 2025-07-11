@@ -14,10 +14,10 @@ void encoder_get_momentum(struct Velocity_Motor *vel_motor)
     int32 front_vel = motor_value.receive_left_speed_data;
     int32 back_vel = motor_value.receive_right_speed_data;
 
-    vel_motor->momentumFront = front_vel;
-    vel_motor->momentumBack = back_vel;
-    vel_motor->velocityDiff =
-        vel_motor->momentumFront + vel_motor->momentumBack;
+    vel_motor->momentum_front = front_vel;
+    vel_motor->momentum_back = back_vel;
+    vel_motor->momentum_diff = vel_motor->momentum_front + vel_motor->momentum_back;
+    vel_motor->momentum_sum = vel_motor->momentum_front - vel_motor->momentum_back;
 }
 
 int16 encoder_get_bottom()

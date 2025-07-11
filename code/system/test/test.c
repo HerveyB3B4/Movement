@@ -88,9 +88,9 @@ void test_side_motor()
 
         // 显示电机状态
         lcd_show_string(0, 6, "Front:");
-        lcd_show_int(8, 6, g_vel_motor.momentumFront, 5);
+        lcd_show_int(8, 6, g_vel_motor.momentum_front, 5);
         lcd_show_string(0, 7, "Back:");
-        lcd_show_int(8, 7, g_vel_motor.momentumBack, 5);
+        lcd_show_int(8, 7, g_vel_motor.momentum_back, 5);
     }
 
     // 退出前确保电机停止
@@ -279,7 +279,7 @@ void test_side_deadzone()
             set_momentum_motor_pwm(front_deadzone, back_deadzone);
             system_delay_ms(50);
 
-            if (abs(g_vel_motor.momentumFront) > 0)
+            if (abs(g_vel_motor.momentum_front) > 0)
             {
                 found_front = front_deadzone;
                 front_done = 1;
@@ -293,7 +293,7 @@ void test_side_deadzone()
             set_momentum_motor_pwm(front_deadzone, back_deadzone);
             system_delay_ms(50);
 
-            if (abs(g_vel_motor.momentumBack) > 0)
+            if (abs(g_vel_motor.momentum_back) > 0)
             {
                 found_back = back_deadzone;
                 back_done = 1;
@@ -302,9 +302,9 @@ void test_side_deadzone()
 
         // 显示当前状态
         lcd_show_int(10, 1, front_deadzone, 5);
-        lcd_show_int(10, 2, g_vel_motor.momentumFront, 5);
+        lcd_show_int(10, 2, g_vel_motor.momentum_front, 5);
         lcd_show_int(10, 3, back_deadzone, 5);
-        lcd_show_int(10, 4, g_vel_motor.momentumBack, 5);
+        lcd_show_int(10, 4, g_vel_motor.momentum_back, 5);
 
         // 显示找到的死区值
         if (front_done)

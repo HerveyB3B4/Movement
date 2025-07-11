@@ -65,7 +65,7 @@ void core1_main(void)
         //        ROLL,
         //        g_control_target.side_angle_vel,
         //        g_control_target.side_angle,
-        //        (g_vel_motor.momentumFront - g_vel_motor.momentumBack) * 0.01f);
+        //        (g_vel_motor.momentum_front - g_vel_motor.momentum_back) * 0.01f);
         // lcd_show_float(0, 0, bottom_angle_PID.Kp, 3, 3);
         // lcd_show_float(0, 1, bottom_angle_PID.Ki, 3, 3);
         // lcd_show_float(0, 2, bottom_angle_PID.Kd, 3, 3);

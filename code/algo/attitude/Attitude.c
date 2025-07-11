@@ -14,22 +14,15 @@ struct EulerAngle g_euler_angle_bias;
 uint8 g_attitude_cal_flag = 0;
 uint8 attitude_time = 0;
 
-static Attitude_algorithm current_algorithm = ATTITUDE_MADGWICK; // 默认使用Mahony
+static Attitude_algorithm current_algorithm;
 
 void attitude_init(Attitude_algorithm algo)
 {
     current_algorithm = algo;
 
-    // 参数顺序依次为 Q1, Q2, R, lambda,
-    // dt(这个已经和计时器中断一致)，根据波形图调整
-    // IMU_QuaternionEKF_Init(10000, 100000, 1000000, 0.9996, 0.001f, 0);  //
-    // ekf初始化
-    // IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.001f, 0); // ekf初始化 (原始参数)
     switch (current_algorithm)
     {
     case ATTITUDE_EKF:
-        // IMU_QuaternionEKF_Init(5, 20, 100, 0.9, 0.002f, 0);
-        // IMU_QuaternionEKF_Init(10, 30, 50, 0.95, 0.002f, 0);
         IMU_QuaternionEKF_Init(10, 0.001, 10000000, 1, 0.001f, 0);
         break;
     case ATTITUDE_MADGWICK:

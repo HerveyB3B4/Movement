@@ -4,6 +4,7 @@
 #include "velocity.h"
 
 static int32 s_momentum_diff = 0;
+
 static void control_turn_velocity(struct Control_Target *control_target,
                                   struct Control_Motion_Manual_Parmas *control_motion_params,
                                   struct Velocity_Motor *vel_motor);
@@ -13,7 +14,6 @@ static void control_turn_angle_velocity(struct Control_Target *control_target,
 static void control_turn_error(struct Control_Target *control_target,
                                struct Control_Motion_Manual_Parmas *control_motion_params);
 
-// diff 为正就往右转，为负往左转
 int32 get_momentum_diff()
 {
     return s_momentum_diff;
@@ -121,7 +121,7 @@ static void control_turn_velocity(struct Control_Target *control_target,
     //                       control_target->turn_vel);
     control_target->turn_err = control_motion_params->turn_velocity_polarity *
                                PID_calc_Position(
-                                   &turn_velocity_PID, (float)(vel_motor->momentumFront - vel_motor->momentumBack) / 2.0f,
+                                   &turn_velocity_PID, (float)(vel_motor->momentum_front - vel_motor->momentum_back) / 2.0f,
                                    0.0f);
     // if (g_control_output_tv_flag != 0)
     // {

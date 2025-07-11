@@ -6,16 +6,15 @@
 struct Velocity_Motor g_vel_motor;
 static kalman_filter_velocity_t s_kf;
 static uint8 s_vel_init_flag = 0;
-uint32 vel_time = 0;
 
 void velocity_init(struct Velocity_Motor *vel_motor)
 {
-    vel_motor->momentumFront = 0;
-    vel_motor->momentumBack = 0;
+    vel_motor->momentum_front = 0;
+    vel_motor->momentum_back = 0;
     vel_motor->bottom = 0;
     vel_motor->bottom_real = 0;
     vel_motor->bottom_filtered = 0;
-    vel_motor->velocityDiff = 0;
+    vel_motor->momentum_diff = 0;
     kalman_filter_velocity_init(&s_kf);
     s_vel_init_flag = 1;
 }

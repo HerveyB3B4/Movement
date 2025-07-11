@@ -75,10 +75,10 @@ void control_side_balance(
 
     int32 turn_diff_left = (int32_t)(get_momentum_diff() *
                                      (float)(3.3f -
-                                             logf(0.2f * abs(vel_motor->momentumFront) + 8)));
+                                             logf(0.2f * abs(vel_motor->momentum_front) + 8)));
     int32 turn_diff_right = (int32_t)(get_momentum_diff() *
                                       (float)(3.3f -
-                                              logf(0.2f * abs(vel_motor->momentumBack) + 8)));
+                                              logf(0.2f * abs(vel_motor->momentum_back) + 8)));
 
     // left_motor_duty = -(s_side_balance_duty + s_side_internal_diff + turn_diff_left);
     // right_motor_duty = s_side_balance_duty + s_side_internal_diff - turn_diff_right;
@@ -93,12 +93,12 @@ void control_side_balance(
     //     -s_side_balance_duty -
     //     (int32_t)(get_momentum_diff() *
     //               (float)(3.3f -
-    //                       logf(0.2f * abs(vel_motor->momentumFront) + 8)));
+    //                       logf(0.2f * abs(vel_motor->momentum_front) + 8)));
     // right_motor_duty =
     //     s_side_balance_duty -
     //     (int32_t)(get_momentum_diff() *
     //               (float)(3.3f -
-    //                       logf(0.2f * abs(vel_motor->momentumBack) + 8)));
+    //                       logf(0.2f * abs(vel_motor->momentum_back) + 8)));
 
     // 添加死区补偿
     if (left_motor_duty > 0)
@@ -134,7 +134,7 @@ static void control_side_velocity(
 {
     static float side_vel_filter[2] = {0};
     side_vel_filter[1] = side_vel_filter[0];
-    side_vel_filter[0] = (float)(vel_motor->momentumFront - vel_motor->momentumBack);
+    side_vel_filter[0] = (float)(vel_motor->momentum_sum);
     // noiseFilter(momentumAngleFilter[0], 0.02f);
     // lowPassFilterF(&side_vel_filter[0], &side_vel_filter[1], 0.2f);
 
