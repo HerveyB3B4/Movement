@@ -9,13 +9,6 @@
 #define TARGET_LOST_TIMEOUT 100        // 目标丢失的超时计数
 
 // 定义状态机的三种状态
-typedef enum
-{
-    STATE_SEARCHING,          // 状态：寻找目标
-    STATE_APPROACHING_TARGET, // 状态：接近目标
-    STATE_CIRCLING_TARGET,    // 状态：环绕目标
-    STATE_CIRCLING            // 状态：压弯转圈
-} state_t;
 
 // 定义当前活动摄像头
 typedef enum

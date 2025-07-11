@@ -17,9 +17,6 @@ static void handle_approaching(state_machine_context_t *sm, uint8 *front_image, 
 static void handle_circling(state_machine_context_t *sm, uint8 *front_image, uint8 *rear_image);
 static void find_global_best_target(uint8 *front_image, uint8 *rear_image, connected_component_info *out_target, active_camera_t *out_cam);
 
-/**
- * @brief 初始化状态机。
- */
 void state_machine_init(state_machine_context_t *sm)
 {
     if (sm == NULL)
@@ -31,9 +28,6 @@ void state_machine_init(state_machine_context_t *sm)
     sm->state_timer = 0;
 }
 
-/**
- * @brief 运行状态机的主要函数。
- */
 void state_machine_run(state_machine_context_t *sm, uint8 *front_image, uint8 *rear_image)
 {
     if (sm == NULL)

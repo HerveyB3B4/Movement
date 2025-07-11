@@ -12,7 +12,7 @@
 #include "switch.h"
 #include "receiver.h"
 
-RunState_t run_state;
+System_State run_state;
 uint32 g_system_attitude_cnt = 0;
 uint32 g_pit_ccu61_ch1_cnt = 0;
 uint32 g_pit_ccu60_ch0_cnt = 0;
@@ -250,7 +250,7 @@ void turn_control_timer(struct Control_Time *control_time,
     control_turn(control_target, control_flag, control_turn_params, control_motion_params, vel_motor);
 }
 
-void system_set_runstate(RunState_t state)
+void system_set_runstate(System_State state)
 {
     // 根据不同的车辆状态执行不同的控制操作
     switch (state)

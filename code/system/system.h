@@ -15,7 +15,7 @@ typedef enum
     CAR_STABLE,
     CAR_RUNNING,
     CAR_TESTING,
-} RunState_t;
+} System_State;
 
 struct Control_Time;
 struct Control_Flag;
@@ -56,9 +56,9 @@ void turn_control_timer(struct Control_Time *control_time,
                         struct Control_Motion_Manual_Parmas *control_motion_params,
                         struct Velocity_Motor *vel_motor);
 
-void system_set_runstate(RunState_t state);
+void system_set_runstate(System_State state);
 
-extern RunState_t run_state;
+extern System_State run_state;
 extern uint32 g_system_attitude_cnt;
 extern uint32 g_pit_ccu60_ch0_cnt;
 extern uint32 g_pit_ccu61_ch1_cnt;
