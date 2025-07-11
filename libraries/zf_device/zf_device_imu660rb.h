@@ -86,8 +86,7 @@
 // 驱动====================================================
 #endif
 #define IMU660RB_CS_PIN IMU_CS_PIN // CS 片选引脚
-#define IMU660RB_CS(x) \
-    ((x) ? (gpio_high(IMU660RB_CS_PIN)) : (gpio_low(IMU660RB_CS_PIN)))
+#define IMU660RB_CS(x) ((x) ? (gpio_high(IMU660RB_CS_PIN)) : (gpio_low(IMU660RB_CS_PIN)))
 
 #define IMU660RB_TIMEOUT_COUNT (0x00FF) // IMU660 超时计数
 
@@ -121,6 +120,21 @@
 // 设置为:0x34 加速度量程为:±16G     获取到的加速度计数据 除以2049，
 // 可以转化为带物理单位的数据，单位：g(m/s^2)
 
+// ACC_SAMPLE 第一位表示采样率。修改此处记得修改imu660rb_acc_transition函数中的switch语句
+// 0 powerdown
+// B 1.6Hz
+// 1 12.5Hz
+// 2 26Hz
+// 3 52Hz
+// 4 104Hz
+// 5 208Hz
+// 6 416Hz
+// 7 833Hz
+// 8 1667Hz
+// 9 3333Hz
+// A 6667Hz
+// C以上 Not allowed
+
 #define IMU660RB_GYR_SAMPLE (0xA1) // 陀螺仪量程
 // 设置为:0x52 陀螺仪量程为:±125dps  获取到的陀螺仪数据除以228.6，
 // 可以转化为带物理单位的数据，单位为：°/s 设置为:0x50 陀螺仪量程为:±250dps
@@ -131,6 +145,20 @@
 // 设置为:0x5C 陀螺仪量程为:±2000dps 获取到的陀螺仪数据除以14.3，
 // 可以转化为带物理单位的数据，单位为：°/s 设置为:0x51 陀螺仪量程为:±4000dps
 // 获取到的陀螺仪数据除以7.1，     可以转化为带物理单位的数据，单位为：°/s
+
+// GYR_SAMPLE 第一位表示采样率。修改此处记得修改imu660rb_gyro_transition函数中的switch语句
+// 0 powerdown
+// 1 12.5Hz
+// 2 26Hz
+// 3 52Hz
+// 4 104Hz
+// 5 208Hz
+// 6 416Hz
+// 7 833Hz
+// 8 1667Hz
+// 9 3333Hz
+// A 6667Hz
+// B以上 Not available
 
 //================================================声明 IMU963RB 全局变量================================================
 extern int16 imu660rb_gyro_x, imu660rb_gyro_y, imu660rb_gyro_z; // 三轴陀螺仪数据      gyro (陀螺仪)
