@@ -173,8 +173,8 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
                                      PID_calc_Position_Gyro_D(
                                          &side_angle_PID,
                                          (ROLL - euler_angle_bias->roll),
-                                         //  control_target->side_angle + control_target->buckling_side // 压弯
-                                         control_target->side_angle,
+                                         control_target->side_angle + control_target->buckling_side,
+                                         //   control_target->side_angle,
                                          momentumAngleFilter[0]);
 
     // control_target->side_angle_vel = control_motion_params->side_angle_polarity *

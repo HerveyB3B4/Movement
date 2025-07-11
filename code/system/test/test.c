@@ -895,8 +895,8 @@ void test_cpu_freq()
 //         system_delay_ms(10);
 //     }
 
-    lcd_clear();
-}
+//     lcd_clear();
+// }
 
 void test_dual_camera_logic()
 {
@@ -910,7 +910,7 @@ void test_dual_camera_logic()
 #pragma section all "cpu1_dsram"
     static uint8 binary_front[IMG_WIDTH * IMG_HEIGHT];
     static uint8 binary_rear[IMG_WIDTH * IMG_HEIGHT];
-#pragma section all restore    
+#pragma section all restore
 
     while (keymsg.key != KEY_L)
     {

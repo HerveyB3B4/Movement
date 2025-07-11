@@ -61,7 +61,9 @@ void core1_main(void)
 
     while (TRUE)
     {
-
+        // lcd_show_float(0, 0, bottom_angle_PID.Kp, 3, 3);
+        // lcd_show_float(0, 1, bottom_angle_PID.Ki, 3, 3);
+        // lcd_show_float(0, 2, bottom_angle_PID.Kd, 3, 3);
         // lcd_show_float(0, 1, get_cpu_freq(), 3, 3);
         // 此处编写需要循环执行的代码
         // if (g_exit_menu_flag && g_show_run_param_flag)

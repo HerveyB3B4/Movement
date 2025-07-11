@@ -290,14 +290,13 @@ void system_control_timer()
 
     // if (g_control_turn_flag != 0)
     // {
-    // turn_control_timer(&g_control_time,
-    //                    &g_control_flag,
-    //                    &g_control_target,
-    //                    &g_control_turn_manual_params,
-    //                    &g_control_motion_params,
-    //                    &g_vel_motor);
+    turn_control_timer(&g_control_time,
+                       &g_control_flag,
+                       &g_control_target,
+                       &g_control_turn_manual_params,
+                       &g_control_motion_params,
+                       &g_vel_motor);
     // }
-
     if (g_control_side_flag != 0)
     {
         side_control_timer(&g_control_time,

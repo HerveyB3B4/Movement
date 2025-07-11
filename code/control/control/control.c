@@ -175,9 +175,13 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // float bottom_angle_pid[3] = {6, 0.0, 2};
     // float bottom_velocity_pid[3] = {0.00065, 0.0000035, 0.00};
 
-    float bottom_angle_velocity_pid[3] = {12, 1, 0};
-    float bottom_angle_pid[3] = {3, 0.0, 0};
-    float bottom_velocity_pid[3] = {0.005, 0, 0};
+    // float bottom_angle_velocity_pid[3] = {12, 1.5, 0};
+    // float bottom_angle_pid[3] = {4, 0.0, 0.05};
+    // float bottom_velocity_pid[3] = {0.005, 0, 0};
+
+    float bottom_angle_velocity_pid[3] = {15, 4, 0};
+    float bottom_angle_pid[3] = {1.0, 0.0, 0.3};
+    float bottom_velocity_pid[3] = {0.01, 0, 0};
 
     PID_init_Position(&bottom_angle_velocity_PID, bottom_angle_velocity_pid,
                       9999, 9999);
@@ -195,9 +199,13 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // float side_angle_pid[3] = {1.0, 0, 0.5};
     // float side_velocity_pid[3] = {0.007, 0.0, 0.001};
 
-    float side_angle_velocity_pid[3] = {10, 1.8, 0.4};
-    float side_angle_pid[3] = {2.0, 0, 1.6};
-    float side_velocity_pid[3] = {0.003, 0.000, 0.0002};
+    // float side_angle_velocity_pid[3] = {10, 1.8, 0.4};
+    // float side_angle_pid[3] = {2.0, 0, 1.6};
+    // float side_velocity_pid[3] = {0.003, 0.000, 0.0002};
+
+    float side_angle_velocity_pid[3] = {7, 3.5, 0};
+    float side_angle_pid[3] = {1.8, 0, 1.6};
+    float side_velocity_pid[3] = {0.007, 0.000, 0.000};
 
     PID_init_Position(&side_angle_velocity_PID, side_angle_velocity_pid, MOMENTUM_MOTOR_PWM_MAX, 8000);
     PID_init_Position(&side_angle_PID, side_angle_pid, 9999, 2.5f);
