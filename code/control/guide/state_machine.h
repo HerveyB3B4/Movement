@@ -5,10 +5,9 @@
 
 typedef enum
 {
-    STATE_SEARCHING,          // 状态：寻找目标
-    STATE_APPROACHING_TARGET, // 状态：接近目标
-    STATE_CIRCLING_TARGET,    // 状态：环绕目标
-    STATE_CIRCLING            // 状态：压弯转圈
+    STATE_SEARCHING,   // 状态：寻找目标
+    STATE_APPROACHING, // 状态：接近目标
+    STATE_CIRCLING,    // 状态：环绕目标
 } Run_State;
 
 #endif

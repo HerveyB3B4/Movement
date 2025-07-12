@@ -15,45 +15,42 @@
 // #define MIN_ASPECT_RATIO 0.2f    // 最小宽高比（防止过细长条）
 // #define MAX_ASPECT_RATIO 5.0f    // 最大宽高比
 // #define MIN_COMPACTNESS 0.1f     // 最小紧凑度（面积/外接矩形面积）
-#define MAX_REGIONS 128          // 最大连通域数量
-#define STACK_SIZE 1024          // 种子填充栈大小
+#define MAX_REGIONS 128 // 最大连通域数量
+#define STACK_SIZE 1024 // 种子填充栈大小
 
 // 连通域检测算法类型
 typedef enum
 {
     ALGORITHM_TWO_PASS,  // 两遍扫描算法（精确，适合复杂场景）
     ALGORITHM_FLOOD_FILL // 种子填充算法（快速，适合简单检测）
-} connected_component_algorithm_enum;
+} Component_AlgorithmEnum;
 
-// 连通域边界框和面积信息
 typedef struct
 {
     uint32 area;         // 面积
     uint16 min_x, max_x; // 边界框
     uint16 min_y, max_y;
-} component_bbox_t;
+} Component_Box;
 
-// 连通域信息
 typedef struct
 {
-    Point center;          // 中心点
-    component_bbox_t bbox; // 边界框和面积信息
-} connected_component_info;
+    Point center;       // 中心点
+    Component_Box bbox; // 边界框和面积信息
+} Component_Info;
 
 // 检测配置
 typedef struct
 {
-    connected_component_algorithm_enum algorithm;
-    connected_component_info *sorted_components_array;
+    Component_AlgorithmEnum algorithm;
+    Component_Info *sorted_components_array;
     uint8 max_components;
 } detection_config_t;
 
-// 主要接口函数
-void detection_init(detection_config_t *config);
-uint8 find_and_sort_components_by_proximity(uint8 *binary_image);
+void detection_init(Component_AlgorithmEnum algo, Component_Info *output);
+void detection_find_components(uint8 *binary_image);
+Component_Info *detection_get_results(void);
 
-// 检查连通域是否为有效目标
-static inline bool is_valid_target(const connected_component_info *component)
+static inline bool is_valid_target(const Component_Info *component)
 {
     if (!component || component->bbox.area == 0)
         return false;
@@ -95,8 +92,8 @@ static inline bool is_valid_target(const connected_component_info *component)
 
 static inline int8 compare_components(const void *a, const void *b)
 {
-    const connected_component_info *comp_a = (const connected_component_info *)a;
-    const connected_component_info *comp_b = (const connected_component_info *)b;
+    const Component_Info *comp_a = (const Component_Info *)a;
+    const Component_Info *comp_b = (const Component_Info *)b;
 
     const int16 center_x = IMG_WIDTH / 2;
     const int16 center_y = IMG_HEIGHT / 2;
