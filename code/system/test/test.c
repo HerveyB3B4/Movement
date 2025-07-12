@@ -900,93 +900,93 @@ void test_cpu_freq()
 
 void test_dual_camera_logic()
 {
-    lcd_clear();
+//     lcd_clear();
 
-    // 初始化状态机
-    state_machine_context_t sm;
-    state_machine_init(&sm);
+//     // 初始化状态机
+//     state_machine_context_t sm;
+//     state_machine_init(&sm);
 
-    // 为前后摄像头分别创建二值化图像缓冲区
-#pragma section all "cpu1_dsram"
-    static uint8 binary_front[IMG_WIDTH * IMG_HEIGHT];
-    static uint8 binary_rear[IMG_WIDTH * IMG_HEIGHT];
-#pragma section all restore
+//     // 为前后摄像头分别创建二值化图像缓冲区
+// #pragma section all "cpu1_dsram"
+//     static uint8 binary_front[IMG_WIDTH * IMG_HEIGHT];
+//     static uint8 binary_rear[IMG_WIDTH * IMG_HEIGHT];
+// #pragma section all restore
 
-    while (keymsg.key != KEY_L)
-    {
-        // 等待两个摄像头的图像帧都准备好
-        if (mt9v03x_finish_flag && mt9v03x2_finish_flag)
-        {
-            mt9v03x_finish_flag = 0;
-            mt9v03x2_finish_flag = 0;
+//     while (keymsg.key != KEY_L)
+//     {
+//         // 等待两个摄像头的图像帧都准备好
+//         if (mt9v03x_finish_flag && mt9v03x2_finish_flag)
+//         {
+//             mt9v03x_finish_flag = 0;
+//             mt9v03x2_finish_flag = 0;
 
-            // 对两个摄像头的图像进行二值化
-            binary_otsu(mt9v03x_image[0], binary_front);
-            binary_otsu(mt9v03x2_image[0], binary_rear);
+//             // 对两个摄像头的图像进行二值化
+//             binary_otsu(mt9v03x_image[0], binary_front);
+//             binary_otsu(mt9v03x2_image[0], binary_rear);
 
-            // 运行状态机，传入两个图像
-            state_machine_run(&sm, binary_front, binary_rear);
+//             // 运行状态机，传入两个图像
+//             state_machine_run(&sm, binary_front, binary_rear);
 
-            // --- 可视化 ---
-            connected_component_info active_target = sm.current_target;
-            active_camera_t active_cam = sm.active_camera;
+//             // --- 可视化 ---
+//             connected_component_info active_target = sm.current_target;
+//             active_camera_t active_cam = sm.active_camera;
 
-            // 在被选中的目标图像上绘制标定框
-            if (active_target.bbox.area > 0)
-            {
-                uint8 *active_buffer = (active_cam == CAM_FRONT) ? binary_front : binary_rear;
-                uint16 width = active_target.bbox.max_x - active_target.bbox.min_x;
-                uint16 height = active_target.bbox.max_y - active_target.bbox.min_y;
-                draw_rectangle(active_buffer, active_target.bbox.min_x, active_target.bbox.min_y, width, height, 128);
-                draw_cross(active_buffer, active_target.center, 5, 200);
-            }
+//             // 在被选中的目标图像上绘制标定框
+//             if (active_target.bbox.area > 0)
+//             {
+//                 uint8 *active_buffer = (active_cam == CAM_FRONT) ? binary_front : binary_rear;
+//                 uint16 width = active_target.bbox.max_x - active_target.bbox.min_x;
+//                 uint16 height = active_target.bbox.max_y - active_target.bbox.min_y;
+//                 draw_rectangle(active_buffer, active_target.bbox.min_x, active_target.bbox.min_y, width, height, 128);
+//                 draw_cross(active_buffer, active_target.center, 5, 200);
+//             }
 
-            // 显示两个摄像头的图像 (缩小一半以并排显示)
-            tft180_show_gray_image(0, 0, binary_front, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
-            tft180_show_gray_image(0, tft180_height_max - MT9V03X_H / 2, binary_rear, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+//             // 显示两个摄像头的图像 (缩小一半以并排显示)
+//             tft180_show_gray_image(0, 0, binary_front, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+//             tft180_show_gray_image(0, tft180_height_max - MT9V03X_H / 2, binary_rear, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
 
-            // 显示状态机信息
-            char state_str[20];
-            switch (sm.current_state)
-            {
-            case STATE_SEARCHING:
-                strcpy(state_str, "SEARCH ");
-                break;
-            case STATE_APPROACHING_TARGET:
-                strcpy(state_str, "APPROACH");
-                break;
-            case STATE_CIRCLING_TARGET:
-                strcpy(state_str, " CIRCLE ");
-                break;
-            default:
-                strcpy(state_str, " UNKNOWN");
-                break;
-            }
-            lcd_show_string(12, 0, state_str);
+//             // 显示状态机信息
+//             char state_str[20];
+//             switch (sm.current_state)
+//             {
+//             case STATE_SEARCHING:
+//                 strcpy(state_str, "SEARCH ");
+//                 break;
+//             case STATE_APPROACHING_TARGET:
+//                 strcpy(state_str, "APPROACH");
+//                 break;
+//             case STATE_CIRCLING_TARGET:
+//                 strcpy(state_str, " CIRCLE ");
+//                 break;
+//             default:
+//                 strcpy(state_str, " UNKNOWN");
+//                 break;
+//             }
+//             lcd_show_string(12, 0, state_str);
 
-            // 显示目标信息
-            if (active_target.bbox.area > 0)
-            {
-                if (active_cam == CAM_FRONT)
-                {
-                    lcd_show_string(12, 1, "  FRONT ");
-                }
-                else
-                {
-                    lcd_show_string(12, 1, "  REAR  ");
-                }
-                lcd_show_string(12, 2, "X:      ");
-                lcd_show_int(14, 2, active_target.center.x, 3);
-                lcd_show_string(12, 3, "Y:      ");
-                lcd_show_int(14, 3, active_target.center.y, 3);
-            }
-            else
-            {
-                lcd_show_string(12, 1, "No targe");
-                lcd_show_string(12, 2, "t found ");
-                lcd_show_string(12, 3, "in sight");
-            }
-        }
-    }
-    lcd_clear();
+//             // 显示目标信息
+//             if (active_target.bbox.area > 0)
+//             {
+//                 if (active_cam == CAM_FRONT)
+//                 {
+//                     lcd_show_string(12, 1, "  FRONT ");
+//                 }
+//                 else
+//                 {
+//                     lcd_show_string(12, 1, "  REAR  ");
+//                 }
+//                 lcd_show_string(12, 2, "X:      ");
+//                 lcd_show_int(14, 2, active_target.center.x, 3);
+//                 lcd_show_string(12, 3, "Y:      ");
+//                 lcd_show_int(14, 3, active_target.center.y, 3);
+//             }
+//             else
+//             {
+//                 lcd_show_string(12, 1, "No targe");
+//                 lcd_show_string(12, 2, "t found ");
+//                 lcd_show_string(12, 3, "in sight");
+//             }
+//         }
+//     }
+//     lcd_clear();
 }

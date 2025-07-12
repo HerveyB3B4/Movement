@@ -1,7 +1,7 @@
 #ifndef _DETECTION_TWOPASS_H
 #define _DETECTION_TWOPASS_H
 
-#include "zf_common_headfile.h"
+#include "detection.h"
 
 typedef struct
 {
@@ -10,7 +10,6 @@ typedef struct
 } DSU_Node;
 
 // 函数声明
-uint16 find_components_two_pass(uint8 *binary_image, uint8 camera_id);
-Component_Info *get_twopass_res(void);
+uint16 find_components_two_pass(uint8 *binary_image, uint8 camera_id, Component_Info *output);
 
 #endif

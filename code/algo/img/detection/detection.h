@@ -47,9 +47,8 @@ typedef struct
     uint8 max_components;
 } detection_config_t;
 
-void detection_init(Component_AlgorithmEnum algo, Component_Info *output);
-uint16 detection_find_components(uint8 *binary_image, uint8 camera_id);
-Component_Info *detection_get_results(void);
+void detection_init(Component_AlgorithmEnum algo);
+uint16 detection_find_components(uint8 *binary_image, uint8 camera_id, Component_Info *output);
 
 static inline bool is_valid_target(const Component_Info *component)
 {

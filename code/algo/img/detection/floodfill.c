@@ -1,12 +1,9 @@
 #include "floodfill.h"
-#include "detection.h"
-
-static Component_Info res[MAX_REGIONS];
 
 static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, Component_Box *region);
-static uint16 update_res(Component_Box *regions, uint8 region_count, uint8 camera_id);
+static uint16 update_res(Component_Box *regions, uint8 region_count, uint8 camera_id, Component_Info *output);
 
-uint16 find_components_flood_fill(uint8 *binary_image, uint8 camera_id)
+uint16 find_components_flood_fill(uint8 *binary_image, uint8 camera_id, Component_Info *output)
 {
     static Component_Box regions[MAX_REGIONS];
     static uint8 temp_img[IMG_WIDTH * IMG_HEIGHT];
@@ -15,13 +12,13 @@ uint16 find_components_flood_fill(uint8 *binary_image, uint8 camera_id)
     // 清空结果数组
     for (uint16 i = 0; i < MAX_REGIONS; i++)
     {
-        res[i].center.x = 0;
-        res[i].center.y = 0;
-        res[i].bbox.area = 0;
-        res[i].bbox.min_x = 0;
-        res[i].bbox.max_x = 0;
-        res[i].bbox.min_y = 0;
-        res[i].bbox.max_y = 0;
+        output[i].center.x = 0;
+        output[i].center.y = 0;
+        output[i].bbox.area = 0;
+        output[i].bbox.min_x = 0;
+        output[i].bbox.max_x = 0;
+        output[i].bbox.min_y = 0;
+        output[i].bbox.max_y = 0;
     }
 
     // 复制图像数据
@@ -57,7 +54,7 @@ uint16 find_components_flood_fill(uint8 *binary_image, uint8 camera_id)
     }
 
     // 更新结果数组并返回连通域数量
-    return update_res(regions, region_count, camera_id);
+    return update_res(regions, region_count, camera_id, output);
 }
 
 static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, Component_Box *region)
@@ -126,7 +123,7 @@ static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, Component
     }
 }
 
-static uint16 update_res(Component_Box *regions, uint8 region_count, uint8 camera_id)
+static uint16 update_res(Component_Box *regions, uint8 region_count, uint8 camera_id, Component_Info *output)
 {
     uint16 valid_component_count = 0;
 
@@ -135,25 +132,20 @@ static uint16 update_res(Component_Box *regions, uint8 region_count, uint8 camer
         if (regions[i].area > 0)
         {
             // 将 Component_Box 转换为 Component_Info
-            res[valid_component_count].bbox.area = regions[i].area;
-            res[valid_component_count].bbox.min_x = regions[i].min_x;
-            res[valid_component_count].bbox.max_x = regions[i].max_x;
-            res[valid_component_count].bbox.min_y = regions[i].min_y;
-            res[valid_component_count].bbox.max_y = regions[i].max_y;
+            output[valid_component_count].bbox.area = regions[i].area;
+            output[valid_component_count].bbox.min_x = regions[i].min_x;
+            output[valid_component_count].bbox.max_x = regions[i].max_x;
+            output[valid_component_count].bbox.min_y = regions[i].min_y;
+            output[valid_component_count].bbox.max_y = regions[i].max_y;
 
             // 计算中心点
-            res[valid_component_count].center.x = (regions[i].min_x + regions[i].max_x) / 2;
-            res[valid_component_count].center.y = (regions[i].min_y + regions[i].max_y) / 2;
-            res[valid_component_count].camera_id = camera_id;
+            output[valid_component_count].center.x = (regions[i].min_x + regions[i].max_x) / 2;
+            output[valid_component_count].center.y = (regions[i].min_y + regions[i].max_y) / 2;
+            output[valid_component_count].camera_id = camera_id;
 
             valid_component_count++;
         }
     }
 
     return valid_component_count;
-}
-
-Component_Info *get_floodfill_res(void)
-{
-    return res;
 }

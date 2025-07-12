@@ -2,7 +2,6 @@
 #include "detection.h"
 
 static DSU_Node dsu_sets[MAX_REGIONS];
-static Component_Info res[MAX_REGIONS];
 static uint16 labels_map[IMG_HEIGHT][IMG_WIDTH];
 static uint16 current_label = 1;
 
@@ -10,9 +9,9 @@ static void union_find_init(void);
 static uint16 union_find_root(uint16 i);
 static void union_sets(uint16 x, uint16 y);
 static uint16 find_root(uint16 x);
-static uint16 update_res(uint8 camera_id);
+static uint16 update_res(uint8 camera_id, Component_Info *output);
 
-uint16 find_components_two_pass(uint8 *binary_image, uint8 camera_id)
+uint16 find_components_two_pass(uint8 *binary_image, uint8 camera_id, Component_Info *output)
 {
     // 初始化
     union_find_init();
@@ -125,7 +124,7 @@ uint16 find_components_two_pass(uint8 *binary_image, uint8 camera_id)
     }
 
     // 更新结果数组并返回连通域数量
-    return update_res(camera_id);
+    return update_res(camera_id, output);
 }
 
 static void union_find_init(void)
@@ -179,20 +178,20 @@ static void union_sets(uint16 x, uint16 y)
     }
 }
 
-static uint16 update_res(uint8 camera_id)
+static uint16 update_res(uint8 camera_id, Component_Info *output)
 {
     uint16 component_count = 0;
 
     // 清空结果数组
     for (uint16 i = 0; i < MAX_REGIONS; i++)
     {
-        res[i].center.x = 0;
-        res[i].center.y = 0;
-        res[i].bbox.area = 0;
-        res[i].bbox.min_x = 0;
-        res[i].bbox.max_x = 0;
-        res[i].bbox.min_y = 0;
-        res[i].bbox.max_y = 0;
+        output[i].center.x = 0;
+        output[i].center.y = 0;
+        output[i].bbox.area = 0;
+        output[i].bbox.min_x = 0;
+        output[i].bbox.max_x = 0;
+        output[i].bbox.min_y = 0;
+        output[i].bbox.max_y = 0;
     }
 
     // 遍历所有可能的根节点，找到有效的连通域
@@ -204,16 +203,16 @@ static uint16 update_res(uint8 camera_id)
             // 这是一个有效的连通域根节点
             if (component_count < MAX_REGIONS)
             {
-                res[component_count].bbox.area = dsu_sets[i].bbox.area;
-                res[component_count].bbox.min_x = dsu_sets[i].bbox.min_x;
-                res[component_count].bbox.max_x = dsu_sets[i].bbox.max_x;
-                res[component_count].bbox.min_y = dsu_sets[i].bbox.min_y;
-                res[component_count].bbox.max_y = dsu_sets[i].bbox.max_y;
+                output[component_count].bbox.area = dsu_sets[i].bbox.area;
+                output[component_count].bbox.min_x = dsu_sets[i].bbox.min_x;
+                output[component_count].bbox.max_x = dsu_sets[i].bbox.max_x;
+                output[component_count].bbox.min_y = dsu_sets[i].bbox.min_y;
+                output[component_count].bbox.max_y = dsu_sets[i].bbox.max_y;
 
                 // 计算中心点
-                res[component_count].center.x = (dsu_sets[i].bbox.min_x + dsu_sets[i].bbox.max_x) / 2;
-                res[component_count].center.y = (dsu_sets[i].bbox.min_y + dsu_sets[i].bbox.max_y) / 2;
-                res[component_count].camera_id = camera_id;
+                output[component_count].center.x = (dsu_sets[i].bbox.min_x + dsu_sets[i].bbox.max_x) / 2;
+                output[component_count].center.y = (dsu_sets[i].bbox.min_y + dsu_sets[i].bbox.max_y) / 2;
+                output[component_count].camera_id = camera_id;
 
                 component_count++;
             }
@@ -221,9 +220,4 @@ static uint16 update_res(uint8 camera_id)
     }
 
     return component_count;
-}
-
-Component_Info *get_twopass_res(void)
-{
-    return res;
 }

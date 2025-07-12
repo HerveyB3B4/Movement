@@ -5,45 +5,25 @@
 #include "floodfill.h"
 
 static Component_AlgorithmEnum current_algorithm = ALGORITHM_TWO_PASS;
-static uint16 component_count = 0;
-static Component_Info *res = NULL;
-static Component_Info default_res[MAX_REGIONS];
 
-void detection_init(Component_AlgorithmEnum algo, Component_Info *output)
+void detection_init(Component_AlgorithmEnum algo)
 {
     current_algorithm = algo;
-    init_union_find();
-    if (output != NULL)
-    {
-        res = output;
-    }
-    else
-    {
-        res = default_res;
-    }
 }
-uint16 detection_find_components(uint8 *binary_image, uint8 camera_id)
+
+uint16 detection_find_components(uint8 *binary_image, uint8 camera_id, Component_Info *output)
 {
     if (binary_image == NULL)
-        return;
-
+        return 0;
     switch (current_algorithm)
     {
     case ALGORITHM_FLOOD_FILL:
-        component_count = find_components_flood_fill(binary_image, camera_id);
-        res = get_floodfill_res();
+        return find_components_flood_fill(binary_image, camera_id, output);
         break;
 
     case ALGORITHM_TWO_PASS:
     default:
-        component_count = find_components_two_pass(binary_image, camera_id);
-        res = get_twopass_res();
+        return find_components_two_pass(binary_image, camera_id, output);
         break;
     }
-    return component_count;
-}
-
-Component_Info *detection_get_results(void)
-{
-    return res;
 }
