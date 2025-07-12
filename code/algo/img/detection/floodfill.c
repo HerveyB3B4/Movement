@@ -4,9 +4,9 @@
 static Component_Info res[MAX_REGIONS];
 
 static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, Component_Box *region);
-static uint16 update_res(Component_Box *regions, uint8 region_count);
+static uint16 update_res(Component_Box *regions, uint8 region_count, uint8 camera_id);
 
-uint16 find_components_flood_fill(uint8 *binary_image)
+uint16 find_components_flood_fill(uint8 *binary_image, uint8 camera_id)
 {
     static Component_Box regions[MAX_REGIONS];
     static uint8 temp_img[IMG_WIDTH * IMG_HEIGHT];
@@ -57,7 +57,7 @@ uint16 find_components_flood_fill(uint8 *binary_image)
     }
 
     // 更新结果数组并返回连通域数量
-    return update_res(regions, region_count);
+    return update_res(regions, region_count, camera_id);
 }
 
 static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, Component_Box *region)
@@ -126,7 +126,7 @@ static void flood_fill(uint8 *binary, uint16 x, uint16 y, uint8 label, Component
     }
 }
 
-static uint16 update_res(Component_Box *regions, uint8 region_count)
+static uint16 update_res(Component_Box *regions, uint8 region_count, uint8 camera_id)
 {
     uint16 valid_component_count = 0;
 
@@ -144,6 +144,7 @@ static uint16 update_res(Component_Box *regions, uint8 region_count)
             // 计算中心点
             res[valid_component_count].center.x = (regions[i].min_x + regions[i].max_x) / 2;
             res[valid_component_count].center.y = (regions[i].min_y + regions[i].max_y) / 2;
+            res[valid_component_count].camera_id = camera_id;
 
             valid_component_count++;
         }

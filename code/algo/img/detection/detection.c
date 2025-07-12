@@ -7,7 +7,7 @@
 static Component_AlgorithmEnum current_algorithm = ALGORITHM_TWO_PASS;
 static uint16 component_count = 0;
 static Component_Info *res = NULL;
-static Component_Info tmp[MAX_REGIONS];
+static Component_Info default_res[MAX_REGIONS];
 
 void detection_init(Component_AlgorithmEnum algo, Component_Info *output)
 {
@@ -19,10 +19,10 @@ void detection_init(Component_AlgorithmEnum algo, Component_Info *output)
     }
     else
     {
-        res = tmp;
+        res = default_res;
     }
 }
-void detection_find_components(uint8 *binary_image)
+uint16 detection_find_components(uint8 *binary_image, uint8 camera_id)
 {
     if (binary_image == NULL)
         return;
@@ -30,16 +30,17 @@ void detection_find_components(uint8 *binary_image)
     switch (current_algorithm)
     {
     case ALGORITHM_FLOOD_FILL:
-        component_count = find_components_flood_fill(binary_image);
+        component_count = find_components_flood_fill(binary_image, camera_id);
         res = get_floodfill_res();
         break;
 
     case ALGORITHM_TWO_PASS:
     default:
-        component_count = find_components_two_pass(binary_image);
+        component_count = find_components_two_pass(binary_image, camera_id);
         res = get_twopass_res();
         break;
     }
+    return component_count;
 }
 
 Component_Info *detection_get_results(void)

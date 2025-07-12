@@ -36,6 +36,7 @@ typedef struct
 {
     Point center;       // 中心点
     Component_Box bbox; // 边界框和面积信息
+    uint8 camera_id;    // 0 表示前摄，1 表示后摄
 } Component_Info;
 
 // 检测配置
@@ -47,7 +48,7 @@ typedef struct
 } detection_config_t;
 
 void detection_init(Component_AlgorithmEnum algo, Component_Info *output);
-void detection_find_components(uint8 *binary_image);
+uint16 detection_find_components(uint8 *binary_image, uint8 camera_id);
 Component_Info *detection_get_results(void);
 
 static inline bool is_valid_target(const Component_Info *component)
@@ -88,35 +89,6 @@ static inline bool is_valid_target(const Component_Info *component)
     //     return false;
 
     return true;
-}
-
-static inline int8 compare_components(const void *a, const void *b)
-{
-    const Component_Info *comp_a = (const Component_Info *)a;
-    const Component_Info *comp_b = (const Component_Info *)b;
-
-    const int16 center_x = IMG_WIDTH / 2;
-    const int16 center_y = IMG_HEIGHT / 2;
-
-    int32 dx_a = comp_a->center.x - center_x;
-    int32 dy_a = comp_a->center.y - center_y;
-    uint32 dist_sq_a = dx_a * dx_a + dy_a * dy_a;
-
-    int32 dx_b = comp_b->center.x - center_x;
-    int32 dy_b = comp_b->center.y - center_y;
-    uint32 dist_sq_b = dx_b * dx_b + dy_b * dy_b;
-
-    if (dist_sq_a < dist_sq_b)
-        return -1;
-    if (dist_sq_a > dist_sq_b)
-        return 1;
-
-    if (comp_a->bbox.area > comp_b->bbox.area)
-        return -1;
-    if (comp_a->bbox.area < comp_b->bbox.area)
-        return 1;
-
-    return 0;
 }
 
 #endif

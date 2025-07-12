@@ -10,9 +10,9 @@ static void union_find_init(void);
 static uint16 union_find_root(uint16 i);
 static void union_sets(uint16 x, uint16 y);
 static uint16 find_root(uint16 x);
-static uint16 update_res(void);
+static uint16 update_res(uint8 camera_id);
 
-uint16 find_components_two_pass(uint8 *binary_image)
+uint16 find_components_two_pass(uint8 *binary_image, uint8 camera_id)
 {
     // 初始化
     union_find_init();
@@ -125,7 +125,7 @@ uint16 find_components_two_pass(uint8 *binary_image)
     }
 
     // 更新结果数组并返回连通域数量
-    return update_res();
+    return update_res(camera_id);
 }
 
 static void union_find_init(void)
@@ -179,7 +179,7 @@ static void union_sets(uint16 x, uint16 y)
     }
 }
 
-static uint16 update_res(void)
+static uint16 update_res(uint8 camera_id)
 {
     uint16 component_count = 0;
 
@@ -213,6 +213,7 @@ static uint16 update_res(void)
                 // 计算中心点
                 res[component_count].center.x = (dsu_sets[i].bbox.min_x + dsu_sets[i].bbox.max_x) / 2;
                 res[component_count].center.y = (dsu_sets[i].bbox.min_y + dsu_sets[i].bbox.max_y) / 2;
+                res[component_count].camera_id = camera_id;
 
                 component_count++;
             }

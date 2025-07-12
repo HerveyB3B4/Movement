@@ -3,7 +3,7 @@
 
 #include "zf_common_headfile.h"
 
-uint16 find_components_flood_fill(uint8 *binary_image);
+uint16 find_components_flood_fill(uint8 *binary_image, uint8 camera_id);
 Component_Info *get_floodfill_res(void);
 
 #endif
