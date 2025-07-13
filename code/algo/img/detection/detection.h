@@ -15,45 +15,42 @@
 // #define MIN_ASPECT_RATIO 0.2f    // 最小宽高比（防止过细长条）
 // #define MAX_ASPECT_RATIO 5.0f    // 最大宽高比
 // #define MIN_COMPACTNESS 0.1f     // 最小紧凑度（面积/外接矩形面积）
-#define MAX_REGIONS 128          // 最大连通域数量
-#define STACK_SIZE 1024          // 种子填充栈大小
+#define MAX_REGIONS 128 // 最大连通域数量
+#define STACK_SIZE 1024 // 种子填充栈大小
 
 // 连通域检测算法类型
 typedef enum
 {
     ALGORITHM_TWO_PASS,  // 两遍扫描算法（精确，适合复杂场景）
     ALGORITHM_FLOOD_FILL // 种子填充算法（快速，适合简单检测）
-} connected_component_algorithm_enum;
+} Component_AlgorithmEnum;
 
-// 连通域边界框和面积信息
 typedef struct
 {
     uint32 area;         // 面积
     uint16 min_x, max_x; // 边界框
     uint16 min_y, max_y;
-} component_bbox_t;
+} Component_Box;
 
-// 连通域信息
 typedef struct
 {
-    Point center;          // 中心点
-    component_bbox_t bbox; // 边界框和面积信息
-} connected_component_info;
+    Point center;       // 中心点
+    Component_Box bbox; // 边界框和面积信息
+    uint8 camera_id;    // 0 表示前摄，1 表示后摄
+} Component_Info;
 
 // 检测配置
 typedef struct
 {
-    connected_component_algorithm_enum algorithm;
-    connected_component_info *sorted_components_array;
+    Component_AlgorithmEnum algorithm;
+    Component_Info *sorted_components_array;
     uint8 max_components;
 } detection_config_t;
 
-// 主要接口函数
-void detection_init(detection_config_t *config);
-uint8 find_and_sort_components_by_proximity(uint8 *binary_image);
+void detection_init(Component_AlgorithmEnum algo);
+uint16 detection_find_components(uint8 *binary_image, uint8 camera_id, Component_Info *output);
 
-// 检查连通域是否为有效目标
-static inline bool is_valid_target(const connected_component_info *component)
+static inline bool is_valid_target(const Component_Info *component)
 {
     if (!component || component->bbox.area == 0)
         return false;
@@ -91,35 +88,6 @@ static inline bool is_valid_target(const connected_component_info *component)
     //     return false;
 
     return true;
-}
-
-static inline int8 compare_components(const void *a, const void *b)
-{
-    const connected_component_info *comp_a = (const connected_component_info *)a;
-    const connected_component_info *comp_b = (const connected_component_info *)b;
-
-    const int16 center_x = IMG_WIDTH / 2;
-    const int16 center_y = IMG_HEIGHT / 2;
-
-    int32 dx_a = comp_a->center.x - center_x;
-    int32 dy_a = comp_a->center.y - center_y;
-    uint32 dist_sq_a = dx_a * dx_a + dy_a * dy_a;
-
-    int32 dx_b = comp_b->center.x - center_x;
-    int32 dy_b = comp_b->center.y - center_y;
-    uint32 dist_sq_b = dx_b * dx_b + dy_b * dy_b;
-
-    if (dist_sq_a < dist_sq_b)
-        return -1;
-    if (dist_sq_a > dist_sq_b)
-        return 1;
-
-    if (comp_a->bbox.area > comp_b->bbox.area)
-        return -1;
-    if (comp_a->bbox.area < comp_b->bbox.area)
-        return 1;
-
-    return 0;
 }
 
 #endif
