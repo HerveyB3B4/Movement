@@ -6,6 +6,7 @@ static float distance_model(int16 x, int16 y);
 
 float distance_reckon(int16 x, int16 y, float c)
 {
+    // 直线距离估计
     if (x >= (IMG_WIDTH / 2) || y < 0 || y >= IMG_HEIGHT)
     {
         return 0;
@@ -21,10 +22,18 @@ float distance_reckon(int16 x, int16 y, float c)
 
 float distance_reckon_horizontal(int16 x, int16 y, int16 c)
 {
+    // 横向偏移估计
     if (y <= 0)
         return 0;
     float distance = 1.7890 * x + 0.5660 * y + (-0.0010) * x * x + (-0.0012) * y * y + (-0.0126) * x * y + (-35.4742);
     return distance + c;
+}
+
+float distance_reckon_sinyaw(int16 x, int16 y, int16 c)
+{
+    // sin yaw估计，c为补偿项
+    float sin_yaw = sqrt(1 - distance_reckon_horizontal(x, y, c) / distance_reckon(x, y, c));
+    return sin_yaw;
 }
 
 int16 get_image_horizon()

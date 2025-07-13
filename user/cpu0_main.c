@@ -63,9 +63,10 @@ int core0_main(void)
     system_set_runstate(CAR_RUNNING);
     while (TRUE)
     {
-        printf("%f,%d\n",
-               g_control_target.bottom_angle,
-               g_vel_motor.bottom);
+        // printf("%f,%f,%f\n",
+        //        g_control_target.bottom_angle,
+        //        g_control_target.bottom_angle_vel,
+        //        PITCH);
         // printf("%f\n", g_control_target.side_angle);
         // printf("%f\n", get_cpu_freq());
         // printf("%f\n", ROLL_VEL);

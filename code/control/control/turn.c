@@ -21,16 +21,29 @@ int32 get_momentum_diff()
 
 void control_buckling(struct Control_Target *control_target,
                       struct Control_Turn_Manual_Params *control_turn_params,
-                      struct Velocity_Motor *vel_motor)
+                      struct Velocity_Motor *vel_motor,
+                      float distance, float sin_yaw)
 {
+    // 逐飞公式
     // 静态项
-    float state = control_turn_params->buckling_side_state * control_target->turn_err;
+    // float state = control_turn_params->buckling_side_state * control_target->turn_err;
 
-    // 动态项 - 可省略
-    float dynamic = control_turn_params->buckling_side_dynamic * vel_motor->bottom_real * vel_motor->bottom_real * control_target->turn_err;
+    // // 动态项 - 可省略
+    // float dynamic = control_turn_params->buckling_side_dynamic * vel_motor->bottom_real * vel_motor->bottom_real * control_target->turn_err;
 
-    control_target->buckling_side = state + dynamic;
-    // restrictValueI(&control_target->buckling_side, 2000, -2000);
+    // // printf("%f,%f\n", state, dynamic);
+    // control_target->buckling_side = state + dynamic;
+    // restrictValueF(&control_target->buckling_side, 20.0f, -20.0f);
+
+    // 物理公式
+    // 此处 turn err 表示转弯半径
+    float theta = atan2f(vel_motor->bottom_real * vel_motor->bottom_real, GravityAcc * 0.8);
+    // printf("%f,%f\n", theta, vel_motor->bottom_real * vel_motor->bottom_real);
+    control_target->buckling_side = control_turn_params->buckling_side_state * theta;
+
+    // 引入图像偏移
+    // float r = distance / (2.0f * sin_yaw);
+    // theta = atan2f(vel_motor->bottom_real * vel_motor->bottom_real, GravityAcc * r);
 }
 
 void control_turn(struct Control_Target *control_target,
@@ -54,6 +67,7 @@ void control_turn(struct Control_Target *control_target,
     {
         control_flag->turn_err = 0;
         control_turn_error(control_target, control_motion_params);
+        control_buckling(control_target, control_turn_params, vel_motor, 0, 0);
     }
     if (control_flag->turn_angle_vel)
     {
@@ -66,7 +80,7 @@ void control_turn(struct Control_Target *control_target,
     lowPassFilterI(&s_momentum_diff, &last_diff, 0.2f);
     last_diff = s_momentum_diff;
 
-    restrictValueI(&s_momentum_diff, 2000, -2000);
+    restrictValueI(&s_momentum_diff, 1500, -1500);
 
     // control_target->buckling_side = control_turn_params->buckling_side_state * control_target->turn_err;
 }
@@ -91,6 +105,10 @@ static void control_turn_angle_velocity(struct Control_Target *control_target,
 static void control_turn_error(struct Control_Target *control_target,
                                struct Control_Motion_Manual_Parmas *control_motion_params)
 {
+    // printf("%f,%f\n",
+    //        g_control_target.turn_err,
+    //        g_control_target.buckling_side);
+
     static float turn_err_filter[2] = {0}; // err 滤波
     turn_err_filter[1] = turn_err_filter[0];
     turn_err_filter[0] = control_target->turn_err;

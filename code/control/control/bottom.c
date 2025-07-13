@@ -34,6 +34,9 @@ void control_bottom_balance(struct Control_Target *control_target,
     if (control_flag->bottom_vel)
     {
         control_flag->bottom_vel = 0;
+        // uint32 start = system_getval_us();
+        // uint32 end = system_getval_us();
+        // printf("%d\n", end - start);
         control_bottom_velocity(vel_motor, control_target, control_motion_params, control_turn_params);
     }
     if (control_flag->bottom_angle)
@@ -65,6 +68,8 @@ void control_bottom_balance(struct Control_Target *control_target,
     //     }
     // }
 
+    // s_bottom_balance_duty = control_target->bottom_angle * 100;
+
     if (s_bottom_balance_duty > 0)
     {
         s_bottom_balance_duty += bottom_motor_deadzone_forward;
@@ -86,10 +91,16 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
                                     struct Control_Motion_Manual_Parmas *control_motion_params,
                                     struct Control_Turn_Manual_Params *control_turn_params)
 {
+    velocity_update_bottom(vel_motor);
+    // printf("%d,%f,%f\n",
+    //        g_vel_motor.bottom,
+    //        g_control_target.bottom_angle,
+    //        g_control_target.bottom_vel);
+
     control_target->bottom_angle = control_motion_params->bottom_velocity_polarity *
                                    PID_calc_Position(
                                        &bottom_velocity_PID,
-                                       vel_motor->bottom,
+                                       (float)vel_motor->bottom,
                                        control_target->bottom_vel);
 
     // control_target->bottom_angle =
@@ -143,7 +154,7 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
                                            &bottom_angle_PID,
                                            angleControlFilter[0] - euler_angle_bias->pitch,
                                            control_target->bottom_angle,
-                                           PITCH_VEL);
+                                           -PITCH_VEL);
 
     if (g_control_output_fa_flag != 0)
     {

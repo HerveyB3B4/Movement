@@ -61,7 +61,7 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,
     // g_pit_ccu60_ch0_cnt++;
     // velocity_update(&g_vel_motor);
     velocity_update_side(&g_vel_motor);
-    velocity_update_bottom(&g_vel_motor);
+    // velocity_update_bottom(&g_vel_motor);
 }
 
 IFX_INTERRUPT(cc60_pit_ch1_isr,
@@ -102,11 +102,11 @@ IFX_INTERRUPT(cc61_pit_ch1_isr,
     pit_clear_flag(CCU61_CH1);
 
     g_pit_ccu61_ch1_cnt++;
-
     if (run_state == CAR_RUNNING)
     {
         // 控制
         // guide_receiver();
+
         guide_receiver(&g_control_target);
         // guide_to_target(&g_control_target);
         system_control_timer();

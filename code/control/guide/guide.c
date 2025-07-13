@@ -317,11 +317,53 @@ int16 get_guide_target_turn(void)
 void guide_receiver(struct Control_Target *control_target)
 {
     // 直接更新目标
+    static uint32 cnt = 0;
+    // if (cnt < 3000)
+    // {
+    //     guide_target_vel = 30;
+    // }
+    // else if (cnt >= 3000 && cnt < 6000)
+    // {
+    //     guide_target_vel = -30;
+    // }
+    // else
+    // {
+    //     // guide_target_vel = 0;
+    //     cnt = 0;
+    // }
+    // cnt++;
     control_target->bottom_vel = (float)guide_target_vel;
-    control_target->turn_err = g_turn_error;
-    // AI:
-    // control_target->bottom_vel = (float)guide_target_vel;
-    // g_turn_error 应该由 guide_set_target_turn 更新
+    // if (cnt <= 1000)
+    // {
+    //     guide_target_turn = 0; // 前1000次不转向
+    // }
+    // else
+    // {
+    //     guide_target_turn = 50.0f;
+    // }
+    // else
+    // {
+    //     // 从1001开始，每2000次变换一次方向
+    //     uint32 cycle_position = (cnt - 1001) % 4000;
+    //     if (cycle_position < 2000)
+    //     {
+    //         guide_target_turn = 50; // 第一个2000次周期，向右转
+    //     }
+    //     else
+    //     {
+    //         guide_target_turn = -50; // 第二个2000次周期，向左转
+    //     }
+    // }
+    // cnt++;
+
+    control_target->turn_err = (float)guide_target_turn;
+    // printf("%f,%d\n", control_target->turn_err, cnt);
+    // if (abs(g_vel_motor.bottom) > 50)
+    //     control_target->bottom_vel = 2;
+    // else if (abs(g_vel_motor.bottom) <= 50)
+    //     control_target->bottom_vel = (float)guide_target_vel;
+    // if (abs(g_vel_motor.bottom) > 50)
+    //     control_target->turn_err = (float)guide_target_turn;
 }
 
 void guide_position_pid(struct Control_Target *control_target, Point *target)

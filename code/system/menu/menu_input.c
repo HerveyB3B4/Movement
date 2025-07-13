@@ -156,14 +156,14 @@ void menu_get_params(
     control_time->side[1] = g_menu_manual_param.SideControlTimeParameter[1]; // SA
     control_time->side[2] = g_menu_manual_param.SideControlTimeParameter[2]; // SV
 
-    guide_set_target_vel(g_menu_manual_param.bottom_velocity * 10);
-    guide_set_target_turn(g_menu_manual_param.turn_target);
+    guide_set_target_vel(g_menu_manual_param.bottom_velocity);
+    guide_set_target_turn(g_menu_manual_param.turn_target * 0.01f);
     side_set_internal_diff(g_menu_manual_param.side_internal_diff);
 
     control_turn_params->buckling_side_state =
-        g_menu_manual_param.buckling_side_state * 0.01f;
+        g_menu_manual_param.buckling_side_state * 0.1f;
     control_turn_params->buckling_side_dynamic =
-        g_menu_manual_param.buckling_side_dynamic * 0.01f;
+        g_menu_manual_param.buckling_side_dynamic * 0.001f;
     control_turn_params->buckling_front_coefficient =
         g_menu_manual_param.buckling_front_coefficient * 0.1f;
 

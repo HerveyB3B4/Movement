@@ -67,7 +67,7 @@ typedef struct
     float YawAngleLast;
 } QEKF_INS_t;
 
-extern QEKF_INS_t QEKF_INS;
+// extern QEKF_INS_t QEKF_INS;
 extern float chiSquare;
 extern float ChiSquareTestThreshold;
 

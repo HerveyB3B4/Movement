@@ -35,12 +35,12 @@ void test_bottom_motor()
         if (keymsg.key == KEY_U) // 向前
         {
             gpio_set_level(DIR_BOTTOM, 1);
-            pwm_set_duty(MOTOR_BOTTOM, 10000);
+            pwm_set_duty(MOTOR_BOTTOM, 2000);
         }
         if (keymsg.key == KEY_D) // 向后
         {
             gpio_set_level(DIR_BOTTOM, 0);
-            pwm_set_duty(MOTOR_BOTTOM, 8000);
+            pwm_set_duty(MOTOR_BOTTOM, 3000);
         }
         lcd_show_int(0, 5, g_vel_motor.bottom, 5);
         lcd_show_float(0, 6, g_vel_motor.bottom_real, 5, 5);

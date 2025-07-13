@@ -47,7 +47,6 @@ void control_side_balance(
     if (control_flag->side_vel)
     {
         control_flag->side_vel = 0;
-        velocity_update_side(vel_motor);
         control_side_velocity(vel_motor, control_target, control_turn_params, control_motion_params);
     }
 
@@ -167,7 +166,7 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
     momentumAngleFilter[1] = momentumAngleFilter[0];
     momentumAngleFilter[0] = -ROLL_VEL;
     // noiseFilter(momentumAngleFilter[0],0.02f);
-    // lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.3f);
+    lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.5f);
 
     control_target->side_angle_vel = control_motion_params->side_angle_polarity *
                                      PID_calc_Position_Gyro_D(
