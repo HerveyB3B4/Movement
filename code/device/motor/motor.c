@@ -1,7 +1,7 @@
 #include "motor.h"
 #include "single_driver.h"
 
-uint32 bottom_motor_deadzone_backword = 430;
+uint32 bottom_motor_deadzone_backword = 240;
 uint32 bottom_motor_deadzone_forward = 240;
 void motor_init()
 {

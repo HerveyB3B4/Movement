@@ -65,4 +65,15 @@ static inline int8 compare_components(const void *a, const void *b)
     return 0;
 }
 
+void state_machine_init(Camera_Mode mode);
+void state_machine_set_runstate(Run_State state);
+void state_machine_imghandler(void);
+
+// 新增的函数声明
+uint32 state_machine_get_component_count(void);
+Component_Info *state_machine_get_components(void);
+Run_State state_machine_get_state(void);
+void state_machine_set_search_turn_speed(int32 speed);
+void state_machine_set_no_target_timeout(uint32 timeout);
+
 #endif

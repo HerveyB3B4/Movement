@@ -327,30 +327,15 @@ void guide_receiver(struct Control_Target *control_target)
     // }
     // cnt++;
     control_target->bottom_vel = (float)guide_target_vel;
-    // if (cnt <= 1000)
-    // {
-    //     guide_target_turn = 0; // 前1000次不转向
-    // }
+    // if (cnt < 5000)
+    //     guide_target_turn = 0;
+    // // if (cnt % 500 == 0 && guide_target_turn < 100)
+    // //     guide_target_turn += 10;
     // else
-    // {
-    //     guide_target_turn = 50.0f;
-    // }
-    // else
-    // {
-    //     // 从1001开始，每2000次变换一次方向
-    //     uint32 cycle_position = (cnt - 1001) % 4000;
-    //     if (cycle_position < 2000)
-    //     {
-    //         guide_target_turn = 50; // 第一个2000次周期，向右转
-    //     }
-    //     else
-    //     {
-    //         guide_target_turn = -50; // 第二个2000次周期，向左转
-    //     }
-    // }
-    // cnt++;
+    //     guide_target_turn = 30;
+    cnt++;
 
-    // control_target->turn_err = (float)guide_target_turn;
+    control_target->turn_err = (float)guide_target_turn;
     // printf("%f,%d\n", control_target->turn_err, cnt);
     // if (abs(g_vel_motor.bottom) > 50)
     //     control_target->bottom_vel = 2;

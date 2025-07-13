@@ -26,20 +26,20 @@ void control_buckling(struct Control_Target *control_target,
 {
     // 逐飞公式
     // 静态项
-    // float state = control_turn_params->buckling_side_state * control_target->turn_err;
+    float state = control_turn_params->buckling_side_state * control_target->turn_err;
 
-    // // 动态项 - 可省略
-    // float dynamic = control_turn_params->buckling_side_dynamic * vel_motor->bottom_real * vel_motor->bottom_real * control_target->turn_err;
+    // 动态项 - 可省略
+    float dynamic = control_turn_params->buckling_side_dynamic * vel_motor->bottom_real * vel_motor->bottom_real * control_target->turn_err;
 
-    // // printf("%f,%f\n", state, dynamic);
-    // control_target->buckling_side = state + dynamic;
-    // restrictValueF(&control_target->buckling_side, 20.0f, -20.0f);
+    // printf("%f,%f\n", state, dynamic);
+    control_target->buckling_side = state + dynamic;
+    restrictValueF(&control_target->buckling_side, 10.0f, -10.0f);
 
     // 物理公式
     // 此处 turn err 表示转弯半径
-    float theta = atan2f(vel_motor->bottom_real * vel_motor->bottom_real, GravityAcc * 0.8);
+    // float theta = atan2f(vel_motor->bottom_real * vel_motor->bottom_real, GravityAcc * 0.20);
     // printf("%f,%f\n", theta, vel_motor->bottom_real * vel_motor->bottom_real);
-    control_target->buckling_side = control_turn_params->buckling_side_state * theta;
+    // control_target->buckling_side = control_turn_params->buckling_side_state * theta;
 
     // 引入图像偏移
     // float r = distance / (2.0f * sin_yaw);
