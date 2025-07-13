@@ -350,7 +350,7 @@ void guide_receiver(struct Control_Target *control_target)
     // }
     // cnt++;
 
-    control_target->turn_err = (float)guide_target_turn;
+    // control_target->turn_err = (float)guide_target_turn;
     // printf("%f,%d\n", control_target->turn_err, cnt);
     // if (abs(g_vel_motor.bottom) > 50)
     //     control_target->bottom_vel = 2;

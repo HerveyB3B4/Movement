@@ -172,7 +172,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[0] = PITCH_VEL;
 
     s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity *
-                            (PID_calc_Position(
+                            (PID_calc_DELTA(
                                 &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
                                 control_target->bottom_angle_vel));
     if (g_control_output_fav_flag != 0)

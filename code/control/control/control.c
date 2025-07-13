@@ -167,7 +167,7 @@ static void control_init_preset(struct Control_Motion_Manual_Parmas *control_mot
     // float bottom_angle_pid[3] = {0.8, 0.0, 0.09};
     // float bottom_velocity_pid[3] = {0.15, 0.000009, 2};
 
-    float bottom_angle_velocity_pid[3] = {18, 4.0, 0.5};
+    float bottom_angle_velocity_pid[3] = {18, 4.5, 0.5};
     float bottom_angle_pid[3] = {0.8, 0.0, 0.09};
     float bottom_velocity_pid[3] = {0.3, 0.000045, 4.5};
 
