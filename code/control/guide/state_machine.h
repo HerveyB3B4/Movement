@@ -7,9 +7,10 @@
 
 typedef enum
 {
-    STATE_SEARCHING,   // 状态：寻找目标
-    STATE_APPROACHING, // 状态：接近目标
-    STATE_CIRCLING,    // 状态：环绕目标
+    STATE_SEARCHING, // 状态：寻找目标
+    STATE_TURNING,   // 低速转向
+    STATE_TRACKING,  // 状态：加速靠近目标
+    STATE_CLOSE      // 接近目标减速
 } Run_State;
 
 typedef enum
@@ -66,14 +67,18 @@ static inline int8 compare_components(const void *a, const void *b)
 }
 
 void state_machine_init(Camera_Mode mode);
-void state_machine_set_runstate(Run_State state);
+
 void state_machine_imghandler(void);
 
-// 新增的函数声明
+void state_machine_set_state(Run_State state);
+
 uint32 state_machine_get_component_count(void);
+
 Component_Info *state_machine_get_components(void);
+
 Run_State state_machine_get_state(void);
-void state_machine_set_search_turn_speed(int32 speed);
-void state_machine_set_no_target_timeout(uint32 timeout);
+
+// 获取前摄像头处理后的二值图像
+uint8 *state_machine_get_front_img(void);
 
 #endif

@@ -15,7 +15,7 @@
 // #define MIN_ASPECT_RATIO 0.2f    // 最小宽高比（防止过细长条）
 // #define MAX_ASPECT_RATIO 5.0f    // 最大宽高比
 // #define MIN_COMPACTNESS 0.1f     // 最小紧凑度（面积/外接矩形面积）
-#define MAX_REGIONS 128 // 最大连通域数量
+#define MAX_REGIONS 20  // 最大连通域数量
 #define STACK_SIZE 1024 // 种子填充栈大小
 
 // 连通域检测算法类型

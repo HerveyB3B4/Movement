@@ -24,5 +24,7 @@ void test_dual_camera(void);
 void test_cpu_freq(void);
 void test_navigation(void);
 void test_dual_camera_logic(void);
+void test_image();
+void test_exposure();
 
 #endif

@@ -7,6 +7,7 @@
 #include "system.h"
 #include "test.h"
 #include "guide.h"
+#include "camera.h"
 
 //======================================================================================================================
 typedef struct MENU_TABLE MENU_TABLE; // 菜单执行
@@ -89,6 +90,8 @@ uint32 *EEPROM_DATA_UINT[] = {
     (uint32 *)(&g_control_output_fav_flag),
     (uint32 *)(&g_show_run_param_flag),
     (uint32 *)(&g_menu_manual_param.angle_limit),
+    (uint32 *)(&g_camera_exp_time_def),
+    (uint32 *)(&g_camera_gain_def),
 };
 
 int32 *EEPROM_DATA_INT[] = {
@@ -394,6 +397,14 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_dual_camera_logic}},
+    {(uint8 *)"Image",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_image}},
+    {(uint8 *)"Exposure",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_exposure}},
 };
 
 MENU_TABLE Utils_MenuTable[] = {
@@ -439,6 +450,17 @@ MENU_TABLE Setting_MenuTable[] = {
     {(uint8 *)"fav_output",
      {.INT32 = (int32 *)&g_control_output_fav_flag},
      Param_Int,
+     {.ItemFunc = Menu_Null}},
+};
+
+MENU_TABLE Camera_MenuTable[] = {
+    {(uint8 *)"exp_time",
+     {.UINT32 = (uint32 *)&g_camera_exp_time_def},
+     Param_Uint,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"gain",
+     {.UINT32 = (uint32 *)&g_camera_gain_def},
+     Param_Uint,
      {.ItemFunc = Menu_Null}},
 };
 
@@ -491,6 +513,10 @@ MENU_TABLE MainMenu_Table[] = {
      {.SubMenu = Setting_MenuTable},
      Sub_Menus,
      {.SubMenuNum = MenuNum(Setting_MenuTable)}},
+    {(uint8 *)"8.CAMERA",
+     {.SubMenu = Camera_MenuTable},
+     Sub_Menus,
+     {.SubMenuNum = MenuNum(Camera_MenuTable)}},
 };
 
 /******************************************************************************

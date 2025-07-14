@@ -16,6 +16,8 @@
 #include "distance.h"
 #include "diode.h"
 #include "YawIntegral.h"
+#include "state_machine.h"
+
 // #include "ins_core.h"
 // #include "waypoint_manager.h"
 
@@ -900,93 +902,105 @@ void test_cpu_freq()
 
 void test_dual_camera_logic()
 {
-//     lcd_clear();
+    lcd_clear();
+    state_machine_init(SINGLE_CAMERA);
+    while (keymsg.key != KEY_L)
+    {
+        state_machine_imghandler();
+        uint8 *bimg = state_machine_get_front_img();
+        Component_Info *res = state_machine_get_components();
+        lcd_show_image(bimg, IMG_WIDTH, IMG_HEIGHT, 0);
+        lcd_show_int(0, 7, res->bbox.area, 5);
+        lcd_show_int(6, 7, res->center.x, 5);
+    }
+}
 
-//     // 初始化状态机
-//     state_machine_context_t sm;
-//     state_machine_init(&sm);
+void test_image()
+{
+    lcd_clear();
 
-//     // 为前后摄像头分别创建二值化图像缓冲区
-// #pragma section all "cpu1_dsram"
-//     static uint8 binary_front[IMG_WIDTH * IMG_HEIGHT];
-//     static uint8 binary_rear[IMG_WIDTH * IMG_HEIGHT];
-// #pragma section all restore
+    while (keymsg.key != KEY_L)
+    {
+        if (mt9v03x_finish_flag)
+        {
+            mt9v03x_finish_flag = 0;
+            lcd_show_image(mt9v03x_image, MT9V03X_W, MT9V03X_H, 0);
+        }
+    }
+    lcd_clear();
+}
 
-//     while (keymsg.key != KEY_L)
-//     {
-//         // 等待两个摄像头的图像帧都准备好
-//         if (mt9v03x_finish_flag && mt9v03x2_finish_flag)
-//         {
-//             mt9v03x_finish_flag = 0;
-//             mt9v03x2_finish_flag = 0;
+void test_exposure()
+{
+    lcd_clear();
 
-//             // 对两个摄像头的图像进行二值化
-//             binary_otsu(mt9v03x_image[0], binary_front);
-//             binary_otsu(mt9v03x2_image[0], binary_rear);
+    // 初始化曝光和增益值
+    uint16 exposure_time = 512; // 默认曝光时间
+    uint16 gain = 32;           // 默认增益值
+    uint8 last_key = KEY_NONE;  // 记录上一次按键状态，用于防止按住时重复执行
 
-//             // 运行状态机，传入两个图像
-//             state_machine_run(&sm, binary_front, binary_rear);
+    while (keymsg.key != KEY_B)
+    {
+        // 检查按键状态并处理
+        if (keymsg.key != last_key)
+        {
+            // 按键状态变化，进行操作
+            last_key = keymsg.key;
 
-//             // --- 可视化 ---
-//             connected_component_info active_target = sm.current_target;
-//             active_camera_t active_cam = sm.active_camera;
+            if (keymsg.key == KEY_U)
+            {
+                exposure_time += 10;       // 增加曝光时间
+                if (exposure_time > 65500) // 防止溢出
+                    exposure_time = 65500;
 
-//             // 在被选中的目标图像上绘制标定框
-//             if (active_target.bbox.area > 0)
-//             {
-//                 uint8 *active_buffer = (active_cam == CAM_FRONT) ? binary_front : binary_rear;
-//                 uint16 width = active_target.bbox.max_x - active_target.bbox.min_x;
-//                 uint16 height = active_target.bbox.max_y - active_target.bbox.min_y;
-//                 draw_rectangle(active_buffer, active_target.bbox.min_x, active_target.bbox.min_y, width, height, 128);
-//                 draw_cross(active_buffer, active_target.center, 5, 200);
-//             }
+                // 使用摄像头API设置曝光时间
+                unsigned char mt9v03x_set_exposure_time_sccb(unsigned short int light);
+                mt9v03x_set_exposure_time_sccb(exposure_time);
+            }
+            else if (keymsg.key == KEY_D)
+            {
+                if (exposure_time >= 10) // 防止负值
+                    exposure_time -= 10; // 减少曝光时间
 
-//             // 显示两个摄像头的图像 (缩小一半以并排显示)
-//             tft180_show_gray_image(0, 0, binary_front, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
-//             tft180_show_gray_image(0, tft180_height_max - MT9V03X_H / 2, binary_rear, MT9V03X_W, MT9V03X_H, MT9V03X_W / 2, MT9V03X_H / 2, 0);
+                // 使用摄像头API设置曝光时间
+                unsigned char mt9v03x_set_exposure_time_sccb(unsigned short int light);
+                mt9v03x_set_exposure_time_sccb(exposure_time);
+            }
+            else if (keymsg.key == KEY_R)
+            {
+                gain += 1;     // 增加增益
+                if (gain > 64) // 增益范围是16-64
+                    gain = 64;
 
-//             // 显示状态机信息
-//             char state_str[20];
-//             switch (sm.current_state)
-//             {
-//             case STATE_SEARCHING:
-//                 strcpy(state_str, "SEARCH ");
-//                 break;
-//             case STATE_APPROACHING_TARGET:
-//                 strcpy(state_str, "APPROACH");
-//                 break;
-//             case STATE_CIRCLING_TARGET:
-//                 strcpy(state_str, " CIRCLE ");
-//                 break;
-//             default:
-//                 strcpy(state_str, " UNKNOWN");
-//                 break;
-//             }
-//             lcd_show_string(12, 0, state_str);
+                // 使用摄像头API设置增益
+                mt9v03x_set_reg_sccb(0x35, gain);
+            }
+            else if (keymsg.key == KEY_L)
+            {
+                if (gain > 16) // 增益范围是16-64
+                    gain -= 1; // 减少增益
 
-//             // 显示目标信息
-//             if (active_target.bbox.area > 0)
-//             {
-//                 if (active_cam == CAM_FRONT)
-//                 {
-//                     lcd_show_string(12, 1, "  FRONT ");
-//                 }
-//                 else
-//                 {
-//                     lcd_show_string(12, 1, "  REAR  ");
-//                 }
-//                 lcd_show_string(12, 2, "X:      ");
-//                 lcd_show_int(14, 2, active_target.center.x, 3);
-//                 lcd_show_string(12, 3, "Y:      ");
-//                 lcd_show_int(14, 3, active_target.center.y, 3);
-//             }
-//             else
-//             {
-//                 lcd_show_string(12, 1, "No targe");
-//                 lcd_show_string(12, 2, "t found ");
-//                 lcd_show_string(12, 3, "in sight");
-//             }
-//         }
-//     }
-//     lcd_clear();
+                // 使用摄像头API设置增益
+                mt9v03x_set_reg_sccb(0x35, gain);
+            }
+        }
+        else if (keymsg.key == KEY_NONE)
+        {
+            // 按键释放时重置last_key
+            last_key = KEY_NONE;
+        }
+
+        // 显示当前参数
+        lcd_show_uint(0, 7, exposure_time, 5);
+        lcd_show_uint(7, 7, gain, 5);
+
+        // 显示图像
+        if (mt9v03x_finish_flag)
+        {
+            mt9v03x_finish_flag = 0;
+            lcd_show_image(mt9v03x_image, MT9V03X_W, MT9V03X_H, 0);
+        }
+    }
+
+    lcd_clear();
 }

@@ -26,7 +26,7 @@ void system_init()
     small_driver_uart_init();
     encoder_init();
     lcd_init();
-    // mt9v03x_init();
+    mt9v03x_init();
     // mt9v03x2_init();
     imu_init();
     // receiver_init();
@@ -61,6 +61,7 @@ void system_init()
     menu_get_params(&g_euler_angle_bias, &g_control_time,
                     &g_control_turn_manual_params, &g_control_motion_params);
 
+    camera_config(); // 配置摄像头参数
     // control init
     control_init(&g_control_motion_params);
 }
