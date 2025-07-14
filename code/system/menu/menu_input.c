@@ -157,7 +157,7 @@ void menu_get_params(
     control_time->side[2] = g_menu_manual_param.SideControlTimeParameter[2]; // SV
 
     guide_set_target_vel(g_menu_manual_param.bottom_velocity);
-    guide_set_target_turn(g_menu_manual_param.turn_target * 0.01f);
+    guide_set_target_turn(g_menu_manual_param.turn_target);
     side_set_internal_diff(g_menu_manual_param.side_internal_diff);
 
     control_turn_params->buckling_side_state =

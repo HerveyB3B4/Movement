@@ -22,7 +22,7 @@ typedef enum
 // 面积比较的容差
 #define AREA_TOLERANCE 10
 // 距离平方比较的容差
-#define DISTANCE_SQ_TOLERANCE 5
+#define ERROR_TOLERANCE 5
 
 #define abs(x) ((x) > 0 ? (x) : -(x))
 
@@ -43,27 +43,16 @@ static inline int8 compare_components(const void *a, const void *b)
     const int16 center_y = IMG_HEIGHT / 2;
 
     int32 dx_a = comp_a->center.x - center_x;
-    int32 dy_a = comp_a->center.y - center_y;
-    uint32 dist_sq_a = dx_a * dx_a + dy_a * dy_a;
-
     int32 dx_b = comp_b->center.x - center_x;
-    int32 dy_b = comp_b->center.y - center_y;
-    uint32 dist_sq_b = dx_b * dx_b + dy_b * dy_b;
 
-    int32 dist_sq_diff = (int32)dist_sq_a - (int32)dist_sq_b;
-    if (abs(dist_sq_diff) > DISTANCE_SQ_TOLERANCE)
+    int32 dist_sq_diff = (int32)dx_a - (int32)dx_b;
+    if (abs(dist_sq_diff) > ERROR_TOLERANCE)
     {
-        // 距离近的排在前面
         return (dist_sq_diff < 0) ? -1 : 1;
     }
 
     // 第三关键字：前置摄像头优先于后置摄像头
-    if (comp_a->camera_id != comp_b->camera_id)
-    {
-        return (comp_a->camera_id < comp_b->camera_id) ? -1 : 1;
-    }
-
-    return 0;
+    return (comp_a->camera_id < comp_b->camera_id) ? -1 : 1;
 }
 
 void state_machine_init(Camera_Mode mode);

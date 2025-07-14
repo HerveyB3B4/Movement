@@ -4,8 +4,8 @@
 #include "Attitude.h"
 #include "camera.h"
 
-const uint32 BOUNDARY_AREA = 20; // 临界面积大小，确定是否进入下一个状态
-const uint32 BOUNDARY_H = 80;    // 临界高度，确定是否进入下一个状态
+const uint32 BOUNDARY_AREA = 450; // 临界面积大小，确定是否进入下一个状态
+const uint32 BOUNDARY_H = 105;    // 临界高度，确定是否进入下一个状态
 
 const int32 TRACKING_SPEED = -34;
 const int32 SEARCHING_SPEED = -10;
@@ -37,7 +37,7 @@ void state_machine_init(Camera_Mode mode)
 {
     curr_state = STATE_SEARCHING;
     curr_camera_mode = mode;
-    detection_init(ALGORITHM_TWO_PASS);
+    detection_init(ALGORITHM_FLOOD_FILL);
     no_target_counter = 0;
 }
 
@@ -57,7 +57,7 @@ void state_machine_imghandler()
 
     // 检查目标并处理转向逻辑
     state_machine_check_targets();
-    lcd_show_int(0, 7, curr_state, 1);
+    // lcd_show_int(0, 7, curr_state, 1);
 }
 
 static void state_machine_single_handler()
@@ -79,11 +79,18 @@ static void state_machine_single_handler()
                 }
             }
         }
-        draw_Hline(binary_front, horizon_line, RGB565_WHITE); // 在图像上画地平线
-        lcd_show_image(binary_front, IMG_WIDTH, IMG_HEIGHT, 0);
+
         component_count = detection_find_components(binary_front, 0, results); // 前摄像头
         // 排序
         qsort(results, component_count, sizeof(Component_Info), compare_components);
+
+        draw_cross(binary_front, results[0].center, 60, RGB565_WHITE);
+        draw_Hline(binary_front, horizon_line, RGB565_WHITE); // 在图像上画地平线
+        lcd_show_int(0, 7, results[0].center.x, 3);
+        lcd_show_int(4, 7, results[0].center.y, 3);
+        lcd_show_int(8, 7, results[0].bbox.min_x, 3);
+        lcd_show_int(12, 7, results[0].bbox.max_x, 3);
+        lcd_show_image(binary_front, IMG_WIDTH, IMG_HEIGHT, 0);
 
         // reset status
         mt9v03x_finish_flag = 0;
@@ -119,7 +126,8 @@ static void state_machine_check_targets(void)
 {
     if (component_count == 0 ||
         (component_count > 0 && results[0].center.x == -1 && results[0].center.y == -1) ||
-        results[0].bbox.area <= 5)
+        (results[0].center.x == 0 && results[0].center.y == 0) || // 添加检测坐标(0,0)的条件
+        results[0].bbox.area <= 2)
     {
         // 如果没有检测到目标，增加无目标计数器
         no_target_counter++;
