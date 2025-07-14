@@ -10,6 +10,7 @@ const int32 TRACKING_SPEED = -34;
 const int32 SEARCHING_SPEED = -10;
 const int32 TURNING_SPEED = -20;
 const int32 CLOSE_SPEED = -6;
+const uint32 SEARCHING_TURN_ERROR = 50;
 
 static Run_State curr_state;
 static Camera_Mode curr_camera_mode = SINGLE_CAMERA;
@@ -145,31 +146,22 @@ void state_machine_set_state(Run_State state)
     {
     case STATE_TURNING:
         // 低速转向对准目标
-        guide_set_target_vel(8); // 降低速度以便更精确地转向
+        guide_set_target_vel(TURNING_SPEED); // 降低速度以便更精确地转向
         // 根据目标位置调整转向，偏差越大转向越大
         int32 turn_amount = results[0].center.x - IMG_WIDTH / 2;
-        if (abs(turn_amount) > 40)
-        {
-            // 目标偏离较大，加大转向力度
-            guide_set_target_turn(turn_amount * 1.2);
-        }
-        else
-        {
-            guide_set_target_turn(turn_amount);
-        }
+        guide_set_target_turn(turn_amount);
+
         break;
 
     case STATE_TRACKING:
         // 转向对准后加速前进追踪目标
-        guide_set_target_vel(34); // 提高速度追踪目标
+        guide_set_target_vel(TRACKING_SPEED); // 提高速度追踪目标
         // 保持小幅度的转向修正，确保目标居中
         guide_set_target_turn((results[0].center.x - IMG_WIDTH / 2) * 0.3);
         break;
 
     case STATE_CLOSE:
-        // 接近目标时减速并根据目标位置进行更精确的控制
-        guide_set_target_vel(6); // 降低速度以便精确操作
-
+        guide_set_target_vel(CLOSE_SPEED); // 接近目标时减速
         int32 offset = results[0].center.x - IMG_WIDTH / 2;
         if (abs(offset) > 20)
         {
@@ -178,23 +170,22 @@ void state_machine_set_state(Run_State state)
         }
         else
         {
-            // 偏离较小时进行微调
             guide_set_target_turn(offset * 0.5);
         }
         break;
 
     case STATE_SEARCHING:
     default:
-        // 搜索状态：低速转圈寻找目标
+        // 低速转圈寻找目标
         guide_set_target_vel(10); // 搜索时保持适中速度
         // 使用Roll角度来确定转向方向，避免一直往一个方向转
         if (ROLL >= 0)
         {
-            guide_set_target_turn(search_turn_speed);
+            guide_set_target_turn(SEARCHING_TURN_ERROR);
         }
         else
         {
-            guide_set_target_turn(-search_turn_speed);
+            guide_set_target_turn(-SEARCHING_TURN_ERROR);
         }
         break;
     }
