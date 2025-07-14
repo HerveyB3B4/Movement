@@ -26,14 +26,14 @@ void control_buckling(struct Control_Target *control_target,
 {
     // 逐飞公式
     // 静态项
-    float state = control_turn_params->buckling_side_state * control_target->turn_err;
+    // float state = control_turn_params->buckling_side_state * control_target->turn_err;
 
-    // 动态项 - 可省略
-    float dynamic = control_turn_params->buckling_side_dynamic * vel_motor->bottom_real * vel_motor->bottom_real * control_target->turn_err;
+    // // 动态项 - 可省略
+    // float dynamic = control_turn_params->buckling_side_dynamic * vel_motor->bottom_real * vel_motor->bottom_real * control_target->turn_err;
 
-    // printf("%f,%f\n", state, dynamic);
-    control_target->buckling_side = state + dynamic;
-    restrictValueF(&control_target->buckling_side, 10.0f, -10.0f);
+    // // printf("%f,%f\n", state, dynamic);
+    // control_target->buckling_side = state + dynamic;
+    // restrictValueF(&control_target->buckling_side, 10.0f, -10.0f);
 
     // 物理公式
     // 此处 turn err 表示转弯半径
@@ -44,6 +44,14 @@ void control_buckling(struct Control_Target *control_target,
     // 引入图像偏移
     // float r = distance / (2.0f * sin_yaw);
     // theta = atan2f(vel_motor->bottom_real * vel_motor->bottom_real, GravityAcc * r);
+
+    // test
+    float v = vel_motor->bottom_filtered / V_KALMAN_MULTIPLE;
+    if (v < 0)
+        v = 0; // 这个需检查方向
+    float x = (float)control_target->turn_angle_vel * 0.1f * logf(v + 2);
+    control_target->buckling_side = control_turn_params->buckling_side_state * x;
+    restrictValueF(&control_target->buckling_side, 15.0f, -15.0f);
 }
 
 void control_turn(struct Control_Target *control_target,
@@ -53,9 +61,10 @@ void control_turn(struct Control_Target *control_target,
                   //   struct EulerAngle *euler_angle_bias,
                   struct Velocity_Motor *vel_motor)
 {
-    // if (control_flag->turn) {
+    // if (control_flag->turn)
+    // {
     //     control_flag->turn = 0;
-    //     TurnCurvatureControl();
+    //     control_buckling(control_target, control_turn_params, vel_motor, 0, 0);
     // }
     // if (control_flag->turn_vel)
     // {
@@ -67,12 +76,13 @@ void control_turn(struct Control_Target *control_target,
     {
         control_flag->turn_err = 0;
         control_turn_error(control_target, control_motion_params);
-        control_buckling(control_target, control_turn_params, vel_motor, 0, 0);
+        // control_buckling(control_target, control_turn_params, vel_motor, 0, 0);
     }
     if (control_flag->turn_angle_vel)
     {
         control_flag->turn_angle_vel = 0;
         control_turn_angle_velocity(control_target, control_motion_params);
+        control_buckling(control_target, control_turn_params, vel_motor, 0, 0);
     }
 
     // diff 滤波

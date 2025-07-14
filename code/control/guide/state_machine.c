@@ -4,8 +4,8 @@
 #include "Attitude.h"
 #include "camera.h"
 
-const uint32 BOUNDARY_AREA = 450; // 临界面积大小，确定是否进入下一个状态
-const uint32 BOUNDARY_H = 105;    // 临界高度，确定是否进入下一个状态
+const uint32 BOUNDARY_AREA = 450; // 临界面积大小
+const uint32 BOUNDARY_H = 105;    // 临界y坐标
 
 const int32 TRACKING_SPEED = -34;
 const int32 SEARCHING_SPEED = -10;
@@ -121,7 +121,6 @@ static void state_machine_dual_handler()
     }
 }
 
-// 检查目标并处理无目标时的转向逻辑
 static void state_machine_check_targets(void)
 {
     if (component_count == 0 ||
