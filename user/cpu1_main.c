@@ -41,47 +41,23 @@
 #include "velocity.h"
 #include "receiver.h"
 #include "zf_common_headfile.h"
+#include "state_machine.h"
 
 #pragma section all "cpu1_dsram"
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU1的RAM中
 
-// 本例程是开源库空工程 可用作移植或者测试各类内外设
-// 本例程是开源库空工程 可用作移植或者测试各类内外设
-// 本例程是开源库空工程 可用作移植或者测试各类内外设
-
-// **************************** 代码区域 ****************************
 void core1_main(void)
 {
     disable_Watchdog();         // 关闭看门狗
     interrupt_global_enable(0); // 打开全局中断
-    // 此处编写用户代码 例如外设初始化代码等
 
-    // 此处编写用户代码 例如外设初始化代码等
-    cpu_wait_event_ready(); // 等待所有核心初始化完毕
+    state_machine_init(SINGLE_CAMERA);
+
+    cpu_wait_event_ready();
 
     while (TRUE)
     {
-        // lcd_show_float(0, 0, bottom_angle_PID.Kp, 3, 3);
-        // lcd_show_float(0, 1, bottom_angle_PID.Ki, 3, 3);
-        // lcd_show_float(0, 2, bottom_angle_PID.Kd, 3, 3);
-        // lcd_show_float(0, 1, get_cpu_freq(), 3, 3);
-        // 此处编写需要循环执行的代码
-        // if (g_exit_menu_flag && g_show_run_param_flag)
-        // {
-        // lcd_show_int(0, 0, g_turn_error, 5);
-        // img_handler(1);
-        // lcd_show_int(0, 0, run_state, 5);
-        // lcd_show_float(0, 0, g_euler_angle.pitch, 6, 2);
-        // lcd_show_float(0, 1, g_euler_angle.roll, 6, 2);
-        // lcd_show_int(0, 1, g_pit_ccu61_ch1_cnt, 5);
-        // lcd_show_int(0, 2, g_pit_ccu60_ch0_cnt, 5);
-        // lcd_show_int(0, 3, g_main_1_cnt++, 5);
-        // lcd_show_int(0, 4, g_system_attitude_cnt, 5);
-        // lcd_show_int(0, 0, g_vel_motor.bottom, 5);
-
-        // printf("%f,%f\n", ROLL, ROLL_VEL);
-        // 此处编写需要循环执行的代码
-        system_delay_ms(1);
+        state_machine_imghandler();
     }
 }
 #pragma section all restore

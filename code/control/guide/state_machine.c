@@ -62,7 +62,22 @@ static void state_machine_single_handler()
 {
     if (mt9v03x_finish_flag)
     {
+        uint16 horizon_line = get_image_horizon();
+
         binary_otsu(mt9v03x_image, binary_front);
+
+        // 将地平线以上部分清零
+        if (horizon_line > 0 && horizon_line < IMG_HEIGHT)
+        {
+            for (uint16 y = 0; y < horizon_line; y++)
+            {
+                for (uint16 x = 0; x < IMG_WIDTH; x++)
+                {
+                    binary_front[y * IMG_WIDTH + x] = RGB565_BLACK; // 设置为背景色
+                }
+            }
+        }
+
         component_count = detection_find_components(binary_front, 0, results); // 前摄像头
         // 排序
         qsort(results, component_count, sizeof(Component_Info), compare_components);

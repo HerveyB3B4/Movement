@@ -45,17 +45,13 @@
 #pragma section all "cpu0_dsram"
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU0的RAM中
 
-// 本例程是开源库空工程 可用作移植或者测试各类内外设
-// 本例程是开源库空工程 可用作移植或者测试各类内外设
-// 本例程是开源库空工程 可用作移植或者测试各类内外设
-// **************************** 代码区域 ****************************
 int core0_main(void)
 {
-    clock_init(); // 获取时钟频率<务必保留>
+    clock_init();
 
     system_init();
 
-    cpu_wait_event_ready(); // 等待所有核心初始化完毕
+    cpu_wait_event_ready();
 
     g_exit_menu_flag = 1;
     system_start();
