@@ -26,5 +26,7 @@ void test_navigation(void);
 void test_dual_camera_logic(void);
 void test_image();
 void test_exposure();
+void test_binary_threshold();
+void test_binary_otsu();
 
 #endif

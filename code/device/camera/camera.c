@@ -2,6 +2,7 @@
 
 uint32 g_camera_exp_time_def = 212;
 uint32 g_camera_gain_def = 63;
+uint32 g_binary_threshold_def = 110;
 
 // void camera_init()
 // {

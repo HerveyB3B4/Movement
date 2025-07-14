@@ -2,6 +2,7 @@
 #include "detection.h"
 #include "guide.h"
 #include "Attitude.h"
+#include "camera.h"
 
 const uint32 BOUNDARY_AREA = 20; // 临界面积大小，确定是否进入下一个状态
 const uint32 BOUNDARY_H = 80;    // 临界高度，确定是否进入下一个状态
@@ -12,6 +13,8 @@ const int32 TURNING_SPEED = -20;
 const int32 CLOSE_SPEED = -6;
 const uint32 SEARCHING_TURN_ERROR = 50;
 
+const uint32 NO_TARGET_TIMEOUT = 50; // 无目标超时计数阈值
+
 static Run_State curr_state;
 static Camera_Mode curr_camera_mode = SINGLE_CAMERA;
 static uint8 front_img = 0;
@@ -19,9 +22,7 @@ static Component_Info results[MAX_REGIONS];
 static uint32 component_count = 0;
 
 // 转向相关参数
-static int32 search_turn_speed = 50;  // 搜索时的转向速度
-static uint32 no_target_timeout = 50; // 无目标超时计数阈值
-static uint32 no_target_counter = 0;  // 无目标计数器
+static uint32 no_target_counter = 0; // 无目标计数器
 
 // #pragma section all "cpu1_dsram"
 static uint8 binary_front[IMG_WIDTH * IMG_HEIGHT];
@@ -56,6 +57,7 @@ void state_machine_imghandler()
 
     // 检查目标并处理转向逻辑
     state_machine_check_targets();
+    lcd_show_int(0, 7, curr_state, 1);
 }
 
 static void state_machine_single_handler()
@@ -64,8 +66,8 @@ static void state_machine_single_handler()
     {
         uint16 horizon_line = get_image_horizon();
 
-        binary_otsu(mt9v03x_image, binary_front);
-
+        // binary_otsu(mt9v03x_image, binary_front);
+        binary_threshold(mt9v03x_image, binary_front, g_binary_threshold_def);
         // 将地平线以上部分清零
         if (horizon_line > 0 && horizon_line < IMG_HEIGHT)
         {
@@ -77,7 +79,8 @@ static void state_machine_single_handler()
                 }
             }
         }
-
+        draw_Hline(binary_front, horizon_line, RGB565_WHITE); // 在图像上画地平线
+        lcd_show_image(binary_front, IMG_WIDTH, IMG_HEIGHT, 0);
         component_count = detection_find_components(binary_front, 0, results); // 前摄像头
         // 排序
         qsort(results, component_count, sizeof(Component_Info), compare_components);
@@ -121,7 +124,7 @@ static void state_machine_check_targets(void)
         // 如果没有检测到目标，增加无目标计数器
         no_target_counter++;
 
-        if (no_target_counter >= no_target_timeout)
+        if (no_target_counter >= NO_TARGET_TIMEOUT)
         {
             state_machine_set_state(STATE_SEARCHING);
             no_target_counter = 0; // 重置计数器

@@ -39,7 +39,7 @@ float distance_reckon_sinyaw(int16 x, int16 y, int16 c)
 int16 get_image_horizon()
 {
     // 地平线
-    float horizon = 1.756f * CAMERA_ANGLE + 1.391f * PITCH + (-90.160f);
+    float horizon = 1.756f * CAMERA_ANGLE + 1.391f * (-PITCH) + (-90.160f);
     if (horizon < 0)
     {
         horizon = 0;

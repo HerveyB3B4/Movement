@@ -6,6 +6,7 @@
 
 extern uint32 g_camera_exp_time_def;
 extern uint32 g_camera_gain_def;
+extern uint32 g_binary_threshold_def;
 
 void camera_config(void);
 

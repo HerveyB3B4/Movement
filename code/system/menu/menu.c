@@ -92,6 +92,7 @@ uint32 *EEPROM_DATA_UINT[] = {
     (uint32 *)(&g_menu_manual_param.angle_limit),
     (uint32 *)(&g_camera_exp_time_def),
     (uint32 *)(&g_camera_gain_def),
+    (uint32 *)(&g_binary_threshold_def),
 };
 
 int32 *EEPROM_DATA_INT[] = {
@@ -405,6 +406,14 @@ MENU_TABLE Test_MenuTable[] = {
      {.SubMenu = Table_Null},
      Functions,
      {.ItemFunc = test_exposure}},
+    {(uint8 *)"BinaryThreshold",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_binary_threshold}},
+    {(uint8 *)"ostu",
+     {.SubMenu = Table_Null},
+     Functions,
+     {.ItemFunc = test_binary_otsu}},
 };
 
 MENU_TABLE Utils_MenuTable[] = {
@@ -460,6 +469,10 @@ MENU_TABLE Camera_MenuTable[] = {
      {.ItemFunc = Menu_Null}},
     {(uint8 *)"gain",
      {.UINT32 = (uint32 *)&g_camera_gain_def},
+     Param_Uint,
+     {.ItemFunc = Menu_Null}},
+    {(uint8 *)"threshold",
+     {.UINT32 = (uint32 *)&g_binary_threshold_def},
      Param_Uint,
      {.ItemFunc = Menu_Null}},
 };

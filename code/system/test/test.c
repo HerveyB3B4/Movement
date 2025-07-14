@@ -17,6 +17,7 @@
 #include "diode.h"
 #include "YawIntegral.h"
 #include "state_machine.h"
+#include "binary.h"
 
 // #include "ins_core.h"
 // #include "waypoint_manager.h"
@@ -1003,4 +1004,61 @@ void test_exposure()
     }
 
     lcd_clear();
+}
+
+void test_binary_threshold()
+{
+    lcd_clear();
+
+    static uint8 threshold = 0; // 默认阈值
+    uint8 last_key = KEY_NONE;  // 记录上一次按键状态，用于防止重复触发
+
+    while (keymsg.key != KEY_L)
+    {
+        if (mt9v03x_finish_flag)
+        {
+            mt9v03x_finish_flag = 0;
+
+            if (keymsg.key != last_key && keymsg.key != KEY_NONE)
+            {
+                if (keymsg.key == KEY_U)
+                {
+                    threshold += 10; // 增加阈值
+                    if (threshold > 255)
+                        threshold = 255;
+                }
+                else if (keymsg.key == KEY_D)
+                {
+                    threshold -= 10; // 减少阈值
+                    if (threshold < 0)
+                        threshold = 0;
+                }
+            }
+
+            // 更新上一次按键状态
+            last_key = keymsg.key;
+
+            binary_threshold(mt9v03x_image, s_edge_map, threshold);
+
+            lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
+            lcd_show_uint(0, 7, threshold, 3); // 显示当前阈值
+        }
+    }
+}
+
+void test_binary_otsu()
+{
+    lcd_clear();
+
+    while (keymsg.key != KEY_L)
+    {
+        if (mt9v03x_finish_flag)
+        {
+            mt9v03x_finish_flag = 0;
+
+            binary_otsu(mt9v03x_image, s_edge_map);
+
+            lcd_show_image(s_edge_map, MT9V03X_W, MT9V03X_H, 0);
+        }
+    }
 }
