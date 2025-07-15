@@ -6,7 +6,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
-uint32 control_params_from = 1; // 0: menu, 1: preset
+uint32 control_params_from = 0; // 0: menu, 1: preset
 uint32 control_time = 0;
 
 // global
@@ -219,16 +219,16 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
 {
     control_param_init(&bottom_angle_velocity_PID,
                        control_motion_params->bottom_angle_velocity_parameter,
-                       1, 100, 1, MOTOR_PWM_MAX, 9999);
+                       1, 10, 100, MOTOR_PWM_MAX, 9999);
     // control_param_init(&bottom_angle_PID,
     //                    control_motion_params->bottom_angle_parameter, 10,
     //                    100, 10);
     control_param_init(&bottom_angle_PID,
                        control_motion_params->bottom_angle_parameter,
-                       10, 1, 100, 9999, 10);
+                       100, 1, 1000, 9999, 10);
     control_param_init(&bottom_velocity_PID,
                        control_motion_params->bottom_velocity_parameter,
-                       1000, 10000, 1000, 5000, 10.0f);
+                       100, 1000000, 10, g_angle_limit, 10.0f);
 
     control_param_init(&bottom_position_PID,
                        control_motion_params->bottom_position_parameter,
@@ -237,21 +237,22 @@ static void control_init_menu(struct Control_Motion_Manual_Parmas *control_motio
     // momentum wheel pid
     control_param_init(&side_angle_velocity_PID,
                        control_motion_params->side_angle_velocity_parameter,
-                       1, 10, 10, MOMENTUM_MOTOR_PWM_MAX, 8000);
+                       10, 10, 10, MOMENTUM_MOTOR_PWM_MAX, 8000);
     control_param_init(&side_angle_PID,
                        control_motion_params->side_angle_parameter,
-                       10, 10, 10, 9999, 2.5f);
+                       10, 10, 100, 9999, 2.5f);
     control_param_init(&side_velocity_PID,
                        control_motion_params->side_velocity_parameter,
-                       10000, 10000000, 10000, 9999, 10);
+                       10000, 10000000, 1000, 9999, 10);
 
     // turn pid
     control_param_init(&turn_angle_velocity_PID,
-                       control_motion_params->turn_angle_velocity_parameter, 10, 10, 10,
-                       2000, 2000);
+                       control_motion_params->turn_angle_velocity_parameter,
+                       10, 10, 10, 9999, 9999);
     control_param_init(&turn_error_PID,
-                       control_motion_params->turn_error_parameter, 1, 1, 1,
-                       5000, 500);
+                       control_motion_params->turn_error_parameter,
+                       10, 1, 10, 5000, 500);
+
     control_param_init(&turn_angle_PID,
                        control_motion_params->turn_angle_parameter, 100, 100, 100, 9999,
                        500);

@@ -92,10 +92,10 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
                                     struct Control_Turn_Manual_Params *control_turn_params)
 {
     velocity_update_bottom(vel_motor);
-    // printf("%d,%f,%f\n",
-    //        g_vel_motor.bottom,
-    //        g_control_target.bottom_angle,
-    //        g_control_target.bottom_vel);
+    printf("%d,%f,%f\n",
+           g_vel_motor.bottom,
+           g_control_target.bottom_angle,
+           g_control_target.bottom_vel);
 
     control_target->bottom_angle = control_motion_params->bottom_velocity_polarity *
                                    PID_calc_Position(
@@ -172,7 +172,7 @@ static void control_bottom_angle_velocity(
     angleVelocityControlFilter[0] = PITCH_VEL;
 
     s_bottom_balance_duty = control_motion_params->bottom_angle_velocity_polarity *
-                            (PID_calc_DELTA(
+                            (PID_calc_Position(
                                 &bottom_angle_velocity_PID, angleVelocityControlFilter[0],
                                 control_target->bottom_angle_vel));
     if (g_control_output_fav_flag != 0)

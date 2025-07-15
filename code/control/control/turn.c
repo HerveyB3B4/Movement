@@ -90,7 +90,7 @@ void control_turn(struct Control_Target *control_target,
     lowPassFilterI(&s_momentum_diff, &last_diff, 0.2f);
     last_diff = s_momentum_diff;
 
-    restrictValueI(&s_momentum_diff, 1500, -1500);
+    restrictValueI(&s_momentum_diff, 3000, -3000);
 
     // control_target->buckling_side = control_turn_params->buckling_side_state * control_target->turn_err;
 }

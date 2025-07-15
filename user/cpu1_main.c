@@ -59,6 +59,7 @@ void core1_main(void)
     {
         state_machine_imghandler();
         // printf("%f\n", g_control_target.turn_err);
+        system_delay_ms(5);
     }
 }
 #pragma section all restore
