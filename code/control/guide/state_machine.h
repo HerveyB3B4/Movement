@@ -67,7 +67,6 @@ Component_Info *state_machine_get_components(void);
 
 Run_State state_machine_get_state(void);
 
-// 获取前摄像头处理后的二值图像
 uint8 *state_machine_get_front_img(void);
 
 #endif

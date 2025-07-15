@@ -45,6 +45,52 @@ void control_buckling(struct Control_Target *control_target,
     // float r = distance / (2.0f * sin_yaw);
     // theta = atan2f(vel_motor->bottom_real * vel_motor->bottom_real, GravityAcc * r);
 
+    // 速度补偿 - 针对低速优化的物理模型 (速度 ≤ 2m/s)
+    float velocity = vel_motor->bottom_filtered / V_KALMAN_MULTIPLE;
+    float turn_rate = fabsf(YAW_VEL * 0.0174533f); // 转换为弧度/秒
+
+    // 前向补偿
+    if (fabsf(velocity) > 0.1f && turn_rate > 0.05f) // 避免静止或极慢速时的噪声
+    {
+        // 向心加速度 = v * ω
+        float centripetal_acceleration = velocity * turn_rate;
+
+        // 考虑当前pitch角度对重力分量的影响
+        float gravity_compensation = sinf(ANGLE_TO_RAD(PITCH - g_euler_angle_bias.pitch));
+
+        // 基础补偿 + 重力补偿
+        control_target->buckling_front = control_turn_params->buckling_front_coefficient *
+                                         (centripetal_acceleration + gravity_compensation * 0.5f);
+
+        // 针对低速场景的速度增益调整 (速度越慢，增益越小)
+        float speed_gain = velocity / 2.0f; // 2m/s时增益为1，更慢时增益更小
+        if (speed_gain > 1.0f)
+            speed_gain = 1.0f;
+        control_target->buckling_front *= speed_gain;
+    }
+    else
+    {
+        control_target->buckling_front = 0.0f; // 静止或极慢速时不补偿
+    }
+
+    // 限制补偿范围 (低速时范围可以小一些)
+    restrictValueF(&control_target->buckling_front, 5.0f, -5.0f);
+
+    // 根据原始角度方向进行适应性限制，避免反向过度补偿
+    float original_angle = control_target->bottom_angle;
+    if (original_angle > 0 && control_target->buckling_front < 0)
+    {
+        // 原始角度为正，限制负向补偿幅度
+        restrictValueF(&control_target->buckling_front, -original_angle * 0.4f, 5.0f);
+    }
+    else if (original_angle < 0 && control_target->buckling_front > 0)
+    {
+        // 原始角度为负，限制正向补偿幅度
+        restrictValueF(&control_target->buckling_front, -5.0f, -original_angle * 0.4f);
+    }
+
+    control_target->bottom_angle += control_target->buckling_front;
+
     // test
     float v = vel_motor->bottom_filtered / V_KALMAN_MULTIPLE;
     if (v < 0)

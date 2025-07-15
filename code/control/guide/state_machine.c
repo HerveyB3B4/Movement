@@ -54,6 +54,7 @@ static void state_machine_execute(void);
 static bool is_target_similar(const Component_Info *target1, const Component_Info *target2);
 static void update_target_tracking(void);
 static Component_Info *find_best_target(void);
+static bool is_target_valid(const Component_Info *target);
 
 void state_machine_init(Camera_Mode mode)
 {
@@ -170,9 +171,7 @@ static void state_machine_handler(void)
     {
         // 使用智能目标选择
         Component_Info *best_target = find_best_target();
-        if (best_target && best_target->center.x > 0 && best_target->center.y > 0 &&
-            best_target->center.x != -1 && best_target->center.y != -1 &&
-            best_target->bbox.area > MIN_VALID_AREA)
+        if (best_target && is_target_valid(best_target))
         {
             has_valid_target = true;
             current_target = best_target;
@@ -375,32 +374,9 @@ static void state_machine_execute(void)
     }
 }
 
-// 获取当前检测到的目标数量
-uint32 state_machine_get_component_count(void)
-{
-    return component_count;
-}
-
-// 获取当前检测到的目标信息
-Component_Info *state_machine_get_components(void)
-{
-    return results;
-}
-
-// 获取当前运行状态
-Run_State state_machine_get_state(void)
-{
-    return curr_state;
-}
-
-uint8 *state_machine_get_front_img(void)
-{
-    return binary_front;
-}
-
 static bool is_target_similar(const Component_Info *target1, const Component_Info *target2)
 {
-    // 简单的相似性判断，您可以根据需要改进
+    // 简单的相似性判断
     if (abs(target1->center.x - target2->center.x) < MAX_TARGET_DISTANCE &&
         abs(target1->center.y - target2->center.y) < MAX_TARGET_DISTANCE &&
         abs((int32)target1->bbox.area - (int32)target2->bbox.area) < (target1->bbox.area / 4))
@@ -410,17 +386,54 @@ static bool is_target_similar(const Component_Info *target1, const Component_Inf
     return false;
 }
 
+static bool is_target_valid(const Component_Info *target)
+{
+    // 检查目标是否有效：center坐标和area都不能为0
+    if (target == NULL)
+        return false;
+
+    // 如果center的x、y都是0，且area也是0，则认为是无效目标
+    if (target->center.x == 0 && target->center.y == 0 && target->bbox.area == 0)
+        return false;
+
+    // 检查坐标是否在有效范围内
+    if (target->center.x < 0 || target->center.x >= IMG_WIDTH ||
+        target->center.y < 0 || target->center.y >= IMG_HEIGHT)
+        return false;
+
+    // 检查面积是否满足最小要求
+    if (target->bbox.area < MIN_VALID_AREA)
+        return false;
+
+    return true;
+}
+
 static void update_target_tracking(void)
 {
-    if (component_count > 0 && results[0].center.x > 0)
+    // 首先检查是否有有效的检测结果
+    bool has_valid_detection = false;
+    Component_Info *current_detection = NULL;
+
+    if (component_count > 0)
+    {
+        // 寻找最佳有效目标
+        Component_Info *best_target = find_best_target();
+        if (is_target_valid(best_target))
+        {
+            has_valid_detection = true;
+            current_detection = best_target;
+        }
+    }
+
+    if (has_valid_detection)
     {
         if (tracked_target.is_valid)
         {
-            // 目标跟踪中，检查目标是否仍然有效
-            if (is_target_similar(&tracked_target.target, &results[0]))
+            // 目标跟踪中，检查目标是否仍然相似
+            if (is_target_similar(&tracked_target.target, current_detection))
             {
                 // 目标相似，更新跟踪信息
-                tracked_target.target = results[0];
+                tracked_target.target = *current_detection;
                 tracked_target.stable_frames++;
                 tracked_target.lost_frames = 0;
             }
@@ -428,30 +441,46 @@ static void update_target_tracking(void)
             {
                 // 目标不再相似，增加丢失帧数
                 tracked_target.lost_frames++;
-            }
 
-            // 超过阈值则认为目标丢失
-            if (tracked_target.lost_frames >= TARGET_LOST_TIMEOUT)
-            {
-                tracked_target.is_valid = false;
+                // 如果丢失帧数不太多，仍然保持跟踪状态
+                if (tracked_target.lost_frames < TARGET_LOST_TIMEOUT)
+                {
+                    // 保持原有目标信息，但不更新位置
+                    // 这样可以避免频繁闪烁
+                }
+                else
+                {
+                    // 超过阈值，重新开始跟踪新目标
+                    tracked_target.target = *current_detection;
+                    tracked_target.is_valid = true;
+                    tracked_target.stable_frames = 1;
+                    tracked_target.lost_frames = 0;
+                }
             }
         }
         else
         {
-            // 目标未被跟踪，尝试开始跟踪
-            if (results[0].bbox.area > MIN_VALID_AREA)
-            {
-                tracked_target.target = results[0];
-                tracked_target.is_valid = true;
-                tracked_target.stable_frames = 1;
-                tracked_target.lost_frames = 0;
-            }
+            // 目标未被跟踪，开始跟踪新目标
+            tracked_target.target = *current_detection;
+            tracked_target.is_valid = true;
+            tracked_target.stable_frames = 1;
+            tracked_target.lost_frames = 0;
         }
     }
     else
     {
-        // 没有检测到目标，标记为无效
-        tracked_target.is_valid = false;
+        // 没有检测到有效目标
+        if (tracked_target.is_valid)
+        {
+            tracked_target.lost_frames++;
+
+            // 只有在连续丢失较长时间后才标记为无效
+            if (tracked_target.lost_frames >= TARGET_LOST_TIMEOUT)
+            {
+                tracked_target.is_valid = false;
+                tracked_target.stable_frames = 0;
+            }
+        }
     }
 
     // 预测目标位置
@@ -473,7 +502,8 @@ static Component_Info *find_best_target(void)
 
     for (uint32 i = 0; i < component_count; i++)
     {
-        if (results[i].bbox.area > best_area)
+        // 只考虑有效的目标
+        if (is_target_valid(&results[i]) && results[i].bbox.area > best_area)
         {
             best_area = results[i].bbox.area;
             best_target = &results[i];
@@ -481,4 +511,14 @@ static Component_Info *find_best_target(void)
     }
 
     return best_target;
+}
+
+Component_Info *state_machine_get_components(void)
+{
+    return results;
+}
+
+uint8 *state_machine_get_front_img(void)
+{
+    return binary_front;
 }
