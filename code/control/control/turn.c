@@ -13,6 +13,9 @@ static void control_turn_angle_velocity(struct Control_Target *control_target,
 // static void control_turn_angle(struct Control_Target *control_target);
 static void control_turn_error(struct Control_Target *control_target,
                                struct Control_Motion_Manual_Parmas *control_motion_params);
+static void control_turn_angle(struct Control_Target *control_target,
+                               struct Control_Motion_Manual_Parmas *control_motion_params,
+                               struct Control_Turn_Manual_Params *control_turn_params);
 
 int32 get_momentum_diff()
 {
@@ -181,6 +184,25 @@ static void control_turn_error(struct Control_Target *control_target,
                                          &turn_error_PID,
                                          turn_err_filter[0],
                                          0);
+}
+
+static void control_turn_angle(struct Control_Target *control_target,
+                               struct Control_Motion_Manual_Parmas *control_motion_params,
+                               struct Control_Turn_Manual_Params *control_turn_params)
+{
+    // 角度环
+    static float turn_angle_filter[2] = {0};
+    turn_angle_filter[1] = turn_angle_filter[0];
+    turn_angle_filter[0] = YAW;
+
+    // lowPassFilterF(&turn_angle_filter[0], &turn_angle_filter[1], 0.3f);
+
+    control_target->turn_angle_vel = control_motion_params->turn_angle_polarity *
+                                     PID_calc_Position_Gyro_D(
+                                         &turn_angle_PID,
+                                         turn_angle_filter[0] - g_euler_angle_bias.yaw,
+                                         control_target->turn_angle,
+                                         -YAW_VEL);
 }
 
 // 不知道需不需要加个速度环

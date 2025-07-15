@@ -155,7 +155,7 @@ float MahonyAHRS_get_pitch()
 
 float MahonyAHRS_get_yaw()
 {
-    return s_mahonyAHRS_info.yaw * 57.29578f + 180.0f;
+    return s_mahonyAHRS_info.yaw * 57.29578f;
 }
 
 static float Mahony_invSqrt(float x)
