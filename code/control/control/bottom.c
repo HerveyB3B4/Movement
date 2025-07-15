@@ -155,7 +155,7 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
                                        PID_calc_Position_Gyro_D(
                                            &bottom_angle_PID,
                                            angleControlFilter[0] - euler_angle_bias->pitch,
-                                           control_target->bottom_angle,
+                                           control_target->bottom_angle - control_target->buckling_front,
                                            -PITCH_VEL);
 
     if (g_control_output_fa_flag != 0)

@@ -39,11 +39,33 @@ void guide_receiver(struct Control_Target *control_target)
     static uint32 cnt = 0;
     cnt++;
 
+    if (cnt >= 2000)
+    {
+        control_target->bottom_vel = 5;
+    }
     if (cnt >= 3000)
     {
-        // control_target->turn = -30;
+        control_target->bottom_vel = 5;
         control_target->turn_err = 90;
+        control_target->buckling_front = 0.5 * (g_vel_motor.bottom - control_target->bottom_vel);
     }
+    if (cnt >= 4000)
+    {
+        control_target->bottom_vel = 5;
+        control_target->turn_err = 0;
+        // control_target->buckling_front = (g_vel_motor.bottom - control_target->bottom_vel);
+    }
+    // if (cnt >= 6000)
+    // {
+    //     control_target->bottom_vel = 0;
+    //     control_target->turn_err = 0;
+    //     control_target->buckling_front = 1.5 * (g_vel_motor.bottom - control_target->bottom_vel);
+    // }
+    // if (cnt >= 8000)
+    // {
+    //     control_target->buckling_front = 0;
+    // }
+
     // else if (cnt <= 6000)
     // {
     //     control_target->bottom_vel = 30;
