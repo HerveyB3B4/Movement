@@ -462,7 +462,7 @@ uint8 *state_machine_get_front_img(void)
 
 static bool is_similar_target(const Component_Info *target1, const Component_Info *target2)
 {
-    // 简单的相似性判断，您可以根据需要改进
+    // 简单的相似性判断
     if (abs(target1->center.x - target2->center.x) < MAX_TARGET_DISTANCE &&
         abs(target1->center.y - target2->center.y) < MAX_TARGET_DISTANCE &&
         abs((int32)target1->bbox.area - (int32)target2->bbox.area) < (target1->bbox.area / 4))
@@ -474,7 +474,22 @@ static bool is_similar_target(const Component_Info *target1, const Component_Inf
 
 static void update_tracking(void)
 {
-    if (component_count > 0 && results[0].center.x > 0)
+    // 首先检查是否有有效的检测结果
+    bool has_valid_detection = false;
+    Component_Info *current_detection = NULL;
+
+    if (component_count > 0)
+    {
+        // 寻找最佳有效目标
+        Component_Info *best_target = find_best_target();
+        if (is_target_valid(best_target))
+        {
+            has_valid_detection = true;
+            current_detection = best_target;
+        }
+    }
+
+    if (has_valid_detection)
     {
         if (tracked_target.is_valid)
         {
@@ -482,7 +497,7 @@ static void update_tracking(void)
             if (is_similar_target(&tracked_target.target, &results[0]))
             {
                 // 目标相似，更新跟踪信息
-                tracked_target.target = results[0];
+                tracked_target.target = *current_detection;
                 tracked_target.stable_frames++;
                 tracked_target.lost_frames = 0;
             }
@@ -490,12 +505,21 @@ static void update_tracking(void)
             {
                 // 目标不再相似，增加丢失帧数
                 tracked_target.lost_frames++;
-            }
 
-            // 超过阈值则认为目标丢失
-            if (tracked_target.lost_frames >= TARGET_LOST_TIMEOUT)
-            {
-                tracked_target.is_valid = false;
+                // 如果丢失帧数不太多，仍然保持跟踪状态
+                if (tracked_target.lost_frames < TARGET_LOST_TIMEOUT)
+                {
+                    // 保持原有目标信息，但不更新位置
+                    // 这样可以避免频繁闪烁
+                }
+                else
+                {
+                    // 超过阈值，重新开始跟踪新目标
+                    tracked_target.target = *current_detection;
+                    tracked_target.is_valid = true;
+                    tracked_target.stable_frames = 1;
+                    tracked_target.lost_frames = 0;
+                }
             }
         }
         else
@@ -512,8 +536,18 @@ static void update_tracking(void)
     }
     else
     {
-        // 没有检测到目标，标记为无效
-        tracked_target.is_valid = false;
+        // 没有检测到有效目标
+        if (tracked_target.is_valid)
+        {
+            tracked_target.lost_frames++;
+
+            // 只有在连续丢失较长时间后才标记为无效
+            if (tracked_target.lost_frames >= TARGET_LOST_TIMEOUT)
+            {
+                tracked_target.is_valid = false;
+                tracked_target.stable_frames = 0;
+            }
+        }
     }
 
     // 预测目标位置
@@ -535,7 +569,8 @@ static Component_Info *find_best_target(void)
 
     for (uint32 i = 0; i < component_count; i++)
     {
-        if (results[i].bbox.area > best_area)
+        // 只考虑有效的目标
+        if (is_target_valid(&results[i]) && results[i].bbox.area > best_area)
         {
             best_area = results[i].bbox.area;
             best_target = &results[i];
