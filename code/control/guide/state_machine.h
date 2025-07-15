@@ -19,6 +19,14 @@ typedef enum
     DUAL_CAMERA,   // 双摄像头模式
 } Camera_Mode;
 
+// 通过策略枚举
+typedef enum
+{
+    PASS_STRATEGY_CENTER, // 直接通过中心
+    PASS_STRATEGY_LEFT,   // 从左侧通过
+    PASS_STRATEGY_RIGHT   // 从右侧通过
+} Pass_Strategy;
+
 // 面积比较的容差
 #define AREA_TOLERANCE 10
 // 距离平方比较的容差

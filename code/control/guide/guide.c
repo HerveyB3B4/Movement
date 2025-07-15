@@ -36,8 +36,23 @@ int16 get_guide_target_turn(void)
 
 void guide_receiver(struct Control_Target *control_target)
 {
+    static uint32 cnt = 0;
+    cnt++;
+
+    if (cnt >= 3000)
+    {
+        // control_target->turn = -30;
+        control_target->turn_err = 90;
+    }
+    // else if (cnt <= 6000)
+    // {
+    //     control_target->bottom_vel = 30;
+    // }
+    // else
+    // {
+    //     cnt = 0; // 重置计数器，开始新的周期
+    // }
     control_target->bottom_vel = (float)guide_target_vel;
-    control_target->turn_err = (float)guide_target_turn;
 }
 
 void guide_position_pid(struct Control_Target *control_target, Point *target)

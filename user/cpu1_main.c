@@ -57,7 +57,7 @@ void core1_main(void)
 
     while (TRUE)
     {
-        state_machine_imghandler();
+        // state_machine_imghandler();
         // printf("%f\n", g_control_target.turn_err);
         system_delay_ms(5);
     }

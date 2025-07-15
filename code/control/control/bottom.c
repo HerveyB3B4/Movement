@@ -92,10 +92,10 @@ static void control_bottom_velocity(struct Velocity_Motor *vel_motor,
                                     struct Control_Turn_Manual_Params *control_turn_params)
 {
     velocity_update_bottom(vel_motor);
-    printf("%d,%f,%f\n",
-           g_vel_motor.bottom,
-           g_control_target.bottom_angle,
-           g_control_target.bottom_vel);
+    // printf("%d,%f,%f\n",
+    //        g_vel_motor.bottom,
+    //        g_control_target.bottom_angle,
+    //        g_control_target.bottom_vel);
 
     control_target->bottom_angle = control_motion_params->bottom_velocity_polarity *
                                    PID_calc_Position(
@@ -142,6 +142,8 @@ static void control_bottom_angle(struct EulerAngle *euler_angle_bias,
                                  struct Control_Motion_Manual_Parmas *control_motion_params,
                                  struct Control_Turn_Manual_Params *control_turn_params)
 {
+    printf("%f,%f\n", control_target->bottom_angle_vel, PITCH);
+
     static float angleControlFilter[2] = {0};
     angleControlFilter[1] = angleControlFilter[0];
     angleControlFilter[0] = PITCH;

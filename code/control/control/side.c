@@ -164,7 +164,7 @@ static void control_side_angle(struct EulerAngle *euler_angle_bias,
 
     static float momentumAngleFilter[2] = {0}; // 角度滤波
     momentumAngleFilter[1] = momentumAngleFilter[0];
-    momentumAngleFilter[0] = -ROLL_VEL;
+    momentumAngleFilter[0] = ROLL_VEL;
     // noiseFilter(momentumAngleFilter[0],0.02f);
     lowPassFilterF(&momentumAngleFilter[0], &momentumAngleFilter[1], 0.5f);
 
