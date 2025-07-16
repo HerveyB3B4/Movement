@@ -50,44 +50,48 @@ typedef struct
 void detection_init(Component_AlgorithmEnum algo);
 uint16 detection_find_components(uint8 *binary_image, uint8 camera_id, Component_Info *output);
 
-static inline bool is_valid_target(const Component_Info *component)
-{
-    if (!component || component->bbox.area == 0)
-        return false;
+// static inline bool is_target_valid(const Component_Info *component)
+// {
+//     if (!component)
+//         return false;
 
-    // 获取当前的地平线位置
-    int16 horizon_y = get_image_horizon();
+//     // 检查目标点的center的xy和area是否都不为0
+//     if (component->center.x == 0 || component->center.y == 0 || component->bbox.area == 0)
+//         return false;
 
-    // 检查连通域是否完全在地平线以上
-    if (component->bbox.max_y < horizon_y)
-    {
-        return false;
-    }
+//     // 获取当前的地平线位置
+//     int16 horizon_y = get_image_horizon();
 
-    // // 计算宽高
-    // uint16 width = component->bbox.max_x - component->bbox.min_x + 1;
-    // uint16 height = component->bbox.max_y - component->bbox.min_y + 1;
+//     // 检查连通域是否完全在地平线以上
+//     if (component->bbox.max_y < horizon_y)
+//     {
+//         return false;
+//     }
 
-    // // 面积限制
-    // if (component->bbox.area < MIN_AREA_THRESHOLD || component->bbox.area > MAX_AREA_THRESHOLD)
-    //     return false;
+//     // // 计算宽高
+//     // uint16 width = component->bbox.max_x - component->bbox.min_x + 1;
+//     // uint16 height = component->bbox.max_y - component->bbox.min_y + 1;
 
-    // // 尺寸限制
-    // if (width < MIN_WIDTH_THRESHOLD || width > MAX_WIDTH_THRESHOLD ||
-    //     height < MIN_HEIGHT_THRESHOLD || height > MAX_HEIGHT_THRESHOLD)
-    //     return false;
+//     // // 面积限制
+//     // if (component->bbox.area < MIN_AREA_THRESHOLD || component->bbox.area > MAX_AREA_THRESHOLD)
+//     //     return false;
 
-    // // 宽高比限制
-    // float aspect_ratio = (float)width / height;
-    // if (aspect_ratio < MIN_ASPECT_RATIO || aspect_ratio > MAX_ASPECT_RATIO)
-    //     return false;
+//     // // 尺寸限制
+//     // if (width < MIN_WIDTH_THRESHOLD || width > MAX_WIDTH_THRESHOLD ||
+//     //     height < MIN_HEIGHT_THRESHOLD || height > MAX_HEIGHT_THRESHOLD)
+//     //     return false;
 
-    // // 紧凑度限制（防止过于分散的连通域）
-    // float compactness = (float)component->bbox.area / (width * height);
-    // if (compactness < MIN_COMPACTNESS)
-    //     return false;
+//     // // 宽高比限制
+//     // float aspect_ratio = (float)width / height;
+//     // if (aspect_ratio < MIN_ASPECT_RATIO || aspect_ratio > MAX_ASPECT_RATIO)
+//     //     return false;
 
-    return true;
-}
+//     // // 紧凑度限制（防止过于分散的连通域）
+//     // float compactness = (float)component->bbox.area / (width * height);
+//     // if (compactness < MIN_COMPACTNESS)
+//     //     return false;
+
+//     return true;
+// }
 
 #endif
