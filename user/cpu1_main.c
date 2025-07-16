@@ -41,7 +41,7 @@
 #include "velocity.h"
 #include "receiver.h"
 #include "zf_common_headfile.h"
-#include "state_machine.h"
+#include "handler.h"
 
 #pragma section all "cpu1_dsram"
 // 将本语句与#pragma section all restore语句之间的全局变量都放在CPU1的RAM中
@@ -51,13 +51,14 @@ void core1_main(void)
     disable_Watchdog();         // 关闭看门狗
     interrupt_global_enable(0); // 打开全局中断
 
-    state_machine_init(SINGLE_CAMERA);
+    // state_machine_init(SINGLE_CAMERA);
 
     cpu_wait_event_ready();
 
     while (TRUE)
     {
         // state_machine_imghandler();
+        // handler_main();
         // printf("%f\n", g_control_target.turn_err);
         system_delay_ms(5);
     }

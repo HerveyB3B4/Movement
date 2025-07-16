@@ -74,6 +74,11 @@ IFX_INTERRUPT(cc60_pit_ch1_isr,
     key_IRQHandler();
     while (key_get_msg(&keymsg))
         ;
+
+    if (run_state == CAR_RUNNING)
+    {
+        handler_main();
+    }
 }
 
 IFX_INTERRUPT(cc61_pit_ch0_isr,

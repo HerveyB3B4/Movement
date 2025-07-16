@@ -901,20 +901,20 @@ void test_cpu_freq()
 //     lcd_clear();
 // }
 
-void test_dual_camera_logic()
-{
-    lcd_clear();
-    state_machine_init(SINGLE_CAMERA);
-    while (keymsg.key != KEY_L)
-    {
-        state_machine_imghandler();
-        uint8 *bimg = state_machine_get_front_img();
-        Component_Info *res = state_machine_get_components();
-        lcd_show_image(bimg, IMG_WIDTH, IMG_HEIGHT, 0);
-        lcd_show_int(0, 7, res->bbox.area, 5);
-        lcd_show_int(6, 7, res->center.x, 5);
-    }
-}
+// void test_dual_camera_logic()
+// {
+//     lcd_clear();
+//     state_machine_init(SINGLE_CAMERA);
+//     while (keymsg.key != KEY_L)
+//     {
+//         state_machine_imghandler();
+//         uint8 *bimg = state_machine_get_front_img();
+//         Component_Info *res = state_machine_get_components();
+//         lcd_show_image(bimg, IMG_WIDTH, IMG_HEIGHT, 0);
+//         lcd_show_int(0, 7, res->bbox.area, 5);
+//         lcd_show_int(6, 7, res->center.x, 5);
+//     }
+// }
 
 void test_image()
 {

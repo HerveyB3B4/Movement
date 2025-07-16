@@ -66,7 +66,7 @@ void control_buckling(struct Control_Target *control_target,
                                          (centripetal_acceleration + gravity_compensation * 0.5f);
 
         // 针对低速场景的速度增益调整 (速度越慢，增益越小)
-        float speed_gain = velocity / 2.0f; // 2m/s时增益为1，更慢时增益更小
+        float speed_gain = velocity; // 2m/s时增益为1，更慢时增益更小
         if (speed_gain > 1.0f)
             speed_gain = 1.0f;
         control_target->buckling_front *= speed_gain;

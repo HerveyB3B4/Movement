@@ -36,34 +36,50 @@ int16 get_guide_target_turn(void)
 
 void guide_receiver(struct Control_Target *control_target)
 {
-    static uint32 cnt = 0;
-    cnt++;
+    // static uint32 cnt = 0;
+    // cnt++;
 
-    if (cnt >= 2000)
-    {
-        control_target->bottom_vel = 5;
-    }
-    if (cnt >= 3000)
-    {
-        control_target->bottom_vel = 5;
-        control_target->turn_err = 90;
-        control_target->buckling_front = 0.5 * (g_vel_motor.bottom - control_target->bottom_vel);
-    }
-    if (cnt >= 4000)
-    {
-        control_target->bottom_vel = 5;
-        control_target->turn_err = 0;
-        // control_target->buckling_front = (g_vel_motor.bottom - control_target->bottom_vel);
-    }
+    // if (cnt >= 2000)
+    // {
+    //     control_target->bottom_vel = 20;
+    // }
+    // if (cnt >= 3000)
+    // {
+    //     control_target->bottom_vel = 20;
+    //     control_target->turn_err = 50;
+    //     // control_target->buckling_front = 0.5 * (g_vel_motor.bottom - control_target->bottom_vel);
+    // }
+    // if (cnt >= 4000)
+    // {
+    //     control_target->bottom_vel = 20;
+    //     control_target->turn_err = 100;
+    //     // control_target->buckling_front = (g_vel_motor.bottom - control_target->bottom_vel);
+    // }
+    // if (cnt >= 5000)
+    // {
+    //     control_target->bottom_vel = 20;
+    //     control_target->turn_err = 150;
+    //     // control_target->buckling_front = 1.5 * (g_vel_motor.bottom - control_target->bottom_vel);
+    // }
     // if (cnt >= 6000)
     // {
-    //     control_target->bottom_vel = 0;
-    //     control_target->turn_err = 0;
-    //     control_target->buckling_front = 1.5 * (g_vel_motor.bottom - control_target->bottom_vel);
+    //     control_target->bottom_vel = 20;
+    //     control_target->turn_err = 200;
+    //     // control_target->buckling_front = 1.5 * (g_vel_motor.bottom - control_target->bottom_vel);
+    // }
+    // if (cnt >= 7000)
+    // {
+    //     control_target->bottom_vel = 20;
+    //     control_target->turn_err = 250;
     // }
     // if (cnt >= 8000)
     // {
-    //     control_target->buckling_front = 0;
+    //     control_target->bottom_vel = 20;
+    //     control_target->turn_err = 0;
+    // }
+    // if (cnt >= 9000)
+    // {
+    //     control_target->bottom_vel = 0;
     // }
 
     // else if (cnt <= 6000)
@@ -75,6 +91,7 @@ void guide_receiver(struct Control_Target *control_target)
     //     cnt = 0; // 重置计数器，开始新的周期
     // }
     control_target->bottom_vel = (float)guide_target_vel;
+    control_target->turn_err = (float)guide_target_turn;
 }
 
 void guide_position_pid(struct Control_Target *control_target, Point *target)

@@ -260,7 +260,7 @@ void system_set_runstate(System_State state)
         run_state = CAR_STOP;
 
         pit_disable(CCU61_CH1); // 失能控制中断
-        pit_enable(CCU60_CH1);  // 使能按键中断
+        // pit_enable(CCU60_CH1);  // 使能按键中断
 
         stop_bottom_motor();
         stop_momentum_motor();
@@ -271,7 +271,7 @@ void system_set_runstate(System_State state)
         run_state = CAR_RUNNING;
 
         // pit_enable(CCU61_CH1); // 使能控制中断
-        pit_disable(CCU60_CH1); // 失能按键中断
+        // pit_disable(CCU60_CH1); // 失能按键中断
         break;
     }
 }
