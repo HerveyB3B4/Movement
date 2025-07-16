@@ -36,8 +36,8 @@ int16 get_guide_target_turn(void)
 
 void guide_receiver(struct Control_Target *control_target)
 {
-    // static uint32 cnt = 0;
-    // cnt++;
+    static uint32 cnt = 0;
+    cnt++;
 
     // if (cnt >= 2000)
     // {
@@ -55,12 +55,7 @@ void guide_receiver(struct Control_Target *control_target)
     //     control_target->turn_err = 100;
     //     // control_target->buckling_front = (g_vel_motor.bottom - control_target->bottom_vel);
     // }
-    // if (cnt >= 5000)
-    // {
-    //     control_target->bottom_vel = 20;
-    //     control_target->turn_err = 150;
-    //     // control_target->buckling_front = 1.5 * (g_vel_motor.bottom - control_target->bottom_vel);
-    // }
+
     // if (cnt >= 6000)
     // {
     //     control_target->bottom_vel = 20;
@@ -78,6 +73,7 @@ void guide_receiver(struct Control_Target *control_target)
     //     control_target->turn_err = 0;
     // }
     // if (cnt >= 9000)
+
     // {
     //     control_target->bottom_vel = 0;
     // }

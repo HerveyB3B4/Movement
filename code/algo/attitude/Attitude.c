@@ -78,6 +78,8 @@ void attitude_cal_amend(struct Control_Turn_Manual_Params *turn_param,
     //     control_target->buckling_side = turn_param->buckling_side_state * x;
     //     restrictValueF(&control_target->buckling_side, 10.5f, -10.5f);
     //     control_target->buckling_front = x * turn_param->buckling_front_coefficientT;
+
+
     //     restrictValueF(&control_target->buckling_front, 5.0f, -5.0f);
     // }
 

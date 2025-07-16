@@ -5,7 +5,7 @@
 #include "image.h"
 #include "detection.h"
 
-#define AREA_TOLERANCE 10
+#define AREA_TOLERANCE 2
 #define ERROR_TOLERANCE 5
 
 typedef enum
@@ -21,14 +21,16 @@ static inline int8 compare_components(const void *a, const void *b)
     const Component_Info *comp_a = (const Component_Info *)a;
     const Component_Info *comp_b = (const Component_Info *)b;
 
-    // 第一关键字：面积（降序），带容差
-    int32 area_diff = (int32)comp_a->bbox.area - (int32)comp_b->bbox.area;
-    if (abs(area_diff) > AREA_TOLERANCE)
+    if (comp_a == NULL || comp_b == NULL)
     {
-        return (area_diff > 0) ? -1 : 1;
+        return 0; // 无效比较
     }
 
-    // 第二关键字：到中心的距离（升序），带容差
+    if (comp_a->bbox.area != comp_b->bbox.area)
+    {
+        return (comp_a->bbox.area > comp_b->bbox.area) ? -1 : 1;
+    }
+
     const int16 center_x = IMG_WIDTH / 2;
     const int16 center_y = IMG_HEIGHT / 2;
 
@@ -41,7 +43,6 @@ static inline int8 compare_components(const void *a, const void *b)
         return (dist_sq_diff < 0) ? -1 : 1;
     }
 
-    // 第三关键字：前置摄像头优先于后置摄像头
     return (comp_a->camera_id < comp_b->camera_id) ? -1 : 1;
 }
 
