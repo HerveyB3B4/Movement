@@ -139,7 +139,7 @@ void control_turn(struct Control_Target *control_target,
     lowPassFilterI(&s_momentum_diff, &last_diff, 0.2f);
     last_diff = s_momentum_diff;
 
-    restrictValueI(&s_momentum_diff, 3000, -3000);
+    restrictValueI(&s_momentum_diff, 7000, -7000);
 
     // control_target->buckling_side = control_turn_params->buckling_side_state * control_target->turn_err;
 }
@@ -159,6 +159,8 @@ static void control_turn_angle_velocity(struct Control_Target *control_target,
                           &turn_angle_velocity_PID,
                           turn_angle_vel_filter[0],
                           control_target->turn_angle_vel);
+
+    restrictValueF(&control_target->turn_angle_vel, 250.0f, -250.0f);
 }
 
 static void control_turn_error(struct Control_Target *control_target,
