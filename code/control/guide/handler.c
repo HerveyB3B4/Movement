@@ -103,14 +103,14 @@ void handler_searching()
 
     if (searching_last_turn_time + 1000 >= system_getval_ms())
     {
-        // if (direction_relation == 0)
-        // {
-        //     searching_turn_err -= 50; // 左侧目标，减少转向误差
-        // }
-        // else
-        // {
-        // searching_turn_err += 50; // 右侧目标，增加转向误差
-        // }
+        if (direction_relation == 0)
+        {
+            searching_turn_err -= 50; // 左侧目标，减少转向误差
+        }
+        else
+        {
+            searching_turn_err += 50; // 右侧目标，增加转向误差
+        }
         searching_last_turn_time = system_getval_ms();
     }
     guide_set_target_vel(SEARCHING_SPEED);
