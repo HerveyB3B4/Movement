@@ -6,7 +6,7 @@
 #include "velocity.h"
 #include "zf_common_headfile.h"
 
-uint32 control_params_from = 0; // 0: menu, 1: preset
+uint32 control_params_from = 1; // 0: menu, 1: preset
 uint32 control_time = 0;
 
 // global

@@ -77,7 +77,7 @@ IFX_INTERRUPT(cc60_pit_ch1_isr,
 
     if (run_state == CAR_RUNNING)
     {
-        handler_main();
+        // handler_main();
     }
 }
 
